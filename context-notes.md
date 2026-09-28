@@ -73,3 +73,9 @@
 - 관리 API(api.supabase.com/v1)와 CLI를 섞어 쓴다. 프로젝트 생성/키 조회/SQL 실행/인증 설정은 API, 함수 배포와 secrets는 CLI(`--use-api`라 Docker 불필요).
 - 비밀값은 인자에 두지 않고 stdin(gh secret set)이나 0600 임시 env 파일(supabase secrets set --env-file)로 넘긴다. 화면에는 변수명과 '설정됨'만 찍는다.
 - 실제 계정 없이 작성해 문법 검사와 VAPID 생성만 확인했다. 관리 API 필드명(uri_allow_list, external_email_enabled, mailer_autoconfirm, api-keys?reveal=true)이 바뀌면 그 단계에서 오류 메시지를 보고 고칠 것.
+
+## 2026-09-28 10차: Supabase 실제 연결
+- 사용자가 스크립트를 실행해 프로젝트 `jooyeok-master`(ref egcmanpyvztornleapui, ap-northeast-2)가 생겼다. 관리 API 필드명은 모두 그대로 동작했다.
+- GitHub Secrets: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_VAPID_PUBLIC_KEY, SUPABASE_DB_PASSWORD. 값은 저장소에 없고 변수명만 기록.
+- 함수 `daily-push`는 인증 없이 호출하면 401. cron은 UTC 22:00.
+- 남은 확인: 실제 로그인 메일 수신, 두 기기 동기화, 푸시 수신(iOS는 홈 화면 추가 후).
