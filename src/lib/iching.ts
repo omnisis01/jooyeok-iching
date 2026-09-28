@@ -1,0 +1,125 @@
+// 8괘(삼획괘) 정의와 점괘 계산 로직(척전법·산통)
+
+import { findHexagramByLines, type Hexagram } from "@/data/hexagrams";
+
+export type Trigram = {
+  /** 산통 산가지 번호(선천 팔괘 순서 1~8) */
+  number: number;
+  name: string;
+  hanja: string;
+  symbol: string;
+  /** 자연 상징 (천·택·화·뢰·풍·수·산·지) */
+  nature: string;
+  natureHanja: string;
+  /** 3효, 인덱스 0이 맨 아래 */
+  lines: string;
+  meaning: string;
+};
+
+export const TRIGRAMS: Trigram[] = [
+  { number: 1, name: "건", hanja: "乾", symbol: "☰", nature: "하늘", natureHanja: "天", lines: "111", meaning: "강건함, 창조, 아버지" },
+  { number: 2, name: "태", hanja: "兌", symbol: "☱", nature: "못", natureHanja: "澤", lines: "011", meaning: "기쁨, 말, 막내딸" },
+  { number: 3, name: "리", hanja: "離", symbol: "☲", nature: "불", natureHanja: "火", lines: "101", meaning: "밝음, 붙음, 둘째딸" },
+  { number: 4, name: "진", hanja: "震", symbol: "☳", nature: "우레", natureHanja: "雷", lines: "001", meaning: "움직임, 놀람, 큰아들" },
+  { number: 5, name: "손", hanja: "巽", symbol: "☴", nature: "바람", natureHanja: "風", lines: "110", meaning: "스며듦, 공손, 큰딸" },
+  { number: 6, name: "감", hanja: "坎", symbol: "☵", nature: "물", natureHanja: "水", lines: "010", meaning: "험난함, 깊음, 둘째아들" },
+  { number: 7, name: "간", hanja: "艮", symbol: "☶", nature: "산", natureHanja: "山", lines: "100", meaning: "멈춤, 고요, 막내아들" },
+  { number: 8, name: "곤", hanja: "坤", symbol: "☷", nature: "땅", natureHanja: "地", lines: "000", meaning: "순함, 포용, 어머니" },
+];
+
+export function trigramByNumber(n: number): Trigram {
+  const t = TRIGRAMS.find((x) => x.number === n);
+  if (!t) throw new Error(`Invalid trigram number: ${n}`);
+  return t;
+}
+
+export function trigramByLines(lines: string): Trigram {
+  const t = TRIGRAMS.find((x) => x.lines === lines);
+  if (!t) throw new Error(`Invalid trigram lines: ${lines}`);
+  return t;
+}
+
+/** 괘의 하괘(0~2효)와 상괘(3~5효) */
+export function trigramsOf(hex: Hexagram): { lower: Trigram; upper: Trigram } {
+  return {
+    lower: trigramByLines(hex.lines.slice(0, 3)),
+    upper: trigramByLines(hex.lines.slice(3, 6)),
+  };
+}
+
+/** 척전법 효값: 6 노음(변), 7 소양, 8 소음, 9 노양(변) */
+export type LineValue = 6 | 7 | 8 | 9;
+
+export const LINE_VALUE_LABEL: Record<LineValue, string> = {
+  6: "노음 (변하는 음)",
+  7: "소양 (양)",
+  8: "소음 (음)",
+  9: "노양 (변하는 양)",
+};
+
+export type CoinToss = {
+  /** true = 앞면(3점), false = 뒷면(2점) */
+  coins: [boolean, boolean, boolean];
+  value: LineValue;
+};
+
+export function tossCoins(rand: () => number = Math.random): CoinToss {
+  const coins: [boolean, boolean, boolean] = [rand() < 0.5, rand() < 0.5, rand() < 0.5];
+  const sum = coins.reduce((acc, c) => acc + (c ? 3 : 2), 0);
+  return { coins, value: sum as LineValue };
+}
+
+export function isYang(v: LineValue): boolean {
+  return v === 7 || v === 9;
+}
+
+export function isChanging(v: LineValue): boolean {
+  return v === 6 || v === 9;
+}
+
+export type Reading = {
+  method: "coin" | "santong";
+  primary: Hexagram;
+  /** 변효 인덱스(0 = 초효) */
+  changingLines: number[];
+  /** 변효가 있을 때의 지괘. 없으면 null */
+  resulting: Hexagram | null;
+  question?: string;
+};
+
+function flipLines(lines: string, changing: number[]): string {
+  return lines
+    .split("")
+    .map((c, i) => (changing.includes(i) ? (c === "1" ? "0" : "1") : c))
+    .join("");
+}
+
+export function readingFromValues(values: LineValue[], question?: string): Reading {
+  if (values.length !== 6) throw new Error("6개의 효값이 필요합니다");
+  const lines = values.map((v) => (isYang(v) ? "1" : "0")).join("");
+  const changing = values.flatMap((v, i) => (isChanging(v) ? [i] : []));
+  const primary = findHexagramByLines(lines);
+  const resulting = changing.length ? findHexagramByLines(flipLines(lines, changing)) : null;
+  return { method: "coin", primary, changingLines: changing, resulting, question };
+}
+
+/** 산통: 하괘 번호, 상괘 번호(각 1~8), 동효(1~6) */
+export function readingFromSantong(lower: number, upper: number, moving: number, question?: string): Reading {
+  const lines = trigramByNumber(lower).lines + trigramByNumber(upper).lines;
+  const changing = [moving - 1];
+  const primary = findHexagramByLines(lines);
+  const resulting = findHexagramByLines(flipLines(lines, changing));
+  return { method: "santong", primary, changingLines: changing, resulting, question };
+}
+
+export const LINE_NAMES = ["초효", "이효", "삼효", "사효", "오효", "상효"];
+
+/** 변효 위치별 일반 조언 (효의 자리가 뜻하는 단계) */
+export const LINE_POSITION_ADVICE: string[] = [
+  "맨 아래 초효가 움직입니다. 일의 시작 단계라 아직 드러나지 않은 기운입니다. 조급하게 앞서지 말고 기초를 다지는 데 집중하세요.",
+  "이효가 움직입니다. 안에서 중심을 잡는 자리로, 성실하고 부드럽게 임하면 도움을 얻습니다. 실무를 꼼꼼히 챙기는 하루가 좋습니다.",
+  "삼효가 움직입니다. 안에서 밖으로 넘어가는 문턱이라 흔들리기 쉬운 자리입니다. 무리하게 나서기보다 위험을 미리 살피세요.",
+  "사효가 움직입니다. 윗사람 가까이에서 일하는 자리로, 신중함과 협력이 핵심입니다. 내 뜻보다 팀의 뜻을 먼저 헤아리세요.",
+  "오효가 움직입니다. 가장 중심이 되는 임금의 자리로, 리더십과 결정이 요구됩니다. 바르게 결단하면 사람들이 따릅니다.",
+  "맨 위 상효가 움직입니다. 일이 끝에 이른 자리로, 지나침을 경계하고 물러날 준비를 하세요. 마무리와 정리가 오늘의 과제입니다.",
+];
