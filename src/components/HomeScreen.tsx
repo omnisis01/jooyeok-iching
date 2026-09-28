@@ -11,7 +11,8 @@ import HexagramWheel from "./HexagramWheel";
 import HexagramDetail from "./HexagramDetail";
 import ResultView from "./ResultView";
 import AccountCard from "./AccountCard";
-import { dayInfo, todayString } from "@/lib/yukhyo";
+import { dayInfo } from "@/lib/yukhyo";
+import { useToday } from "@/lib/useToday";
 import { dailyHexagram } from "@/lib/daily";
 import { clearHistory, formatAt, loadHistory, readingFromRecord, removeRecord, type HistoryRecord } from "@/lib/history";
 import { cloudEnabled } from "@/lib/supabase";
@@ -23,11 +24,10 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
 
-  const today = todayString();
-  const day = dayInfo(today);
-  const daily = dailyHexagram(today);
-  const hour = new Date().getHours();
-  const greeting = hour < 5 ? "고요한 밤이에요" : hour < 11 ? "좋은 아침이에요" : hour < 17 ? "좋은 오후예요" : "편안한 저녁이에요";
+  const { today, hour } = useToday();
+  const day = today ? dayInfo(today) : null;
+  const daily = today ? dailyHexagram(today) : null;
+  const greeting = hour === null ? "" : hour < 5 ? "고요한 밤이에요" : hour < 11 ? "좋은 아침이에요" : hour < 17 ? "좋은 오후예요" : "편안한 저녁이에요";
 
   useEffect(() => {
     const sync = () => setHistory(loadHistory());
@@ -60,9 +60,9 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
     <div className="space-y-4">
       <div className="px-1 pt-2">
         <p className="text-xs font-bold text-vermilion">세상에서 가장 정확한 점사풀이</p>
-        <p className="mt-1 text-sm text-muted">{greeting}</p>
+        <p className="mt-1 min-h-5 text-sm text-muted">{greeting}</p>
         <h1 className="mt-1 text-[26px] font-extrabold leading-tight">
-          오늘은 {day.label.replace("일", "")} 날,
+          {day ? `오늘은 ${day.label.replace("일", "")} 날,` : "오늘은"}
           <br />
           어떤 괘가 나올까요
         </h1>
@@ -70,21 +70,27 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
 
       {/* 오늘의 괘 한마디 */}
       <motion.button
-        onClick={() => setSelected(daily)}
+        onClick={() => daily && setSelected(daily)}
         whileTap={{ scale: 0.98 }}
-        className="flex w-full items-center gap-4 rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)]"
+        className="flex min-h-[112px] w-full items-center gap-4 rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)]"
       >
-        <div className="shrink-0 text-gold">
-          <HexagramFigure lines={daily.lines} size={56} title={daily.name} />
-        </div>
-        <div className="min-w-0 flex-1">
+        {daily ? (
+          <>
+            <div className="shrink-0 text-gold">
+              <HexagramFigure lines={daily.lines} size={56} title={daily.name} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-vermilion">오늘의 괘 한마디</p>
+              <p className="mt-1 font-bold">
+                {daily.name} <span className="font-normal text-muted">{daily.hanja}</span>
+              </p>
+              <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground/80">{daily.advice}</p>
+            </div>
+            <ChevronRight size={18} className="shrink-0 text-muted" />
+          </>
+        ) : (
           <p className="text-xs font-bold text-vermilion">오늘의 괘 한마디</p>
-          <p className="mt-1 font-bold">
-            {daily.name} <span className="font-normal text-muted">{daily.hanja}</span>
-          </p>
-          <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground/80">{daily.advice}</p>
-        </div>
-        <ChevronRight size={18} className="shrink-0 text-muted" />
+        )}
       </motion.button>
 
       {/* 점치기 입구 */}

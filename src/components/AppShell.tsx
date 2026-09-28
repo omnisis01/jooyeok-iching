@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { BookOpen, Compass, Grid3x3, Home, Sparkles } from "lucide-react";
 import Taegeuk from "./Taegeuk";
+import { useToday } from "@/lib/useToday";
 import HomeScreen from "./HomeScreen";
 import DivinationFlow from "./DivinationFlow";
 import YukhyoSection from "./YukhyoSection";
@@ -50,8 +51,8 @@ export default function AppShell() {
     window.scrollTo({ top: 0 });
   };
 
-  const today = new Date();
-  const dateLabel = today.toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
+  const { today } = useToday();
+  const dateLabel = today ? new Date(today + "T12:00:00").toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" }) : "";
 
   return (
     <div className="app-backdrop min-h-screen">
