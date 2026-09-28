@@ -21,6 +21,7 @@ import { LINE_NAMES } from "@/lib/iching";
 import { makeId, saveRecord } from "@/lib/history";
 import ShareCardModal from "./ShareCardModal";
 import { renderYukhyoCard, yukhyoFileName, yukhyoShareText } from "@/lib/yukhyoCard";
+import ShareForCoupon from "./ShareForCoupon";
 
 type Props = {
   result: Result;
@@ -184,6 +185,7 @@ export default function YukhyoResult({ result, onRestart }: Props) {
         job={shareOpen ? { render: () => renderYukhyoCard(result), fileName: yukhyoFileName(result), text: yukhyoShareText(result) } : null}
         onClose={() => setShareOpen(false)}
       />
+      <ShareForCoupon className="mx-auto max-w-sm pt-2" />
       <p className="text-center text-xs leading-relaxed text-muted">
         육효는 점친 날의 일진과 월건을 함께 보는 점법이라 같은 괘라도 날짜에 따라 풀이가 달라집니다. 결과는 참고로만 삼아 주세요.
       </p>

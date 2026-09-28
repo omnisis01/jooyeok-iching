@@ -9,6 +9,8 @@ import { CATEGORIES, analyzeYukhyo, todayString, type Category, type YukhyoResul
 import CoinCasting from "./CoinCasting";
 import YukhyoResult from "./YukhyoResult";
 import FocusGate from "./FocusGate";
+import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
+import { consumeCast } from "@/lib/quota";
 
 type Stage = "setup" | "focus" | "cast" | "result";
 
@@ -20,8 +22,10 @@ export default function YukhyoSection() {
   const [date, setDate] = useState(todayString());
   const [result, setResult] = useState<Result | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
+  const quota = useQuota();
 
   const complete = (reading: Reading) => {
+    consumeCast();
     setResult(
       analyzeYukhyo({
         lines: reading.primary.lines,
@@ -103,12 +107,19 @@ export default function YukhyoSection() {
               </label>
             </div>
 
-            <button
-              onClick={() => setStage("focus")}
-              className="w-full rounded-full bg-vermilion py-4 text-center text-lg font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
-            >
-              동전으로 괘 뽑기
-            </button>
+            {quota.remaining <= 0 ? (
+              <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
+            ) : (
+              <button
+                onClick={() => setStage("focus")}
+                className="w-full rounded-full bg-vermilion py-4 text-center text-lg font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
+              >
+                동전으로 괘 뽑기
+              </button>
+            )}
+            <div className="flex justify-center">
+              <QuotaBadge />
+            </div>
 
             <div className="rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
               <button onClick={() => setGuideOpen((o) => !o)} className="flex w-full items-center justify-between px-5 py-4 text-left font-semibold" aria-expanded={guideOpen}>

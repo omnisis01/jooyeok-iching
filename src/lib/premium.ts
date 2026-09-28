@@ -1,5 +1,6 @@
 // 프리미엄 상태 조회와 결제 페이지 이동 (Stripe Checkout)
 import { cloudEnabled, supabase } from "./supabase";
+import { cachePremiumUntil } from "./quota";
 
 export const paymentsEnabled = cloudEnabled && process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === "true";
 
@@ -14,10 +15,15 @@ export const FREE_HISTORY_LIMIT = 30;
 export async function fetchPremiumUntil(): Promise<Date | null> {
   if (!cloudEnabled) return null;
   const { data: session } = await supabase().auth.getSession();
-  if (!session.session) return null;
+  if (!session.session) {
+    cachePremiumUntil(null);
+    return null;
+  }
   const { data } = await supabase().from("profiles").select("premium_until").eq("user_id", session.session.user.id).maybeSingle();
   const until = data?.premium_until ? new Date(data.premium_until as string) : null;
-  return until && until.getTime() > Date.now() ? until : null;
+  const active = until && until.getTime() > Date.now() ? until : null;
+  cachePremiumUntil(active);
+  return active;
 }
 
 /** 결제 페이지 주소를 받아 이동한다. 로그인 토큰을 함수에 함께 보낸다 */

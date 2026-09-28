@@ -11,6 +11,7 @@ import HexagramFigure from "./HexagramFigure";
 import ShareCardModal from "./ShareCardModal";
 import { renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
 import { adaptAdvice, adviceHeading, periodLabel } from "@/lib/period";
+import ShareForCoupon from "./ShareForCoupon";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -176,6 +177,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
         onClose={() => setShareOpen(false)}
       />
 
+      <ShareForCoupon className="mx-auto max-w-sm pt-2" />
       <p className="text-center text-xs text-muted">
         주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼고, 중요한 결정은 충분히 생각한 뒤 내려 주세요.
       </p>

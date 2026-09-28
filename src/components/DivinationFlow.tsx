@@ -13,6 +13,8 @@ import MethodGuide, { type Method } from "./MethodGuide";
 import FocusGate from "./FocusGate";
 import { PERIODS, type Period } from "@/lib/period";
 import { todayString } from "@/lib/yukhyo";
+import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
+import { consumeCast } from "@/lib/quota";
 
 type Stage = "setup" | "focus" | Method | "result";
 
@@ -24,6 +26,7 @@ export default function DivinationFlow() {
   const [pending, setPending] = useState<Method>("coin");
   const [period, setPeriod] = useState<Period>("today");
   const [periodDate, setPeriodDate] = useState(todayString());
+  const quota = useQuota();
   const isFirstRender = useRef(true);
 
   // 단계가 바뀔 때 섹션 상단으로 스크롤해 결과가 잘리지 않게 한다 (첫 렌더는 제외)
@@ -46,6 +49,7 @@ export default function DivinationFlow() {
   };
 
   const complete = (r: Reading) => {
+    consumeCast();
     setReading({ ...r, period, periodDate: period === "date" ? periodDate : undefined });
     setStage("result");
   };
@@ -92,8 +96,16 @@ export default function DivinationFlow() {
               />
             ) : null}
 
-            <p className="mt-8 font-bold">점치는 방법을 고르세요</p>
-            <div className="mt-3 grid gap-3 md:grid-cols-3">
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-2">
+              <p className="font-bold">점치는 방법을 고르세요</p>
+              <QuotaBadge />
+            </div>
+            {quota.remaining <= 0 ? (
+              <div className="mt-3">
+                <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
+              </div>
+            ) : null}
+            <div className={`mt-3 grid gap-3 md:grid-cols-3 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
               <MethodCard
                 icon={<Coins size={28} />}
                 title="동전 세 개, 척전법"

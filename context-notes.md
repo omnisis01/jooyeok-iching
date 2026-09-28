@@ -97,3 +97,9 @@
 - 국내 간편결제가 필요하면 토스페이먼츠로 교체해야 한다. 함수 두 개와 premium.ts의 startCheckout만 바꾸면 된다.
 - 묻는 시기: Reading.period(today/week/month/year/date/open). 64괘 조언이 모두 "오늘은"으로 시작해 `adaptAdvice`가 "이번 주는"처럼 바꾼다(받침에 따라 은/는). 육효는 시기 선택 없음(응기로 시점을 답한다).
 - 사용자 질문 "오늘 것만 볼 수 있나": 주역점은 시기 제한이 없고 육효의 날짜는 점치는 날이다. 문구가 오늘 위주였던 것을 시기 선택으로 해결.
+
+## 2026-09-28 14차: 하루 무료 횟수와 공유 쿠폰
+- 횟수는 localStorage(`jooyeok-master-quota-v1`, 날짜별)에만 있다. 서버 검증이 없어 우회는 가능하지만 일반 사용에는 충분. 서버 검증이 필요해지면 readings 테이블의 당일 건수로 대체할 수 있다.
+- 차감 시점은 결과가 나올 때(onComplete). 중간에 나가면 차감하지 않는다.
+- 공유 쿠폰은 navigator.share 성공 또는 클립보드 복사 성공 시 지급, 하루 3회. 친구가 실제로 받았는지는 확인할 수 없다.
+- 프리미엄 여부는 fetchPremiumUntil이 `jooyeok-master-premium-until`에 기억해 두어 점치기 흐름에서 동기적으로 쓴다.
