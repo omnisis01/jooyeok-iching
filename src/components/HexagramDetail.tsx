@@ -1,11 +1,12 @@
 // 괘 하나의 상세 해설을 보여주는 모달
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { hexagramSymbol, type Hexagram } from "@/data/hexagrams";
-import { trigramsOf } from "@/lib/iching";
+import { LINE_NAMES, trigramsOf } from "@/lib/iching";
+import { getAllLineTexts, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
 
 type Props = {
@@ -63,6 +64,8 @@ export default function HexagramDetail({ hex, onClose }: Props) {
 
 export function DetailBody({ hex }: { hex: Hexagram }) {
   const { lower, upper } = trigramsOf(hex);
+  const [showLines, setShowLines] = useState(false);
+  const lineTexts = getAllLineTexts(hex.number);
   return (
     <div className="flex flex-col gap-6 sm:flex-row">
       <div className="flex shrink-0 flex-col items-center gap-3 text-gold-soft">
@@ -90,6 +93,30 @@ export function DetailBody({ hex }: { hex: Hexagram }) {
 
         <h4 className="mt-6 text-xs font-semibold uppercase tracking-widest text-muted">오늘의 조언</h4>
         <p className="mt-2 rounded-2xl border border-gold/30 bg-gold/10 p-4 leading-relaxed">{hex.advice}</p>
+
+        <button
+          onClick={() => setShowLines((v) => !v)}
+          className="mt-6 flex w-full items-center justify-between rounded-xl border border-border px-4 py-2.5 text-sm text-foreground/80 transition hover:border-gold/60"
+          aria-expanded={showLines}
+        >
+          <span>여섯 효의 효사(爻辭) 보기</span>
+          <ChevronDown size={16} className={`transition-transform ${showLines ? "rotate-180" : ""}`} />
+        </button>
+        {showLines ? (
+          <ol className="mt-3 space-y-3 text-sm leading-relaxed">
+            {[...lineTexts].map((lt, i) => ({ lt, i })).reverse().map(({ lt, i }) => (
+              <li key={i} className="rounded-xl bg-background/50 p-3">
+                <div className="flex flex-wrap items-baseline gap-2">
+                  <span className="text-xs font-semibold text-gold-soft">{lineTitle(hex.lines, i)}</span>
+                  <span className="text-xs text-muted">{LINE_NAMES[i]}</span>
+                  <span className="font-serif text-gold-soft/90">{lt.hanja}</span>
+                </div>
+                <p className="mt-1 text-foreground/85">{lt.text}</p>
+                <p className="mt-0.5 text-foreground/65">→ {lt.advice}</p>
+              </li>
+            ))}
+          </ol>
+        ) : null}
       </div>
     </div>
   );

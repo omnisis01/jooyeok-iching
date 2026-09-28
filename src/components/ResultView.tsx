@@ -5,7 +5,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowRight, Check, Copy, RotateCcw } from "lucide-react";
 import { hexagramSymbol } from "@/data/hexagrams";
-import { LINE_NAMES, LINE_POSITION_ADVICE, trigramsOf, type Reading } from "@/lib/iching";
+import { LINE_NAMES, trigramsOf, type Reading } from "@/lib/iching";
+import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
 
 type Props = {
@@ -25,7 +26,10 @@ export default function ResultView({ reading, onRestart }: Props) {
       `키워드: ${primary.keyword}`,
       `해설: ${primary.summary}`,
       `오늘의 조언: ${primary.advice}`,
-      changingLines.length ? `변효: ${changingLines.map((i) => LINE_NAMES[i]).join(", ")}` : null,
+      ...changingLines.map((i) => {
+        const lt = getLineText(primary.number, i);
+        return `${lineTitle(primary.lines, i)} ${lt.hanja}: ${lt.text} ${lt.advice}`;
+      }),
       resulting ? `흐름의 방향(지괘): 제${resulting.number}괘 ${resulting.name} — ${resulting.keyword}` : null,
     ]
       .filter(Boolean)
@@ -83,17 +87,28 @@ export default function ResultView({ reading, onRestart }: Props) {
       {changingLines.length ? (
         <section className="grid gap-6 lg:grid-cols-[1fr_auto_1fr]">
           <div className="rounded-3xl border border-border bg-card/60 p-6">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-vermilion">움직이는 효</h3>
-            <ul className="mt-3 space-y-3 text-sm leading-relaxed text-foreground/90">
-              {changingLines.map((i) => (
-                <li key={i} className="flex gap-3">
-                  <span className="mt-0.5 shrink-0 rounded-md bg-vermilion/15 px-2 py-0.5 text-xs font-semibold text-vermilion">{LINE_NAMES[i]}</span>
-                  <span>{LINE_POSITION_ADVICE[i]}</span>
-                </li>
-              ))}
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-vermilion">움직이는 효 · 효사(爻辭)</h3>
+            <ul className="mt-3 space-y-4 text-sm leading-relaxed text-foreground/90">
+              {[...changingLines].reverse().map((i) => {
+                const lt = getLineText(primary.number, i);
+                const isFocus = changingLines.length === 2 ? i === Math.max(...changingLines) : changingLines.length === 1;
+                return (
+                  <li key={i} className={`rounded-2xl border p-4 ${isFocus ? "border-vermilion/50 bg-vermilion/5" : "border-border/60 bg-background/40"}`}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-md bg-vermilion/15 px-2 py-0.5 text-xs font-semibold text-vermilion">
+                        {lineTitle(primary.lines, i)} · {LINE_NAMES[i]}
+                      </span>
+                      <span className="font-serif text-base tracking-wide text-gold-soft">{lt.hanja}</span>
+                      {isFocus && changingLines.length > 1 ? <span className="text-xs text-muted">중심 효</span> : null}
+                    </div>
+                    <p className="mt-2">{lt.text}</p>
+                    <p className="mt-1.5 text-foreground/75">→ {lt.advice}</p>
+                  </li>
+                );
+              })}
             </ul>
-            {changingLines.length >= 4 ? (
-              <p className="mt-4 text-xs text-muted">변효가 많으면 상황이 크게 바뀌는 시기입니다. 지괘의 뜻을 더 무겁게 보세요.</p>
+            {changingLinesRule(changingLines.length) ? (
+              <p className="mt-4 text-xs leading-relaxed text-muted">{changingLinesRule(changingLines.length)}</p>
             ) : null}
           </div>
 
