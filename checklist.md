@@ -33,6 +33,10 @@
 - [x] 괘 상세 모달에 여섯 효사 목록
 - [x] GitHub Pages 배포: 저장소 omnisis01/jooyeok-iching, Actions 워크플로, https://omnisis01.github.io/jooyeok-iching/
 
+## 2026-09-28 4차: 이미지 저장·공유
+- [x] 캔버스로 1080×1350(내용 따라 늘어남) 결과 카드 생성 `src/lib/shareCard.ts`
+- [x] 미리보기 모달 `ShareCardModal`: PNG 저장, Web Share(파일 공유 지원 기기), 글·링크 복사
+
 ## 다음에 할 만한 것
-- [ ] 결과 이미지 저장/공유 카드
+- [ ] 효사 문구 원전 대조 검토
 - [ ] 오늘의 괘 기록(로컬 저장) 및 히스토리

@@ -33,3 +33,9 @@
 - 배포: Vercel CLI가 없고 gh CLI만 로그인되어 있어 GitHub Pages 선택. `output: "export"` 정적 내보내기, `GITHUB_PAGES=true`일 때만 basePath `/jooyeok-iching` 적용(로컬 개발은 basePath 없음).
 - 저장소 https://github.com/omnisis01/jooyeok-iching (public). main에 push하면 `.github/workflows/deploy.yml`이 자동 배포.
 - Pages 설정은 `gh api -X POST repos/omnisis01/jooyeok-iching/pages -f build_type=workflow`로 켰다.
+
+## 2026-09-28 4차: 결과 이미지 카드
+- 외부 라이브러리 없이 Canvas 2D로 그린다. Pretendard는 `document.fonts.load`로 먼저 불러온 뒤 그려야 캔버스에 적용된다.
+- 고정 높이로 그리면 변효·지괘 블록이 하단 문구와 겹쳐서, 넉넉한 임시 캔버스(1800)에 그린 뒤 내용 높이(최소 1350)로 잘라낸다.
+- 공유는 `navigator.canShare({files})`가 true인 기기(주로 모바일)에서만 공유 버튼을 보이고, 아니면 저장·복사만 제공한다. 데스크톱 Chrome 계열은 파일 공유가 안 되는 경우가 많다.
+- 효사 출처 관련: 사용자에게 통행본 기억 기반으로 작성했음을 알렸고, 원전 대조는 후속 과제로 남김. 네이버 검색은 이 브라우저에서 차단되어 참고 블로그(효산역술원)는 확인하지 못함.

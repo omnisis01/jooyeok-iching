@@ -3,11 +3,12 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Check, Copy, RotateCcw } from "lucide-react";
+import { ArrowRight, Check, Copy, ImageDown, RotateCcw } from "lucide-react";
 import { hexagramSymbol } from "@/data/hexagrams";
 import { LINE_NAMES, trigramsOf, type Reading } from "@/lib/iching";
 import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
+import ShareCardModal from "./ShareCardModal";
 
 type Props = {
   reading: Reading;
@@ -18,6 +19,7 @@ export default function ResultView({ reading, onRestart }: Props) {
   const { primary, resulting, changingLines, question, method } = reading;
   const { lower, upper } = trigramsOf(primary);
   const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const copy = async () => {
     const text = [
@@ -146,12 +148,19 @@ export default function ResultView({ reading, onRestart }: Props) {
           <RotateCcw size={18} /> 다시 점치기
         </button>
         <button
+          onClick={() => setShareOpen(true)}
+          className="inline-flex items-center gap-2 rounded-full bg-vermilion px-6 py-3 font-semibold text-paper shadow-lg shadow-vermilion/25 transition hover:brightness-110"
+        >
+          <ImageDown size={18} /> 이미지 저장·공유
+        </button>
+        <button
           onClick={copy}
           className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm text-foreground/80 transition hover:border-gold/60 hover:text-foreground"
         >
-          {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "복사되었습니다" : "결과 복사"}
+          {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "복사되었습니다" : "글로 복사"}
         </button>
       </div>
+      <ShareCardModal reading={shareOpen ? reading : null} onClose={() => setShareOpen(false)} />
 
       <p className="text-center text-xs text-muted">
         주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼고, 중요한 결정은 충분히 생각한 뒤 내려 주세요.
