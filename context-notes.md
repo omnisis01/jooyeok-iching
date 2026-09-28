@@ -26,3 +26,10 @@
 - `motion.rect`로 49개 산가지의 fill 색까지 보간하면 메인 스레드가 1.5초 이상 멈춘다(측정). 색은 일반 `fill` 속성으로 즉시 바꾸고 위치·높이만 tween으로 애니메이션한다.
 - 브라우저 패널이 가려져 있으면 스크린샷이 검게 나오거나 지연되므로, 애니메이션 단계 검증은 DOM 폴링(JS)으로 했다.
 - Reading.method에 "yarrow" 추가. `readingFromValues(values, question, method)` 세 번째 인자로 구분.
+
+## 2026-09-28 3차: 효사 데이터 + GitHub Pages 배포
+- 효사는 4개 파일(16괘씩)로 나눠 `src/data/lineTexts.ts`에서 합친다. 원문은 요지만 싣고(긴 효사는 핵심 구절), 풀이·조언은 쉬운 말로.
+- 변효가 여러 개일 때 읽는 규칙은 주자 계몽 기준(1개: 그 효, 2개: 위 효 중심, 3개: 본괘+지괘, 4~5개: 지괘 중심, 6개: 지괘). `changingLinesRule`.
+- 배포: Vercel CLI가 없고 gh CLI만 로그인되어 있어 GitHub Pages 선택. `output: "export"` 정적 내보내기, `GITHUB_PAGES=true`일 때만 basePath `/jooyeok-iching` 적용(로컬 개발은 basePath 없음).
+- 저장소 https://github.com/omnisis01/jooyeok-iching (public). main에 push하면 `.github/workflows/deploy.yml`이 자동 배포.
+- Pages 설정은 `gh api -X POST repos/omnisis01/jooyeok-iching/pages -f build_type=workflow`로 켰다.
