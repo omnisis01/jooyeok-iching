@@ -26,6 +26,8 @@ import ShareForCoupon from "./ShareForCoupon";
 type Props = {
   result: Result;
   onRestart: () => void;
+  /** 기록에서 다시 여는 경우 false */
+  saveToHistory?: boolean;
 };
 
 const LEVEL_STYLE = {
@@ -40,11 +42,12 @@ const JUDGE_STYLE = {
 };
 const JUDGE_LABEL = { 왕: "힘이 있어요", 평: "보통이에요", 쇠: "힘이 약해요" };
 
-export default function YukhyoResult({ result, onRestart }: Props) {
+export default function YukhyoResult({ result, onRestart, saveToHistory = true }: Props) {
   const { hexagram, changedHexagram, palace, day, lines, useRelation, useLine, hiddenUse, useJudgement, worldJudgement, verdict, timing, input } = result;
   const category = CATEGORIES.find((c) => c.key === input.category)!;
   const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
+    if (!saveToHistory) return;
     const at = new Date();
     saveRecord({
       id: makeId([at.toISOString().slice(0, 16), "yukhyo", hexagram.lines, input.changingLines.join(""), input.category, input.date]),
@@ -62,7 +65,7 @@ export default function YukhyoResult({ result, onRestart }: Props) {
       title: verdict.title,
       text: verdict.text,
     });
-  }, [hexagram, input, category.label, verdict]);
+  }, [saveToHistory, hexagram, input, category.label, verdict]);
 
   const useLabel = useRelation === "세" ? "세효(나 자신)" : useRelation === "응" ? "응효(상대)" : `${useRelation}(${RELATION_HANJA[useRelation]})`;
 

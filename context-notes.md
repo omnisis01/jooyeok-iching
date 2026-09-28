@@ -103,3 +103,8 @@
 - 차감 시점은 결과가 나올 때(onComplete). 중간에 나가면 차감하지 않는다.
 - 공유 쿠폰은 navigator.share 성공 또는 클립보드 복사 성공 시 지급, 하루 3회. 친구가 실제로 받았는지는 확인할 수 없다.
 - 프리미엄 여부는 fetchPremiumUntil이 `jooyeok-master-premium-until`에 기억해 두어 점치기 흐름에서 동기적으로 쓴다.
+
+## 2026-09-28 15차: QA 준비
+- 사용자 결정: 결제는 무료 버전 QA 뒤에 붙인다. NEXT_PUBLIC_PAYMENTS_ENABLED는 미설정(꺼짐) 상태 유지.
+- ResultView/YukhyoResult는 마운트 시 기록을 저장하므로, 기록에서 다시 열 때는 saveToHistory={false}를 넘겨야 한다.
+- QA 항목은 QA.md. 발견 사항은 화면, 기기, 한 일, 기대, 실제, 오류 문구 형식으로 받는다.

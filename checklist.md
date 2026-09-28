@@ -76,11 +76,16 @@
 - [x] Stripe 결제: Edge Function create-checkout(결제 페이지), stripe-webhook(서명 검증 후 profiles.premium_until 갱신), 0002_premium.sql, 프리미엄 카드, 무료 기록 30개 제한, 육효 전체 복원(프리미엄), 이미지 사이트 표시 생략(프리미엄)
 - [x] 자동 설정 `scripts/setup-payments.mjs` (상품·가격·웹훅 생성, 함수 배포, GitHub Secret). 실계정 미실행
 - [x] 점치기 전에 묻는 시기 선택(오늘, 이번 주, 이번 달, 올해, 날짜 지정, 때 상관없음). 결과 제목과 조언 문구, 기록, 이미지 카드에 반영
-- [ ] 사용자가 Stripe 테스트 키로 스크립트를 실행한 뒤 시험 결제 확인
+- [ ] (보류) 무료 버전 QA가 끝난 뒤 Stripe 테스트 키로 `scripts/setup-payments.mjs` 실행, 시험 결제 확인
 
 ## 2026-09-28 14차: 하루 무료 3회 + 공유 쿠폰
 - [x] `src/lib/quota.ts`: 하루 3회 무료(결과가 나올 때 차감), 프리미엄은 무제한(만료일을 기기에 기억), 공유 쿠폰 하루 3회
 - [x] `QuotaGate`(횟수 소진 안내), `QuotaBadge`(남은 횟수), `ShareForCoupon`(공유 시트 또는 링크 복사 뒤 쿠폰 1회). 점보기, 육효, 결과 화면, 홈에 연결
+
+## 2026-09-28 15차: QA 준비
+- [x] 기록에서 결과를 다시 열면 새 기록이 또 생기던 버그 수정(saveToHistory)
+- [x] 무료 버전 QA 체크리스트 `QA.md`
+- [ ] 사용자 QA 진행, 발견 사항 수정
 
 ## 다음에 할 만한 것
 - [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)

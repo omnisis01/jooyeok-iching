@@ -18,9 +18,11 @@ type Props = {
   reading: Reading;
   onRestart: () => void;
   restartLabel?: string;
+  /** 기록에서 다시 여는 경우 false */
+  saveToHistory?: boolean;
 };
 
-export default function ResultView({ reading, onRestart, restartLabel = "다시 점치기" }: Props) {
+export default function ResultView({ reading, onRestart, restartLabel = "다시 점치기", saveToHistory = true }: Props) {
   const { primary, resulting, changingLines, question, method, period, periodDate } = reading;
   const advice = adaptAdvice(primary.advice, period, periodDate);
   const { lower, upper } = trigramsOf(primary);
@@ -29,10 +31,11 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
 
   // 결과가 나오면 이 기기에 기록한다 (같은 결과는 한 번만)
   useEffect(() => {
+    if (!saveToHistory) return;
     const at = new Date();
     const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join(""), question]);
     saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, period, periodDate });
-  }, [method, primary.lines, changingLines, question, period, periodDate]);
+  }, [saveToHistory, method, primary.lines, changingLines, question, period, periodDate]);
 
   const copy = async () => {
     const text = [

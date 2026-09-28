@@ -66,7 +66,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           <ArrowLeft size={16} /> 기록으로 돌아가기
         </button>
         {viewing.type === "iching" ? (
-          <ResultView reading={readingFromRecord(viewing)} onRestart={() => setViewing(null)} restartLabel="닫기" />
+          <ResultView reading={readingFromRecord(viewing)} onRestart={() => setViewing(null)} restartLabel="닫기" saveToHistory={false} />
         ) : premium || !paymentsEnabled ? (
           <YukhyoResult
             result={analyzeYukhyo({
@@ -78,6 +78,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
               question: viewing.question,
             })}
             onRestart={() => setViewing(null)}
+            saveToHistory={false}
           />
         ) : (
           <YukhyoSummary record={viewing} />
