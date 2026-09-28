@@ -78,7 +78,7 @@ export function isChanging(v: LineValue): boolean {
 }
 
 export type Reading = {
-  method: "coin" | "santong";
+  method: "coin" | "santong" | "yarrow";
   primary: Hexagram;
   /** 변효 인덱스(0 = 초효) */
   changingLines: number[];
@@ -94,13 +94,49 @@ function flipLines(lines: string, changing: number[]): string {
     .join("");
 }
 
-export function readingFromValues(values: LineValue[], question?: string): Reading {
+export function readingFromValues(values: LineValue[], question?: string, method: "coin" | "yarrow" = "coin"): Reading {
   if (values.length !== 6) throw new Error("6개의 효값이 필요합니다");
   const lines = values.map((v) => (isYang(v) ? "1" : "0")).join("");
   const changing = values.flatMap((v, i) => (isChanging(v) ? [i] : []));
   const primary = findHexagramByLines(lines);
   const resulting = changing.length ? findHexagramByLines(flipLines(lines, changing)) : null;
-  return { method: "coin", primary, changingLines: changing, resulting, question };
+  return { method, primary, changingLines: changing, resulting, question };
+}
+
+/** 시초점 한 번의 '변(變)': 49개(또는 남은 수)를 둘로 나누고 4개씩 세어 남는 것을 덜어낸다 */
+export type YarrowChange = {
+  /** 나누기 전 개수 */
+  before: number;
+  left: number;
+  right: number;
+  /** 오른쪽에서 손가락 사이에 끼운 1개 */
+  hand: 1;
+  /** 왼쪽 무더기를 4씩 센 나머지(0이면 4) */
+  leftRemainder: number;
+  rightRemainder: number;
+  /** 이번 변에서 덜어낸 개수 (첫 변 5·9, 이후 4·8) */
+  taken: number;
+  /** 남은 개수 */
+  after: number;
+};
+
+export function yarrowChange(before: number, rand: () => number = Math.random): YarrowChange {
+  // 실제로 손으로 나누듯 절반 근처에서 흔들리게 한다 (정규분포 근사). 4로 나눈 나머지는 여전히 고르게 분포한다.
+  const gauss = Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+  const left = Math.min(before - 1, Math.max(1, Math.round(before / 2 + gauss * before * 0.12)));
+  const right = before - left;
+  const rem = (n: number) => (n % 4 === 0 ? 4 : n % 4);
+  const leftRemainder = rem(left);
+  const rightRemainder = rem(right - 1);
+  const taken = 1 + leftRemainder + rightRemainder;
+  return { before, left, right, hand: 1, leftRemainder, rightRemainder, taken, after: before - taken };
+}
+
+/** 세 번의 변이 끝난 뒤 남은 개수(24·28·32·36)를 4로 나누면 효값(6~9) */
+export function yarrowLineValue(remaining: number): LineValue {
+  const v = remaining / 4;
+  if (v !== 6 && v !== 7 && v !== 8 && v !== 9) throw new Error(`Invalid yarrow remainder: ${remaining}`);
+  return v;
 }
 
 /** 산통: 하괘 번호, 상괘 번호(각 1~8), 동효(1~6) */

@@ -3,13 +3,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, Coins, Landmark } from "lucide-react";
+import { ArrowLeft, Coins, Landmark, Sprout } from "lucide-react";
 import type { Reading } from "@/lib/iching";
 import CoinCasting from "./CoinCasting";
 import SantongCasting from "./SantongCasting";
 import ResultView from "./ResultView";
+import YarrowCasting from "./YarrowCasting";
+import MethodGuide, { type Method } from "./MethodGuide";
 
-type Stage = "setup" | "coin" | "santong" | "result";
+type Stage = "setup" | Method | "result";
 
 export default function DivinationFlow() {
   const [stage, setStage] = useState<Stage>("setup");
@@ -27,7 +29,7 @@ export default function DivinationFlow() {
     document.getElementById("divine")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [stage]);
 
-  const start = (method: "coin" | "santong") => {
+  const start = (method: Method) => {
     setCastKey((k) => k + 1);
     setStage(method);
   };
@@ -59,7 +61,7 @@ export default function DivinationFlow() {
             </label>
 
             <p className="mt-8 text-sm text-muted">점치는 방법을 고르세요</p>
-            <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <div className="mt-3 grid gap-4 sm:grid-cols-3">
               <MethodCard
                 icon={<Coins size={28} />}
                 title="척전법 · 동전 세 개"
@@ -74,20 +76,32 @@ export default function DivinationFlow() {
                 time="약 30초"
                 onClick={() => start("santong")}
               />
+              <MethodCard
+                icon={<Sprout size={28} />}
+                title="시초점 · 산가지 50개"
+                desc="49개를 나누고 4개씩 세어 덜어내는 과정을 18번 거칩니다. 주역 원전에 적힌 가장 오래된 정통 방식입니다."
+                time="약 3분 (자동 진행 가능)"
+                onClick={() => start("yarrow")}
+              />
             </div>
           </motion.div>
         ) : null}
 
-        {stage === "coin" || stage === "santong" ? (
+        {stage === "coin" || stage === "santong" || stage === "yarrow" ? (
           <motion.div key={`cast-${castKey}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35 }}>
             <button onClick={restart} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
               <ArrowLeft size={16} /> 방법 다시 고르기
             </button>
             {question ? <p className="mb-4 text-center text-muted">“{question}”</p> : null}
+            <div className="mb-5">
+              <MethodGuide method={stage} />
+            </div>
             {stage === "coin" ? (
               <CoinCasting question={question || undefined} onComplete={complete} />
-            ) : (
+            ) : stage === "santong" ? (
               <SantongCasting question={question || undefined} onComplete={complete} />
+            ) : (
+              <YarrowCasting question={question || undefined} onComplete={complete} />
             )}
           </motion.div>
         ) : null}

@@ -22,7 +22,7 @@ export default function Hero() {
             뽑아 보세요
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-foreground/80">
-            삼천 년 동안 읽혀 온 변화의 책, 주역. 동전을 던지고 산통을 흔들어 오늘의 괘를 뽑고,
+            삼천 년 동안 읽혀 온 변화의 책, 주역. 산가지를 세고, 동전을 던지고, 산통을 흔들어 오늘의 괘를 뽑고,
             어렵지 않은 말로 풀어낸 해설과 함께 하루를 어떻게 보내면 좋을지 힌트를 얻어 보세요.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">

@@ -43,7 +43,7 @@ export default function ResultView({ reading, onRestart }: Props) {
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
       {question ? (
         <p className="text-center text-sm text-muted">
-          “{question}” 에 대한 오늘의 괘 · {method === "coin" ? "척전법" : "산통점"}
+          “{question}” 에 대한 오늘의 괘 · {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
         </p>
       ) : null}
 
