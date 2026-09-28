@@ -60,6 +60,12 @@ export function saveRecord(record: HistoryRecord) {
   window.dispatchEvent(new Event("history-changed"));
 }
 
+/** 이벤트를 내지 않고 저장한다. 여러 건을 받아올 때 마지막에 한 번만 알리기 위해 */
+export function saveRecordSilently(record: HistoryRecord) {
+  const list = read().filter((r) => r.id !== record.id);
+  write([record, ...list].sort((a, b) => (a.at < b.at ? 1 : -1)));
+}
+
 export function removeRecord(id: string) {
   write(read().filter((r) => r.id !== id));
   window.dispatchEvent(new Event("history-changed"));

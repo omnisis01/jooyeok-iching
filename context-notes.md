@@ -56,3 +56,12 @@
 - PWA: 정적 사이트라 서비스 워커는 두지 않았다(오프라인 캐시 불필요). manifest의 start_url은 "./"로 두어 GitHub Pages 하위 경로와 로컬 모두 동작.
 - 아이콘 PNG는 외부 도구 없이 파이썬으로 픽셀을 직접 계산해 만들었다(`zlib`+`struct`). 다시 만들려면 6차 커밋의 스크립트 참고.
 - 사용자 요청: 상용 앱 수준. 서버가 필요한 기능(알림, 계정, 결제)은 이번 범위 밖으로 남김.
+
+## 2026-09-28 7차: 백엔드 준비
+- 정적 사이트(GitHub Pages)라 서버 기능은 Supabase(Auth, Postgres, Edge Functions)로 붙인다. 앱에는 anon 키와 VAPID 공개 키만 들어가고(NEXT_PUBLIC_), service_role과 VAPID 비밀 키는 Edge Function Secrets에만 둔다.
+- 키가 없으면 `cloudEnabled=false`로 계정 카드가 숨겨지고 기존 동작(기기 저장)만 한다. 그래서 키 없이 빌드·배포가 계속 된다.
+- 동기화 방식: readings(id text PK, user_id, payload jsonb). 로컬 기록 id를 그대로 서버 id로 써서 중복 없이 upsert(ignoreDuplicates). 로그인 시 pushLocal → pullRemote.
+- 푸시: 구독은 로그인 없이도 가능(user_id null 허용). Edge Function은 Authorization이 service_role일 때만 동작하고, pg_cron + pg_net이 UTC 22:00(KST 07:00)에 호출. 410/404는 구독 삭제, 그 외 실패는 fail_count 증가(5 이상이면 제외).
+- 오늘의 괘 해시는 앱(`daily.ts`)과 함수(`index.ts`)가 같은 식을 쓴다. 함수는 KST 날짜 문자열을 쓴다. 바꾸면 양쪽을 같이 바꿀 것.
+- Deno 코드는 tsconfig exclude와 eslint globalIgnores에 넣어 Next 검사에서 제외했다.
+- 실제 Supabase 프로젝트가 없어 로그인·동기화·푸시는 실기기 검증을 못 했다. SETUP.md 순서대로 진행 후 확인 필요.

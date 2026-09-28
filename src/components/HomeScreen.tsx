@@ -10,9 +10,12 @@ import HexagramFigure from "./HexagramFigure";
 import HexagramWheel from "./HexagramWheel";
 import HexagramDetail from "./HexagramDetail";
 import ResultView from "./ResultView";
+import AccountCard from "./AccountCard";
 import { dayInfo, todayString } from "@/lib/yukhyo";
 import { dailyHexagram } from "@/lib/daily";
 import { clearHistory, formatAt, loadHistory, readingFromRecord, removeRecord, type HistoryRecord } from "@/lib/history";
+import { cloudEnabled } from "@/lib/supabase";
+import { deleteRemote } from "@/lib/cloudSync";
 
 export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [selected, setSelected] = useState<Hexagram | null>(null);
@@ -106,6 +109,8 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
       </div>
 
+      <AccountCard />
+
       {/* 나의 점 기록 */}
       <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
         <div className="flex items-center justify-between">
@@ -143,7 +148,14 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
                   </div>
                   <ChevronRight size={16} className="shrink-0 text-muted" />
                 </button>
-                <button onClick={() => removeRecord(r.id)} className="p-1 text-muted/60 hover:text-vermilion" aria-label="이 기록 지우기">
+                <button
+                  onClick={() => {
+                    removeRecord(r.id);
+                    if (cloudEnabled) deleteRemote(r.id).catch(() => {});
+                  }}
+                  className="p-1 text-muted/60 hover:text-vermilion"
+                  aria-label="이 기록 지우기"
+                >
                   <Trash2 size={14} />
                 </button>
               </li>

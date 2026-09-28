@@ -51,8 +51,15 @@
 - [x] 홈 화면 설치: manifest.webmanifest, SVG 아이콘, PNG 아이콘(파이썬으로 직접 생성), 애플 터치 아이콘
 - [x] 탭 전환 퇴장 애니메이션 제거
 
+## 2026-09-28 7차: 백엔드 준비(Supabase)
+- [x] 공개 키만 쓰는 클라이언트 `src/lib/supabase.ts`, 키 없으면 기능 숨김
+- [x] 이메일 매직링크 로그인 + 기록 동기화 `cloudSync.ts`, 홈 계정 카드 `AccountCard`
+- [x] 오늘의 괘 푸시: 서비스 워커 `public/sw.js`, 구독 `push.ts`, Edge Function `supabase/functions/daily-push`, 스키마 `supabase/migrations/0001_init.sql`
+- [x] CI에서 공개 키를 GitHub Secrets로 주입, `.env.example`, 설정 안내 `SETUP.md`
+- [ ] 사용자가 Supabase 프로젝트를 만들고 키를 넣은 뒤 실제 로그인·동기화·푸시 검증 (키가 없어 미검증)
+
 ## 다음에 할 만한 것
 - [ ] 효사 문구 원전 대조 검토
 - [ ] 육효 결과 이미지 카드
-- [ ] 푸시 알림(오늘의 괘), 계정 동기화, 결제 같은 상용 기능은 서버가 필요해 별도 설계
+- [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)
 - [ ] 오늘의 괘 기록(로컬 저장) 및 히스토리

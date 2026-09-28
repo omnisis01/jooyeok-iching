@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Deno로 실행되는 Supabase Edge Function은 Next 규칙 대상이 아니다
+    "supabase/**",
   ]),
 ]);
 
