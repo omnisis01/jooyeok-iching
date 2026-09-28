@@ -79,3 +79,7 @@
 - GitHub Secrets: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_VAPID_PUBLIC_KEY, SUPABASE_DB_PASSWORD. 값은 저장소에 없고 변수명만 기록.
 - 함수 `daily-push`는 인증 없이 호출하면 401. cron은 UTC 22:00.
 - 남은 확인: 실제 로그인 메일 수신, 두 기기 동기화, 푸시 수신(iOS는 홈 화면 추가 후).
+
+## 2026-09-28 11차: 표현 정리
+- 치환은 문자열 리터럴 안에서만 정규식으로 했다(주석은 그대로). 사전은 커밋 이력의 스크립트 참고. 길/흉/이롭다는 운세 앱에서 흔한 우리말이라 남겼고, 허물/형통/숭상/군자/소인은 바꿨다.
+- 홈의 날짜·인사말·오늘의 괘는 `useToday`로 마운트 뒤에만 채운다. 정적 export는 빌드 시각을 굽기 때문에 React #418이 났다.

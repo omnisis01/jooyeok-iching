@@ -273,40 +273,40 @@ function judge(lineEl: Element, branch: number, changing: boolean, changed: Line
   // 월건
   if (mEl === lineEl) {
     score += 2;
-    reasons.push(`월건 ${branchLabel(day.monthBranch)} 달과 같은 ${lineEl} 기운이라 왕(旺)합니다.`);
+    reasons.push(`이달(${branchLabel(day.monthBranch)}월)과 같은 ${lineEl} 기운이라 힘이 가장 셉니다.`);
   } else if (generates(mEl, lineEl)) {
     score += 1;
-    reasons.push(`월건 ${branchLabel(day.monthBranch)} 달이 낳아 주어 상(相)합니다.`);
+    reasons.push(`이달(${branchLabel(day.monthBranch)}월)이 힘을 보태 주어 기운이 좋습니다.`);
   } else if (generates(lineEl, mEl)) {
     score -= 1;
-    reasons.push(`월건을 낳느라 힘이 빠져 휴(休)합니다.`);
+    reasons.push(`이달의 기운을 돕느라 오히려 힘이 빠집니다.`);
   } else if (overcomes(lineEl, mEl)) {
     score -= 1;
-    reasons.push(`월건을 이기려다 갇혀 수(囚)합니다.`);
+    reasons.push(`이달의 기운과 부딪혀 힘을 쓰지 못합니다.`);
   } else {
     score -= 2;
-    reasons.push(`월건 ${branchLabel(day.monthBranch)} 달에 눌려 사(死)합니다.`);
+    reasons.push(`이달(${branchLabel(day.monthBranch)}월)의 기운에 눌려 힘이 없습니다.`);
   }
   if (isClash(day.monthBranch, branch)) {
     score -= 1.5;
-    reasons.push(`월건과 충(沖)하니 월파(月破)입니다.`);
+    reasons.push(`이달의 기운과 정면으로 부딪혀(월파) 크게 흔들립니다.`);
   }
 
   // 일진
   if (dEl === lineEl || generates(dEl, lineEl)) {
     score += 1;
-    reasons.push(`일진 ${day.label}이 도와줍니다.`);
+    reasons.push(`오늘(${day.label})의 기운이 도와줍니다.`);
   } else if (overcomes(dEl, lineEl)) {
     score -= 1;
-    reasons.push(`일진이 극(克)합니다.`);
+    reasons.push(`오늘의 기운이 누릅니다.`);
   }
   if (isClash(day.dayBranch, branch)) {
     if (!changing && score > 0) {
       score += 0.5;
-      reasons.push(`일진이 충하니 조용히 움직이는 암동(暗動)입니다.`);
+      reasons.push(`오늘의 기운이 부딪혀 조용히 움직이기 시작합니다(암동).`);
     } else {
       score -= 1;
-      reasons.push(`일진과 충하니 일파(日破)로 흔들립니다.`);
+      reasons.push(`오늘의 기운과 부딪혀(일파) 흔들립니다.`);
     }
   }
 
@@ -315,10 +315,10 @@ function judge(lineEl: Element, branch: number, changing: boolean, changed: Line
     if (!m.changing || (self && m.index === self.index)) continue;
     if (generates(m.element, lineEl)) {
       score += 1;
-      reasons.push(`${m.index + 1}효 ${m.relation} ${branchLabel(m.branch)} 효가 움직여 낳아 줍니다(원신 발동).`);
+      reasons.push(`${m.index + 1}효 ${m.relation}(${branchLabel(m.branch)})이 움직여 힘을 보태 줍니다.`);
     } else if (overcomes(m.element, lineEl)) {
       score -= 1.5;
-      reasons.push(`${m.index + 1}효 ${m.relation} ${branchLabel(m.branch)} 효가 움직여 극합니다(기신 발동).`);
+      reasons.push(`${m.index + 1}효 ${m.relation}(${branchLabel(m.branch)})이 움직여 누릅니다.`);
     }
   }
 
@@ -326,20 +326,20 @@ function judge(lineEl: Element, branch: number, changing: boolean, changed: Line
   if (changing && changed) {
     if (generates(changed.element, lineEl)) {
       score += 1.5;
-      reasons.push(`변효 ${branchLabel(changed.branch)} 효가 되돌아와 낳아 주니 회두생(回頭生)입니다.`);
+      reasons.push(`움직여 변한 효(${branchLabel(changed.branch)})가 되돌아와 힘을 보탭니다(회두생).`);
     } else if (overcomes(changed.element, lineEl)) {
       score -= 2;
-      reasons.push(`변효 ${branchLabel(changed.branch)} 효가 되돌아와 극하니 회두극(回頭克)입니다.`);
+      reasons.push(`움직여 변한 효(${branchLabel(changed.branch)})가 되돌아와 누릅니다(회두극).`);
     } else if (changed.element === lineEl) {
       const forward = [
         [2, 3], [5, 6], [8, 9], [11, 0], [1, 4], [4, 7], [7, 10], [10, 1],
       ].some(([a, b]) => a === branch && b === changed.branch);
       if (forward) {
         score += 1;
-        reasons.push(`같은 기운으로 앞으로 나아가니 진신(進神)입니다.`);
+        reasons.push(`같은 기운으로 한 걸음 나아갑니다(진신).`);
       } else {
         score -= 1;
-        reasons.push(`같은 기운이나 뒤로 물러나니 퇴신(退神)입니다.`);
+        reasons.push(`같은 기운이지만 한 걸음 물러섭니다(퇴신).`);
       }
     }
   }
@@ -348,10 +348,10 @@ function judge(lineEl: Element, branch: number, changing: boolean, changed: Line
   if (isVoid) {
     if (changing || score > 0) {
       score -= 0.5;
-      reasons.push(`공망(空亡)에 들었지만 힘이 있어 공망을 벗어나는 날 이루어집니다.`);
+      reasons.push(`빈자리(공망)에 들었지만 힘이 있어, 그 자리를 벗어나는 날 이루어집니다.`);
     } else {
       score -= 2;
-      reasons.push(`공망(空亡)에 들고 힘도 없어 진공(眞空)입니다. 실속이 없습니다.`);
+      reasons.push(`빈자리(공망)에 들고 힘도 없어 실속이 없습니다.`);
     }
   }
 
@@ -472,7 +472,7 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
       ? (() => {
           const j = judge(hiddenUse.element, hiddenUse.branch, false, undefined, infos, null, day, day.voids.includes(hiddenUse.branch));
           j.score -= 1.5;
-          j.reasons.unshift(`용신이 괘에 드러나지 않아 본궁 ${hiddenUse.at + 1}효 ${branchLabel(hiddenUse.branch)} 자리에 숨어 있습니다(복신). 드러날 때까지 일이 더딥니다.`);
+          j.reasons.unshift(`용신이 괘에 나타나지 않아 본궁 ${hiddenUse.at + 1}효 ${branchLabel(hiddenUse.branch)} 자리에 숨어 있습니다(복신). 드러날 때까지 일이 더딥니다.`);
           j.level = j.score >= 2 ? "왕" : j.score >= 0 ? "평" : "쇠";
           return j;
         })()
@@ -493,17 +493,17 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
     const harmony = (1 - ub + 12) % 12;
     const useEl = BRANCH_ELEMENT[ub];
     if (useJudgement.level === "왕") {
-      timing.push(`용신 ${branchLabel(ub)}의 날이나 달, 또는 합(合)이 되는 ${branchLabel(harmony)}의 날이나 달에 일이 이루어지기 쉽습니다.`);
+      timing.push(`${branchLabel(ub)}의 날이나 달, 또는 짝이 되는 ${branchLabel(harmony)}의 날이나 달에 이루어지기 쉽습니다.`);
     } else {
       const parents = (["목", "화", "토", "금", "수"] as Element[]).filter((e) => generates(e, useEl));
       timing.push(`용신이 약하니 ${parents.join(", ")} 기운이 강한 날이나 달(${BRANCHES.map((b, i) => (parents.includes(BRANCH_ELEMENT[i]) ? b : null)).filter(Boolean).join(", ")})에 힘을 얻어 진전이 있습니다.`);
     }
     if (useLine?.isVoid || (hiddenUse && day.voids.includes(hiddenUse.branch))) {
-      timing.push(`공망을 벗어나는 ${branchLabel(ub)}의 날 이후를 기다리세요.`);
+      timing.push(`빈자리를 벗어나는 ${branchLabel(ub)}의 날 이후를 기다리세요.`);
     }
   }
 
-  const elementNote = `본괘는 ${palace.palaceName} ${palace.generationName}, 궁의 오행은 ${palace.element}(${ELEMENT_HANJA[palace.element]})입니다. 세효 ${palace.world + 1}효, 응효 ${palace.response + 1}효.`;
+  const elementNote = `이 괘는 ${palace.palaceName}의 ${palace.generationName}이고, 궁의 오행은 ${palace.element}(${ELEMENT_HANJA[palace.element]})입니다. 나를 뜻하는 세효는 ${palace.world + 1}효, 상대를 뜻하는 응효는 ${palace.response + 1}효입니다.`;
 
   return {
     input,

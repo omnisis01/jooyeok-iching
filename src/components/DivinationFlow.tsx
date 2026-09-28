@@ -86,7 +86,7 @@ export default function DivinationFlow() {
                 icon={<Sprout size={28} />}
                 title="산가지 50개, 시초점"
                 desc="산가지 49개를 18번 나누어 셉니다. 주역 원전에 적힌 가장 오래된 정통 방식이에요. 자동 진행도 됩니다."
-                time="약 3분 (자동 진행 가능)"
+                time="약 3분, 자동 진행도 돼요"
                 onClick={() => start("yarrow")}
               />
             </div>

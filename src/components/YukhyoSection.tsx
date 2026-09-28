@@ -93,7 +93,7 @@ export default function YukhyoSection() {
               </label>
               <label className="mt-4 block">
                 <span className="font-bold">점치는 날짜</span>
-                <span className="ml-2 text-xs text-muted">일진과 월건을 정합니다</span>
+                <span className="ml-2 text-xs text-muted">그날의 기운을 함께 봅니다</span>
                 <input
                   type="date"
                   value={date}

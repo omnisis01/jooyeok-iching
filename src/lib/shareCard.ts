@@ -181,7 +181,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   ctx.stroke();
   ctx.fillStyle = C.muted;
   ctx.font = font(500, 22);
-  ctx.fillText("오 늘  이 렇 게  살 아 보 세 요", W / 2, y + 44);
+  ctx.fillText("오늘 이렇게 살아보세요", W / 2, y + 44);
   ctx.fillStyle = C.paper;
   ctx.font = font(500, 32);
   adviceLines.forEach((l, i) => ctx.fillText(l, W / 2, y + 96 + i * 48));

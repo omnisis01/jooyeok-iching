@@ -98,11 +98,11 @@ export default function YukhyoResult({ result, onRestart }: Props) {
         </div>
         <p className="mt-2 text-sm leading-relaxed text-foreground/75">{result.elementNote}</p>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
-          <Chip>점친 날 {day.date}</Chip>
-          <Chip>일진 {day.label}</Chip>
-          <Chip>월건 {branchLabel(day.monthBranch)}월</Chip>
+          <Chip>점친 날 {day.date.replace(/^(\d+)-(\d+)-(\d+)$/, (_, y, m, d) => `${y}년 ${Number(m)}월 ${Number(d)}일`)}</Chip>
+          <Chip>오늘의 간지 {day.label}</Chip>
+          <Chip>이달 {branchLabel(day.monthBranch)}월</Chip>
           <Chip>
-            공망 {BRANCHES[day.voids[0]]}{BRANCHES[day.voids[1]]}({BRANCHES_HANJA[day.voids[0]]}{BRANCHES_HANJA[day.voids[1]]})
+            빈자리(공망) {BRANCHES[day.voids[0]]}{BRANCHES[day.voids[1]]}({BRANCHES_HANJA[day.voids[0]]}{BRANCHES_HANJA[day.voids[1]]})
           </Chip>
         </div>
 
@@ -118,7 +118,7 @@ export default function YukhyoResult({ result, onRestart }: Props) {
             <LineRow key={l.index} line={l} isUse={useLine?.index === l.index} />
           ))}
         </div>
-        <p className="mt-2 text-xs text-muted">붉게 표시된 효가 용신입니다. 動은 움직이는 효입니다.</p>
+        <p className="mt-2 text-xs text-muted">붉게 칠한 줄이 이번 질문의 용신이고, 動 표시는 움직이는 효입니다.</p>
       </section>
 
       {/* 용신 판단 */}
@@ -146,7 +146,7 @@ export default function YukhyoResult({ result, onRestart }: Props) {
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-xs text-muted">점수 {useJudgement.score}</p>
+        <p className="mt-3 text-xs text-muted">힘 점수 {useJudgement.score}</p>
       </section>
 
       {/* 세효 */}

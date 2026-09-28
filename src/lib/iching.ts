@@ -51,10 +51,10 @@ export function trigramsOf(hex: Hexagram): { lower: Trigram; upper: Trigram } {
 export type LineValue = 6 | 7 | 8 | 9;
 
 export const LINE_VALUE_LABEL: Record<LineValue, string> = {
-  6: "노음 (변하는 음)",
-  7: "소양 (양)",
-  8: "소음 (음)",
-  9: "노양 (변하는 양)",
+  6: "노음(변하는 음)",
+  7: "소양(양)",
+  8: "소음(음)",
+  9: "노양(변하는 양)",
 };
 
 export type CoinToss = {
