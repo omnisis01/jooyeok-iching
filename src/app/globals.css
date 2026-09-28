@@ -55,6 +55,14 @@ input[type="date"] {
   color-scheme: light;
 }
 
+/* 폰을 가로로 눕힌 짧은 화면: 큰 여백을 줄인다 */
+@media (max-height: 480px) and (orientation: landscape) {
+  .focus-orb {
+    height: 6rem !important;
+    width: 6rem !important;
+  }
+}
+
 @keyframes spin-slow {
   to {
     transform: rotate(360deg);

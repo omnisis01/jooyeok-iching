@@ -1,9 +1,9 @@
 // 육효점 결과: 여섯 효 도표(육수, 육친, 간지, 세응, 동효)와 용신 판단, 종합 풀이
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { RotateCcw } from "lucide-react";
+import { ImageDown, RotateCcw } from "lucide-react";
 import {
   BEASTS,
   BEAST_MEANING,
@@ -19,6 +19,8 @@ import {
 } from "@/lib/yukhyo";
 import { LINE_NAMES } from "@/lib/iching";
 import { makeId, saveRecord } from "@/lib/history";
+import ShareCardModal from "./ShareCardModal";
+import { renderYukhyoCard, yukhyoFileName, yukhyoShareText } from "@/lib/yukhyoCard";
 
 type Props = {
   result: Result;
@@ -40,6 +42,7 @@ const JUDGE_LABEL = { 왕: "힘이 있어요", 평: "보통이에요", 쇠: "힘
 export default function YukhyoResult({ result, onRestart }: Props) {
   const { hexagram, changedHexagram, palace, day, lines, useRelation, useLine, hiddenUse, useJudgement, worldJudgement, verdict, timing, input } = result;
   const category = CATEGORIES.find((c) => c.key === input.category)!;
+  const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
     const at = new Date();
     saveRecord({
@@ -169,7 +172,17 @@ export default function YukhyoResult({ result, onRestart }: Props) {
         <button onClick={onRestart} className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 font-semibold text-card transition hover:opacity-90">
           <RotateCcw size={18} /> 다시 묻기
         </button>
+        <button
+          onClick={() => setShareOpen(true)}
+          className="inline-flex items-center gap-2 rounded-full bg-vermilion px-6 py-3 font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
+        >
+          <ImageDown size={18} /> 이미지로 저장하기
+        </button>
       </div>
+      <ShareCardModal
+        job={shareOpen ? { render: () => renderYukhyoCard(result), fileName: yukhyoFileName(result), text: yukhyoShareText(result) } : null}
+        onClose={() => setShareOpen(false)}
+      />
       <p className="text-center text-xs leading-relaxed text-muted">
         육효는 점친 날의 일진과 월건을 함께 보는 점법이라 같은 괘라도 날짜에 따라 풀이가 달라집니다. 결과는 참고로만 삼아 주세요.
       </p>

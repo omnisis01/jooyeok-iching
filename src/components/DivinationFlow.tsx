@@ -67,7 +67,7 @@ export default function DivinationFlow() {
             </label>
 
             <p className="mt-8 font-bold">점치는 방법을 고르세요</p>
-            <div className="mt-3 grid gap-3">
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
               <MethodCard
                 icon={<Coins size={28} />}
                 title="동전 세 개, 척전법"

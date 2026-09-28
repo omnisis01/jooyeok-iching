@@ -57,8 +57,8 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const shown = showAll ? history : history.slice(0, 3);
 
   return (
-    <div className="space-y-4">
-      <div className="px-1 pt-2">
+    <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+      <div className="px-1 pt-2 lg:col-span-2">
         <p className="text-xs font-bold text-vermilion">세상에서 가장 정확한 점사풀이</p>
         <p className="mt-1 min-h-5 text-sm text-muted">{greeting}</p>
         <h1 className="mt-1 text-[26px] font-extrabold leading-tight">
@@ -103,14 +103,14 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           <HexagramWheel size={260} />
         </div>
         <p className="text-sm text-card/70">주역 64괘 점</p>
-        <p className="mt-2 text-2xl font-extrabold">나의 괘 뽑기</p>
-        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80">동전, 산통, 산가지 중 마음에 드는 방법으로 괘를 뽑고 오늘의 조언을 받아 보세요.</p>
+        <p className="mt-2 text-2xl font-extrabold">오늘 나만의 주역 괘 뽑기</p>
+        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80 md:max-w-[70%]">동전, 산통, 산가지 중 마음에 드는 방법으로 괘를 뽑고 오늘의 조언을 받아 보세요.</p>
         <span className="mt-5 inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold">
           시작하기 <ChevronRight size={16} />
         </span>
       </motion.button>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:col-span-2">
         <Card title="육효로 묻기" desc="돈, 직장, 연애처럼 구체적인 질문에 답합니다" onClick={() => go("yukhyo")} accent="bg-vermilion/10 text-vermilion" badge="상세 점" />
         <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
       </div>
@@ -188,7 +188,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </div>
       </div>
 
-      <p className="px-2 text-center text-xs leading-relaxed text-muted">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
+      <p className="px-2 text-center text-xs leading-relaxed text-muted lg:col-span-2">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
       <HexagramDetail hex={selected} onClose={() => setSelected(null)} />
     </div>
   );

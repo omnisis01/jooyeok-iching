@@ -23,7 +23,7 @@ export default function FocusGate({ action, question, onReady }: Props) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl bg-card p-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <motion.div
-        className="mx-auto flex h-36 w-36 items-center justify-center rounded-full bg-vermilion/8"
+        className="focus-orb mx-auto flex h-36 w-36 items-center justify-center rounded-full bg-vermilion/8"
         animate={{ scale: [1, 1.12, 1] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       >

@@ -55,9 +55,36 @@ export default function AppShell() {
   const dateLabel = today ? new Date(today + "T12:00:00").toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" }) : "";
 
   return (
-    <div className="app-backdrop min-h-screen">
-      <div className="mx-auto min-h-screen w-full max-w-[520px] bg-background sm:shadow-[0_0_60px_rgba(31,29,26,0.08)]">
-        <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-3 pt-4 backdrop-blur">
+    <div className="app-backdrop min-h-screen lg:pl-60">
+      {/* 넓은 화면(가로 태블릿, 데스크톱): 왼쪽 메뉴 + 넓은 본문. 좁은 화면: 한 열 + 하단 탭 */}
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-border bg-card/90 px-4 py-6 backdrop-blur lg:flex">
+        <button onClick={() => go("home")} className="flex items-center gap-2 px-2 text-lg font-bold">
+          <Taegeuk size={28} />
+          주역 마스터
+        </button>
+        <p className="mt-1 px-2 text-xs text-vermilion">세상에서 가장 정확한 점사풀이</p>
+        <ul className="mt-8 space-y-1">
+          {TABS.map((t) => {
+            const active = tab === t.key;
+            return (
+              <li key={t.key}>
+                <button
+                  onClick={() => go(t.key)}
+                  className={`flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition ${active ? "bg-foreground text-card" : "text-foreground/80 hover:bg-background"}`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {t.icon}
+                  {t.label}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="mt-auto px-2 text-xs text-muted">{dateLabel}</p>
+      </aside>
+
+      <div className="mx-auto min-h-screen w-full max-w-[520px] bg-background sm:shadow-[0_0_60px_rgba(31,29,26,0.08)] lg:max-w-none lg:bg-transparent lg:shadow-none">
+        <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-3 pt-4 backdrop-blur lg:hidden">
           <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />
             {TITLES[tab]}
@@ -65,7 +92,8 @@ export default function AppShell() {
           <span className="text-sm text-muted">{dateLabel}</span>
         </header>
 
-        <main className="px-4 pb-28 pt-2">
+        <main className="px-4 pb-28 pt-2 lg:mx-auto lg:max-w-4xl lg:px-8 lg:pb-12 lg:pt-8">
+          <h1 className="mb-4 hidden text-2xl font-extrabold lg:block">{TITLES[tab]}</h1>
           {/* 탭 전환은 퇴장 애니메이션 없이 바로 바꾼다. 화면이 가려진 상태에서도 멈추지 않도록 */}
           <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>
               {tab === "home" ? <HomeScreen go={go} /> : null}
@@ -89,7 +117,7 @@ export default function AppShell() {
             </motion.div>
         </main>
 
-        <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[520px] -translate-x-1/2 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+        <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[520px] -translate-x-1/2 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
           <ul className="grid grid-cols-5">
             {TABS.map((t) => {
               const active = tab === t.key;

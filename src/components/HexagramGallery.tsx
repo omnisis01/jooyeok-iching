@@ -12,7 +12,7 @@ export default function HexagramGallery() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-2 md:grid-cols-8">
         {HEXAGRAMS.map((hex, i) => (
           <motion.button
             key={hex.number}

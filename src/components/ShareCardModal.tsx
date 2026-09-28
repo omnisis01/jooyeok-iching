@@ -4,15 +4,16 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, Download, Link2, Share2, X } from "lucide-react";
-import type { Reading } from "@/lib/iching";
-import { renderShareCard, shareFileName, shareText, SITE_URL } from "@/lib/shareCard";
+import { SITE_URL } from "@/lib/shareCard";
 
 type Props = {
-  reading: Reading | null;
+  /** 열려 있을 때만 값이 있다 */
+  job: { render: () => Promise<Blob>; fileName: string; text: string } | null;
   onClose: () => void;
 };
 
-export default function ShareCardModal({ reading, onClose }: Props) {
+export default function ShareCardModal({ job, onClose }: Props) {
+  const reading = job;
   const [blob, setBlob] = useState<Blob | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -24,13 +25,13 @@ export default function ShareCardModal({ reading, onClose }: Props) {
     let objectUrl: string | null = null;
     let cancelled = false;
     // 모달은 닫힐 때 언마운트되므로 열 때마다 상태가 초기값에서 시작한다
-    renderShareCard(reading)
+    reading.render()
       .then((b) => {
         if (cancelled) return;
         objectUrl = URL.createObjectURL(b);
         setBlob(b);
         setUrl(objectUrl);
-        const file = new File([b], shareFileName(reading), { type: "image/png" });
+        const file = new File([b], reading.fileName, { type: "image/png" });
         setCanShareFiles(typeof navigator.canShare === "function" && navigator.canShare({ files: [file] }));
       })
       .catch((e: unknown) => {
@@ -51,16 +52,16 @@ export default function ShareCardModal({ reading, onClose }: Props) {
     if (!url || !reading) return;
     const a = document.createElement("a");
     a.href = url;
-    a.download = shareFileName(reading);
+    a.download = reading.fileName;
     a.click();
     setStatus("이미지를 저장했습니다");
   };
 
   const share = async () => {
     if (!blob || !reading) return;
-    const file = new File([blob], shareFileName(reading), { type: "image/png" });
+    const file = new File([blob], reading.fileName, { type: "image/png" });
     try {
-      await navigator.share({ files: [file], title: "주역 마스터", text: shareText(reading) });
+      await navigator.share({ files: [file], title: "주역 마스터", text: reading.text });
       setStatus("공유했습니다");
     } catch (e) {
       // 사용자가 공유 시트를 닫은 경우는 오류가 아니다
@@ -71,10 +72,10 @@ export default function ShareCardModal({ reading, onClose }: Props) {
   const copyLink = async () => {
     if (!reading) return;
     try {
-      await navigator.clipboard.writeText(shareText(reading));
+      await navigator.clipboard.writeText(reading.text);
       setStatus("결과 글과 링크를 복사했습니다");
     } catch {
-      window.prompt("아래 내용을 복사하세요", `${shareText(reading)}\n${SITE_URL}`);
+      window.prompt("아래 내용을 복사하세요", `${reading.text}\n${SITE_URL}`);
     }
   };
 

@@ -9,6 +9,7 @@ import { LINE_NAMES, trigramsOf, type Reading } from "@/lib/iching";
 import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
 import ShareCardModal from "./ShareCardModal";
+import { renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -169,7 +170,10 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
           {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "복사되었습니다" : "글로 복사"}
         </button>
       </div>
-      <ShareCardModal reading={shareOpen ? reading : null} onClose={() => setShareOpen(false)} />
+      <ShareCardModal
+        job={shareOpen ? { render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading) } : null}
+        onClose={() => setShareOpen(false)}
+      />
 
       <p className="text-center text-xs text-muted">
         주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼고, 중요한 결정은 충분히 생각한 뒤 내려 주세요.
