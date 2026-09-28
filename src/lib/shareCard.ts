@@ -12,15 +12,15 @@ const H_MAX = 1800;
 const FONT = '"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
 
 const C = {
-  bg: "#0b0d14",
-  card: "#141827",
-  border: "#2a3047",
-  paper: "#ece4d4",
-  gold: "#c9a44a",
-  goldSoft: "#e6cf8a",
-  vermilion: "#c8462f",
-  jade: "#6fae98",
-  muted: "#9a927f",
+  bg: "#f5f0e8",
+  card: "#ffffff",
+  border: "#e8e1d6",
+  paper: "#1f1d1a",
+  gold: "#b9862b",
+  goldSoft: "#a8781f",
+  vermilion: "#d8452b",
+  jade: "#2f8f6b",
+  muted: "#837c70",
 };
 
 function font(weight: number, size: number) {
@@ -115,8 +115,8 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H_MAX);
   const glow = ctx.createRadialGradient(W / 2, 80, 20, W / 2, 80, 900);
-  glow.addColorStop(0, "rgba(201,164,74,0.22)");
-  glow.addColorStop(1, "rgba(201,164,74,0)");
+  glow.addColorStop(0, "rgba(216,69,43,0.12)");
+  glow.addColorStop(1, "rgba(216,69,43,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H_MAX);
 
@@ -124,7 +124,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   ctx.textAlign = "center";
   ctx.fillStyle = C.goldSoft;
   ctx.font = font(500, 26);
-  ctx.fillText("周 易  ·  오 늘 의  괘", W / 2, 110);
+  ctx.fillText("주역 마스터", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
   const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
@@ -147,7 +147,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   // 이름
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 26);
-  ctx.fillText(`제${primary.number}괘  ·  상 ${upper.symbol} ${upper.nature}  하 ${lower.symbol} ${lower.nature}`, W / 2, y);
+  ctx.fillText(`제${primary.number}괘   위 ${upper.symbol} ${upper.nature}   아래 ${lower.symbol} ${lower.nature}`, W / 2, y);
   y += 78;
   ctx.fillStyle = C.paper;
   ctx.font = font(800, 76);
@@ -173,8 +173,8 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   ctx.font = font(500, 32);
   const adviceLines = wrap(ctx, primary.advice, W - 220, 4);
   const boxH = adviceLines.length * 48 + 96;
-  ctx.fillStyle = "rgba(201,164,74,0.10)";
-  ctx.strokeStyle = "rgba(201,164,74,0.5)";
+  ctx.fillStyle = "rgba(216,69,43,0.07)";
+  ctx.strokeStyle = "rgba(216,69,43,0.35)";
   ctx.lineWidth = 2;
   roundRect(ctx, 90, y, W - 180, boxH, 24);
   ctx.fill();
@@ -193,7 +193,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
     const lt = getLineText(primary.number, focus);
     ctx.fillStyle = C.vermilion;
     ctx.font = font(700, 26);
-    ctx.fillText(`움직이는 효  ${changingLines.map((i) => lineTitle(primary.lines, i)).join(" · ")}`, W / 2, y);
+    ctx.fillText(`움직이는 효  ${changingLines.map((i) => lineTitle(primary.lines, i)).join(", ")}`, W / 2, y);
     y += 44;
     ctx.fillStyle = C.goldSoft;
     ctx.font = font(500, 28);
@@ -210,7 +210,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
     ctx.textAlign = "left";
     ctx.fillStyle = C.jade;
     ctx.font = font(700, 24);
-    ctx.fillText("흐름의 방향 · 지괘", 290, y + 18);
+    ctx.fillText("앞으로의 흐름, 지괘", 290, y + 18);
     ctx.fillStyle = C.paper;
     ctx.font = font(700, 34);
     ctx.fillText(`${resulting.name}  ${resulting.hanja}`, 290, y + 62);
@@ -230,7 +230,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   const H = Math.min(H_MAX, Math.max(H_MIN, y + 150));
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 22);
-  ctx.fillText("주역 점은 스스로를 돌아보는 거울입니다.", W / 2, H - 96);
+  ctx.fillText("세상에서 가장 정확한 점사풀이, 주역 마스터", W / 2, H - 96);
   ctx.fillStyle = C.gold;
   ctx.font = font(600, 24);
   ctx.fillText(SITE_LABEL, W / 2, H - 58);
@@ -241,7 +241,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   const octx = out.getContext("2d");
   if (!octx) throw new Error("canvas not supported");
   octx.drawImage(canvas, 0, 0, W, H, 0, 0, W, H);
-  octx.strokeStyle = "rgba(201,164,74,0.45)";
+  octx.strokeStyle = "rgba(185,134,43,0.5)";
   octx.lineWidth = 2;
   roundRect(octx, 36, 36, W - 72, H - 72, 28);
   octx.stroke();
@@ -260,9 +260,9 @@ export function shareFileName(reading: Reading): string {
 export function shareText(reading: Reading): string {
   const { primary, resulting } = reading;
   return [
-    `오늘의 괘: 제${primary.number}괘 ${primary.name}(${primary.hanja}) — ${primary.keyword}`,
+    `오늘의 괘: 제${primary.number}괘 ${primary.name}(${primary.hanja}), ${primary.keyword}`,
     primary.advice,
-    resulting ? `흐름의 방향: ${resulting.name} — ${resulting.keyword}` : null,
+    resulting ? `앞으로의 흐름: ${resulting.name}, ${resulting.keyword}` : null,
     SITE_URL,
   ]
     .filter(Boolean)

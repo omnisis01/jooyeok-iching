@@ -60,7 +60,7 @@ export default function ShareCardModal({ reading, onClose }: Props) {
     if (!blob || !reading) return;
     const file = new File([blob], shareFileName(reading), { type: "image/png" });
     try {
-      await navigator.share({ files: [file], title: "오늘의 괘", text: shareText(reading) });
+      await navigator.share({ files: [file], title: "주역 마스터", text: shareText(reading) });
       setStatus("공유했습니다");
     } catch (e) {
       // 사용자가 공유 시트를 닫은 경우는 오류가 아니다
@@ -92,7 +92,7 @@ export default function ShareCardModal({ reading, onClose }: Props) {
           aria-label="결과 이미지 저장 및 공유"
         >
           <motion.div
-            className="relative flex max-h-[92vh] w-full max-w-md flex-col rounded-t-3xl border border-border bg-card p-5 shadow-2xl sm:rounded-3xl"
+            className="relative flex max-h-[92vh] w-full max-w-md flex-col rounded-t-3xl bg-card p-5 shadow-2xl sm:rounded-3xl"
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 40, opacity: 0 }}
@@ -101,12 +101,12 @@ export default function ShareCardModal({ reading, onClose }: Props) {
           >
             <div className="flex items-center justify-between">
               <h3 className="font-bold">결과 이미지</h3>
-              <button onClick={onClose} className="rounded-full p-2 text-muted transition hover:bg-white/5 hover:text-foreground" aria-label="닫기">
+              <button onClick={onClose} className="rounded-full p-2 text-muted transition hover:bg-background hover:text-foreground" aria-label="닫기">
                 <X size={20} />
               </button>
             </div>
 
-            <div className="mt-4 flex min-h-[240px] flex-1 items-center justify-center overflow-hidden rounded-2xl border border-border bg-background/60">
+            <div className="mt-4 flex min-h-[240px] flex-1 items-center justify-center overflow-hidden rounded-2xl bg-background">
               {url ? (
                 // 캔버스로 만든 blob URL이라 next/image 최적화 대상이 아니다
                 // eslint-disable-next-line @next/next/no-img-element
@@ -122,7 +122,7 @@ export default function ShareCardModal({ reading, onClose }: Props) {
               <button
                 onClick={download}
                 disabled={!url}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-4 py-3 text-sm font-semibold text-ink transition hover:bg-gold-soft disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-card transition hover:opacity-90 disabled:opacity-50"
               >
                 <Download size={16} /> 저장
               </button>
@@ -130,16 +130,16 @@ export default function ShareCardModal({ reading, onClose }: Props) {
                 <button
                   onClick={share}
                   disabled={!blob}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-vermilion px-4 py-3 text-sm font-semibold text-paper transition hover:brightness-110 disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-vermilion px-4 py-3 text-sm font-semibold text-card transition hover:brightness-105 disabled:opacity-50"
                 >
                   <Share2 size={16} /> 공유
                 </button>
               ) : null}
               <button
                 onClick={copyLink}
-                className={`inline-flex items-center justify-center gap-2 rounded-full border border-border px-4 py-3 text-sm text-foreground/80 transition hover:border-gold/60 hover:text-foreground ${canShareFiles ? "col-span-2 sm:col-span-1" : ""}`}
+                className={`inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60 ${canShareFiles ? "col-span-2 sm:col-span-1" : ""}`}
               >
-                <Link2 size={16} /> 글·링크 복사
+                <Link2 size={16} /> 글로 복사
               </button>
             </div>
             <p className="mt-3 min-h-[1.25rem] text-center text-xs text-muted">

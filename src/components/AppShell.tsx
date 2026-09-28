@@ -1,0 +1,113 @@
+// 모바일 앱처럼 보이는 화면 틀: 상단 바, 화면 전환, 하단 탭
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { BookOpen, Compass, Grid3x3, Home, Sparkles } from "lucide-react";
+import Taegeuk from "./Taegeuk";
+import HomeScreen from "./HomeScreen";
+import DivinationFlow from "./DivinationFlow";
+import YukhyoSection from "./YukhyoSection";
+import HexagramGallery from "./HexagramGallery";
+import AboutScreen from "./AboutScreen";
+
+export type Tab = "home" | "divine" | "yukhyo" | "hexagrams" | "about";
+
+const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
+  { key: "home", label: "홈", icon: <Home size={22} /> },
+  { key: "divine", label: "점보기", icon: <Sparkles size={22} /> },
+  { key: "yukhyo", label: "육효", icon: <Compass size={22} /> },
+  { key: "hexagrams", label: "64괘", icon: <Grid3x3 size={22} /> },
+  { key: "about", label: "알아보기", icon: <BookOpen size={22} /> },
+];
+
+const TITLES: Record<Tab, string> = {
+  home: "주역 마스터",
+  divine: "점보기",
+  yukhyo: "육효로 묻기",
+  hexagrams: "64괘",
+  about: "주역 알아보기",
+};
+
+function tabFromHash(): Tab {
+  if (typeof window === "undefined") return "home";
+  const h = window.location.hash.replace("#", "") as Tab;
+  return TABS.some((t) => t.key === h) ? h : "home";
+}
+
+export default function AppShell() {
+  const [tab, setTab] = useState<Tab>("home");
+
+  useEffect(() => {
+    const sync = () => setTab(tabFromHash());
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+
+  const go = (t: Tab) => {
+    window.location.hash = t;
+    window.scrollTo({ top: 0 });
+  };
+
+  const today = new Date();
+  const dateLabel = today.toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
+
+  return (
+    <div className="app-backdrop min-h-screen">
+      <div className="mx-auto min-h-screen w-full max-w-[520px] bg-background sm:shadow-[0_0_60px_rgba(31,29,26,0.08)]">
+        <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-3 pt-4 backdrop-blur">
+          <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
+            <Taegeuk size={26} />
+            {TITLES[tab]}
+          </button>
+          <span className="text-sm text-muted">{dateLabel}</span>
+        </header>
+
+        <main className="px-4 pb-28 pt-2">
+          {/* 탭 전환은 퇴장 애니메이션 없이 바로 바꾼다. 화면이 가려진 상태에서도 멈추지 않도록 */}
+          <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>
+              {tab === "home" ? <HomeScreen go={go} /> : null}
+              {tab === "divine" ? (
+                <section id="divine" className="scroll-mt-24">
+                  <DivinationFlow />
+                </section>
+              ) : null}
+              {tab === "yukhyo" ? (
+                <section id="yukhyo" className="scroll-mt-24">
+                  <YukhyoSection />
+                </section>
+              ) : null}
+              {tab === "hexagrams" ? (
+                <section id="hexagrams">
+                  <p className="mb-4 text-sm leading-relaxed text-muted">여섯 개의 선으로 이루어진 64가지 상황입니다. 괘를 누르면 뜻과 조언, 효사를 볼 수 있어요.</p>
+                  <HexagramGallery />
+                </section>
+              ) : null}
+              {tab === "about" ? <AboutScreen /> : null}
+            </motion.div>
+        </main>
+
+        <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[520px] -translate-x-1/2 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+          <ul className="grid grid-cols-5">
+            {TABS.map((t) => {
+              const active = tab === t.key;
+              return (
+                <li key={t.key}>
+                  <button
+                    onClick={() => go(t.key)}
+                    className={`flex w-full flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition ${active ? "text-vermilion" : "text-muted hover:text-foreground"}`}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {t.icon}
+                    {t.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  );
+}

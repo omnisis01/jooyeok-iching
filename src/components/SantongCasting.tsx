@@ -49,9 +49,10 @@ export default function SantongCasting({ question, onComplete }: Props) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
-      <div className="flex flex-col items-center justify-center rounded-3xl border border-border bg-card/70 p-6 sm:p-10">
-        <p className="text-sm text-muted">
-          {step < 3 ? `${step + 1} / 3 · ` : ""}
+      <div className="flex flex-col items-center justify-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6 sm:p-10">
+        <p className="text-xs font-semibold text-vermilion">산통점은 통을 흔들어 산가지 3개를 차례로 뽑습니다</p>
+        <p className="mt-1 text-sm text-muted">
+          {step < 3 ? `${step + 1} / 3  ` : ""}
           {STEP_LABEL[step]}
         </p>
 
@@ -69,11 +70,11 @@ export default function SantongCasting({ question, onComplete }: Props) {
               <motion.p key="r" className="text-foreground" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                 {step === 2 ? (
                   <>
-                    <b>{risen}</b>번 → <b className="text-vermilion">{LINE_NAMES[risen - 1]}</b>가 움직입니다
+                    <b>{risen}</b>번, <b className="text-vermilion">{LINE_NAMES[risen - 1]}</b>가 움직입니다
                   </>
                 ) : (
                   <>
-                    <b>{risen}</b>번 → {trigramByNumber(risen).symbol} <b>{trigramByNumber(risen).name}</b>·{trigramByNumber(risen).nature}
+                    <b>{risen}</b>번, {trigramByNumber(risen).symbol} <b>{trigramByNumber(risen).name}</b> {trigramByNumber(risen).nature}
                   </>
                 )}
               </motion.p>
@@ -95,7 +96,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
               onClick={shake}
               disabled={phase !== "idle"}
               whileTap={{ scale: 0.95, rotate: -3 }}
-              className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-semibold text-ink shadow-lg shadow-gold/20 transition hover:bg-gold-soft disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-full bg-vermilion px-6 py-3 font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Hand size={18} /> 산통 흔들기
             </motion.button>
@@ -104,7 +105,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => onComplete(readingFromSantong(draws[0], draws[1], draws[2], question))}
-              className="inline-flex items-center gap-2 rounded-full bg-vermilion px-7 py-3 font-semibold text-paper shadow-lg shadow-vermilion/30 transition hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-full bg-vermilion px-7 py-3 font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
             >
               <Sparkles size={18} /> 괘 풀이 보기
             </motion.button>
@@ -112,7 +113,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col items-center rounded-3xl border border-border bg-card/40 p-6">
+      <div className="flex flex-col items-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6">
         <p className="text-sm text-muted">뽑은 결과</p>
         <div className="my-6 text-gold-soft">
           <HexagramFigure
@@ -123,12 +124,12 @@ export default function SantongCasting({ question, onComplete }: Props) {
           />
         </div>
         <ul className="w-full space-y-2 text-sm">
-          <ResultRow label="하괘" active={step === 0} value={lower ? `${lower.symbol} ${lower.name} · ${lower.nature} (${lower.number}번)` : null} />
-          <ResultRow label="상괘" active={step === 1} value={upper ? `${upper.symbol} ${upper.name} · ${upper.nature} (${upper.number}번)` : null} />
+          <ResultRow label="하괘" active={step === 0} value={lower ? `${lower.symbol} ${lower.name} ${lower.nature} (${lower.number}번)` : null} />
+          <ResultRow label="상괘" active={step === 1} value={upper ? `${upper.symbol} ${upper.name} ${upper.nature} (${upper.number}번)` : null} />
           <ResultRow label="동효" active={step === 2} value={moving ? `${LINE_NAMES[moving - 1]} (${moving}번)` : null} accent />
         </ul>
         <p className="mt-4 text-xs leading-relaxed text-muted">
-          산가지 번호는 선천 팔괘 순서입니다. 1 건☰ · 2 태☱ · 3 리☲ · 4 진☳ · 5 손☴ · 6 감☵ · 7 간☶ · 8 곤☷
+          산가지 번호는 선천 팔괘 순서입니다. 1 건☰, 2 태☱, 3 리☲, 4 진☳, 5 손☴, 6 감☵, 7 간☶, 8 곤☷
         </p>
       </div>
     </div>
@@ -137,9 +138,9 @@ export default function SantongCasting({ question, onComplete }: Props) {
 
 function ResultRow({ label, value, active, accent }: { label: string; value: string | null; active: boolean; accent?: boolean }) {
   return (
-    <li className={`flex items-center justify-between rounded-xl px-3 py-2 ${value ? "bg-background/60" : "text-muted/60"} ${active ? "ring-1 ring-gold/50" : ""}`}>
+    <li className={`flex items-center justify-between rounded-xl px-3 py-2 ${value ? "bg-background" : "text-muted/60"} ${active ? "ring-2 ring-vermilion/40" : ""}`}>
       <span>{label}</span>
-      <span className={value && accent ? "text-vermilion" : ""}>{value ?? "—"}</span>
+      <span className={value && accent ? "text-vermilion" : ""}>{value ?? <span className="text-muted/50">아직</span>}</span>
     </li>
   );
 }

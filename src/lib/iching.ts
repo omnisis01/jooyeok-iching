@@ -18,12 +18,12 @@ export type Trigram = {
 
 export const TRIGRAMS: Trigram[] = [
   { number: 1, name: "건", hanja: "乾", symbol: "☰", nature: "하늘", natureHanja: "天", lines: "111", meaning: "강건함, 창조, 아버지" },
-  { number: 2, name: "태", hanja: "兌", symbol: "☱", nature: "못", natureHanja: "澤", lines: "011", meaning: "기쁨, 말, 막내딸" },
+  { number: 2, name: "태", hanja: "兌", symbol: "☱", nature: "못", natureHanja: "澤", lines: "110", meaning: "기쁨, 말, 막내딸" },
   { number: 3, name: "리", hanja: "離", symbol: "☲", nature: "불", natureHanja: "火", lines: "101", meaning: "밝음, 붙음, 둘째딸" },
-  { number: 4, name: "진", hanja: "震", symbol: "☳", nature: "우레", natureHanja: "雷", lines: "001", meaning: "움직임, 놀람, 큰아들" },
-  { number: 5, name: "손", hanja: "巽", symbol: "☴", nature: "바람", natureHanja: "風", lines: "110", meaning: "스며듦, 공손, 큰딸" },
+  { number: 4, name: "진", hanja: "震", symbol: "☳", nature: "우레", natureHanja: "雷", lines: "100", meaning: "움직임, 놀람, 큰아들" },
+  { number: 5, name: "손", hanja: "巽", symbol: "☴", nature: "바람", natureHanja: "風", lines: "011", meaning: "스며듦, 공손, 큰딸" },
   { number: 6, name: "감", hanja: "坎", symbol: "☵", nature: "물", natureHanja: "水", lines: "010", meaning: "험난함, 깊음, 둘째아들" },
-  { number: 7, name: "간", hanja: "艮", symbol: "☶", nature: "산", natureHanja: "山", lines: "100", meaning: "멈춤, 고요, 막내아들" },
+  { number: 7, name: "간", hanja: "艮", symbol: "☶", nature: "산", natureHanja: "山", lines: "001", meaning: "멈춤, 고요, 막내아들" },
   { number: 8, name: "곤", hanja: "坤", symbol: "☷", nature: "땅", natureHanja: "地", lines: "000", meaning: "순함, 포용, 어머니" },
 ];
 

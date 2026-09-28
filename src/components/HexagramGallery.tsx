@@ -12,7 +12,7 @@ export default function HexagramGallery() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-2 sm:grid-cols-8 sm:gap-3">
+      <div className="grid grid-cols-4 gap-2">
         {HEXAGRAMS.map((hex, i) => (
           <motion.button
             key={hex.number}
@@ -22,7 +22,7 @@ export default function HexagramGallery() {
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.35, delay: (i % 8) * 0.03 }}
             whileHover={{ y: -3 }}
-            className="group flex flex-col items-center gap-2 rounded-2xl border border-border bg-card/70 p-3 text-gold-soft/80 transition hover:border-gold/60 hover:bg-card hover:text-gold-soft hover:shadow-[0_0_24px_rgba(201,164,74,0.18)]"
+            className="group flex flex-col items-center gap-2 rounded-2xl bg-card p-3 text-foreground/80 shadow-[0_4px_16px_rgba(31,29,26,0.05)] transition hover:text-vermilion hover:shadow-[0_8px_24px_rgba(31,29,26,0.10)]"
           >
             <HexagramFigure lines={hex.lines} size={40} title={hex.name} />
             <span className="text-[11px] text-muted group-hover:text-foreground sm:text-xs">

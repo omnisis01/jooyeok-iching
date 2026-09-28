@@ -94,11 +94,12 @@ export default function YarrowCasting({ question, onComplete }: Props) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-      <div className="flex flex-col items-center rounded-3xl border border-border bg-card/70 p-5 sm:p-8">
-        <p className="text-sm text-muted">
+      <div className="flex flex-col items-center rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)] sm:p-8">
+        <p className="text-xs font-semibold text-vermilion">시초점은 산가지 49개를 18번 나누어 세어 괘를 만듭니다</p>
+        <p className="mt-1 text-sm text-muted">
           {done
             ? "열여덟 번의 변이 모두 끝났습니다"
-            : `${LINE_NAMES[values.length]} · ${changes.length + 1}번째 변 · 산가지 ${remaining}개`}
+            : `${LINE_NAMES[values.length]}, ${changes.length + 1}번째 변, 산가지 ${remaining}개`}
         </p>
 
         <div className="my-4 w-full max-w-[420px]">
@@ -117,21 +118,21 @@ export default function YarrowCasting({ question, onComplete }: Props) {
               <button
                 onClick={runChange}
                 disabled={phase !== "idle" || auto !== "off"}
-                className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-semibold text-ink shadow-lg shadow-gold/20 transition hover:bg-gold-soft disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-vermilion px-6 py-3 font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Scissors size={18} /> 시초 나누기
               </button>
               <button
                 onClick={() => setAuto("line")}
                 disabled={phase !== "idle" || auto !== "off"}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-3 text-sm text-foreground/80 transition hover:border-gold/60 hover:text-foreground disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-semibold text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.08)] transition hover:bg-background disabled:opacity-50"
               >
                 <SkipForward size={16} /> 이 효 마저 세기
               </button>
               <button
                 onClick={() => setAuto("all")}
                 disabled={phase !== "idle" || auto !== "off"}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-3 text-sm text-foreground/80 transition hover:border-gold/60 hover:text-foreground disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-3 text-sm font-semibold text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.08)] transition hover:bg-background disabled:opacity-50"
               >
                 <FastForward size={16} /> 끝까지 자동
               </button>
@@ -141,7 +142,7 @@ export default function YarrowCasting({ question, onComplete }: Props) {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => onComplete(readingFromValues(values, question, "yarrow"))}
-              className="inline-flex items-center gap-2 rounded-full bg-vermilion px-7 py-3 font-semibold text-paper shadow-lg shadow-vermilion/30 transition hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-full bg-vermilion px-7 py-3 font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
             >
               <Sparkles size={18} /> 괘 풀이 보기
             </motion.button>
@@ -149,7 +150,7 @@ export default function YarrowCasting({ question, onComplete }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col items-center rounded-3xl border border-border bg-card/40 p-6">
+      <div className="flex flex-col items-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6">
         <p className="text-sm text-muted">3변마다 효 하나가 정해집니다</p>
         <div className="my-6 text-gold-soft">
           <HexagramFigure lines={lines} revealed={values.length} changing={changing} size={150} />
@@ -161,28 +162,28 @@ export default function YarrowCasting({ question, onComplete }: Props) {
             return (
               <li
                 key={name}
-                className={`flex items-center justify-between rounded-xl px-3 py-2 ${v ? "bg-background/60" : "text-muted/60"} ${isCurrent ? "ring-1 ring-gold/50" : ""}`}
+                className={`flex items-center justify-between rounded-xl px-3 py-2 ${v ? "bg-background" : "text-muted/60"} ${isCurrent ? "ring-2 ring-vermilion/40" : ""}`}
               >
                 <span>{name}</span>
                 {v ? (
                   <span className={isChanging(v) ? "text-vermilion" : ""}>
-                    {v * 4}개 남음 → {v} · {isYang(v) ? "양" : "음"}
+                    {v * 4}개 남음, {v} {isYang(v) ? "양" : "음"}
                     {isChanging(v) ? " (변효)" : ""}
                   </span>
                 ) : isCurrent ? (
                   <span className="text-gold-soft">
-                    {changes.map((c) => c.after).join(" → ") || "49"}
+                    {changes.map((c) => c.after).join(", ") || "49"}
                     {changes.length ? ` (${changes.length}/3변)` : ""}
                   </span>
                 ) : (
-                  <span>—</span>
+                  <span className="text-muted/50">아직</span>
                 )}
               </li>
             );
           })}
         </ol>
         <p className="mt-4 text-xs leading-relaxed text-muted">
-          남은 개수 ÷ 4 = 효값. 36→9 노양(변), 32→8 소음, 28→7 소양, 24→6 노음(변)
+          남은 개수를 4로 나누면 효값입니다. 36은 9 노양(변), 32는 8 소음, 28은 7 소양, 24는 6 노음(변)
         </p>
       </div>
     </div>
@@ -199,25 +200,25 @@ function Narration({ phase, current, changes, lastValue, done }: { phase: Phase;
   if (phase === "split" && current)
     return wrap(
       <>
-        <b>분이(分二)</b> · 산가지를 두 무더기로 나눕니다. 왼쪽 {current.left}개, 오른쪽 {current.right}개.
+        <b>분이(分二)</b> 산가지를 두 무더기로 나눕니다. 왼쪽 {current.left}개, 오른쪽 {current.right}개.
       </>,
     );
   if (phase === "count" && current)
     return wrap(
       <>
-        <b>괘일·설사</b> · 오른쪽에서 하나를 손가락에 끼우고, 양쪽을 4개씩 셉니다. 왼쪽은 {current.leftRemainder}개, 오른쪽은 {current.rightRemainder}개가 남습니다.
+        <b>괘일과 설사</b> 오른쪽에서 하나를 손가락에 끼우고, 양쪽을 4개씩 셉니다. 왼쪽은 {current.leftRemainder}개, 오른쪽은 {current.rightRemainder}개가 남습니다.
       </>,
     );
   if (phase === "aside" && current)
     return wrap(
       <>
-        <b>귀기(歸奇)</b> · 낀 1개 + {current.leftRemainder} + {current.rightRemainder} = <b>{current.taken}개</b>를 덜어냅니다. 남은 산가지 {current.after}개.
+        <b>귀기(歸奇)</b> 낀 1개와 {current.leftRemainder}개, {current.rightRemainder}개를 합쳐 <b>{current.taken}개</b>를 덜어냅니다. 남은 산가지 {current.after}개.
       </>,
     );
   if (lastValue)
     return wrap(
       <>
-        세 번의 변이 끝났습니다. 남은 {lastValue * 4}개 ÷ 4 = <b>{lastValue}</b>, <b>{LINE_VALUE_LABEL[lastValue]}</b>
+        세 번의 변이 끝났습니다. 남은 {lastValue * 4}개를 4로 나누면 <b>{lastValue}</b>, <b>{LINE_VALUE_LABEL[lastValue]}</b>
       </>,
       "text-gold-soft",
     );
@@ -300,10 +301,10 @@ function StalkStage({ active, aside, current, phase }: { active: number[]; aside
       {phase !== "idle" ? (
         <>
           <text x={14} y={84} fontSize="10" fill="var(--muted)">
-            왼쪽 · 하늘
+            왼쪽, 하늘
           </text>
           <text x={W - 14} y={84} textAnchor="end" fontSize="10" fill="var(--muted)">
-            오른쪽 · 땅
+            오른쪽, 땅
           </text>
         </>
       ) : (

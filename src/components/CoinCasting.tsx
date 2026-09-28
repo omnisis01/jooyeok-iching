@@ -66,9 +66,10 @@ export default function CoinCasting({ question, onComplete }: Props) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
       {/* 동전 영역 */}
-      <div className="flex flex-col items-center justify-center rounded-3xl border border-border bg-card/70 p-6 sm:p-10">
-        <p className="text-sm text-muted">
-          {done ? "여섯 효가 모두 나왔습니다" : `${tosses.length + 1}번째 던지기 · ${LINE_NAMES[tosses.length]}`}
+      <div className="flex flex-col items-center justify-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6 sm:p-10">
+        <p className="text-xs font-semibold text-vermilion">척전법은 동전 3개를 6번 던져 점을 칩니다</p>
+        <p className="mt-1 text-sm text-muted">
+          {done ? "여섯 효가 모두 나왔습니다" : `${tosses.length + 1}번째 던지기, ${LINE_NAMES[tosses.length]}`}
         </p>
 
         <div className="my-10 flex items-center justify-center gap-4 sm:gap-8" style={{ perspective: 900 }}>
@@ -90,10 +91,10 @@ export default function CoinCasting({ question, onComplete }: Props) {
             </motion.p>
           ) : last ? (
             <motion.p key={tosses.length} className="h-6 text-sm text-foreground/90" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              {last.coins.map((c) => (c ? "앞" : "뒤")).join(" · ")} → 합 {last.value}, <b>{LINE_VALUE_LABEL[last.value]}</b>
+              {last.coins.map((c) => (c ? "앞" : "뒤")).join(" ")}, 합 {last.value}, <b>{LINE_VALUE_LABEL[last.value]}</b>
             </motion.p>
           ) : (
-            <p className="h-6 text-sm text-muted">앞면 3점, 뒷면 2점. 세 동전의 합이 효를 정합니다.</p>
+            <p className="h-6 text-sm text-muted">앞면(陽)은 3점, 뒷면(陰)은 2점. 세 동전의 합이 효를 정합니다.</p>
           )}
         </AnimatePresence>
 
@@ -103,14 +104,14 @@ export default function CoinCasting({ question, onComplete }: Props) {
               <button
                 onClick={toss}
                 disabled={tossing || autoRun}
-                className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-semibold text-ink shadow-lg shadow-gold/20 transition hover:bg-gold-soft disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-vermilion px-6 py-3 font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Coins size={18} /> 동전 던지기
               </button>
               <button
                 onClick={() => setAutoRun(true)}
                 disabled={tossing || autoRun}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm text-foreground/80 transition hover:border-gold/60 hover:text-foreground disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-card px-5 py-3 text-sm font-semibold text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.08)] transition hover:bg-background disabled:opacity-50"
               >
                 <FastForward size={16} /> 남은 효 한 번에 던지기
               </button>
@@ -120,7 +121,7 @@ export default function CoinCasting({ question, onComplete }: Props) {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={() => onComplete(readingFromValues(values as LineValue[], question))}
-              className="inline-flex items-center gap-2 rounded-full bg-vermilion px-7 py-3 font-semibold text-paper shadow-lg shadow-vermilion/30 transition hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-full bg-vermilion px-7 py-3 font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
             >
               <Sparkles size={18} /> 괘 풀이 보기
             </motion.button>
@@ -129,7 +130,7 @@ export default function CoinCasting({ question, onComplete }: Props) {
       </div>
 
       {/* 쌓이는 괘 */}
-      <div className="flex flex-col items-center rounded-3xl border border-border bg-card/40 p-6">
+      <div className="flex flex-col items-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6">
         <p className="text-sm text-muted">아래 효부터 쌓입니다</p>
         <div className="my-6 text-gold-soft">
           <HexagramFigure lines={lines} revealed={tosses.length} changing={changing} size={150} />
@@ -141,8 +142,8 @@ export default function CoinCasting({ question, onComplete }: Props) {
               <li
                 key={name}
                 className={`flex items-center justify-between rounded-xl px-3 py-2 ${
-                  t ? "bg-background/60" : "text-muted/60"
-                } ${i === tosses.length && !done ? "ring-1 ring-gold/50" : ""}`}
+                  t ? "bg-background" : "text-muted/60"
+                } ${i === tosses.length && !done ? "ring-2 ring-vermilion/40" : ""}`}
               >
                 <span>{name}</span>
                 {t ? (
@@ -154,13 +155,13 @@ export default function CoinCasting({ question, onComplete }: Props) {
                     </span>
                   </span>
                 ) : (
-                  <span>—</span>
+                  <span className="text-muted/50">아직</span>
                 )}
               </li>
             );
           })}
         </ol>
-        <p className="mt-4 text-xs text-muted">○ 앞면 ● 뒷면 · 빨간 효는 변하는 효(변효)</p>
+        <p className="mt-4 text-xs text-muted">○ 앞면, ● 뒷면, 빨간 효는 변하는 효(변효)</p>
       </div>
     </div>
   );
@@ -171,7 +172,7 @@ function Coin({ index, spinKey, tossing, face }: { index: number; spinKey: numbe
   return (
     <motion.div
       key={spinKey}
-      className="relative h-20 w-20 sm:h-24 sm:w-24"
+      className="relative h-24 w-24 sm:h-28 sm:w-28"
       style={{ transformStyle: "preserve-3d" }}
       initial={false}
       animate={
@@ -198,11 +199,11 @@ function CoinFace({ side }: { side: "front" | "back" }) {
       }`}
       style={{ backfaceVisibility: "hidden", transform: isFront ? "rotateX(0deg)" : "rotateX(180deg)" }}
     >
-      <div className="absolute h-5 w-5 rounded-sm border-2 border-current/40 bg-card/70" />
-      <span className="absolute -translate-y-6 text-[11px] font-bold tracking-widest">{isFront ? "陽" : "陰"}</span>
-      <span className="absolute translate-y-6 text-[11px] font-bold tracking-widest">{isFront ? "三" : "二"}</span>
-      <span className="absolute -translate-x-6 text-[10px] font-semibold">{isFront ? "通" : "陰"}</span>
-      <span className="absolute translate-x-6 text-[10px] font-semibold">{isFront ? "寶" : "陽"}</span>
+      <div className="absolute h-6 w-6 rounded-sm border-2 border-current/50 bg-background" />
+      <span className="absolute -translate-y-7 text-2xl font-bold">{isFront ? "陽" : "陰"}</span>
+      <span className="absolute translate-y-7 text-2xl font-bold">{isFront ? "三" : "二"}</span>
+      <span className="absolute -translate-x-7 text-lg font-bold">{isFront ? "通" : "點"}</span>
+      <span className="absolute translate-x-7 text-lg font-bold">{isFront ? "寶" : "數"}</span>
     </div>
   );
 }

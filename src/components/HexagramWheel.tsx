@@ -41,7 +41,7 @@ export default function HexagramWheel({ size = 560, onSelect, className }: Props
       <defs>
         <radialGradient id="wheel-glow" cx="50%" cy="50%" r="50%">
           <stop offset="70%" stopColor="rgba(201,164,74,0)" />
-          <stop offset="100%" stopColor="rgba(201,164,74,0.18)" />
+          <stop offset="100%" stopColor="rgba(185,134,43,0.14)" />
         </radialGradient>
       </defs>
       <circle cx={center} cy={center} r={R - 2} fill="url(#wheel-glow)" />
@@ -70,7 +70,7 @@ export default function HexagramWheel({ size = 560, onSelect, className }: Props
                 width={figW}
                 lineHeight={figLine}
                 gap={figGap}
-                color="var(--gold-soft)"
+                color="var(--gold)"
               />
             </g>
           );
@@ -88,7 +88,7 @@ export default function HexagramWheel({ size = 560, onSelect, className }: Props
           return (
             <g key={t.number} transform={`translate(${x} ${y})`}>
               <circle r={26} fill="var(--card)" stroke="var(--border)" />
-              <text textAnchor="middle" dominantBaseline="central" fontSize="24" fill="var(--paper)" dy="-3">
+              <text textAnchor="middle" dominantBaseline="central" fontSize="24" fill="var(--foreground)" dy="-3">
                 {t.symbol}
               </text>
               <text textAnchor="middle" fontSize="9" fill="var(--muted)" y={18}>

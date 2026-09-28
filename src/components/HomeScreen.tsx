@@ -1,0 +1,215 @@
+// 홈 화면: 오늘의 괘 한마디, 점치기 입구, 나의 점 기록
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { ArrowLeft, ChevronRight, Trash2 } from "lucide-react";
+import type { Hexagram } from "@/data/hexagrams";
+import type { Tab } from "./AppShell";
+import HexagramFigure from "./HexagramFigure";
+import HexagramWheel from "./HexagramWheel";
+import HexagramDetail from "./HexagramDetail";
+import ResultView from "./ResultView";
+import { dayInfo, todayString } from "@/lib/yukhyo";
+import { dailyHexagram } from "@/lib/daily";
+import { clearHistory, formatAt, loadHistory, readingFromRecord, removeRecord, type HistoryRecord } from "@/lib/history";
+
+export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
+  const [selected, setSelected] = useState<Hexagram | null>(null);
+  const [history, setHistory] = useState<HistoryRecord[]>([]);
+  const [viewing, setViewing] = useState<HistoryRecord | null>(null);
+  const [showAll, setShowAll] = useState(false);
+
+  const today = todayString();
+  const day = dayInfo(today);
+  const daily = dailyHexagram(today);
+  const hour = new Date().getHours();
+  const greeting = hour < 5 ? "고요한 밤이에요" : hour < 11 ? "좋은 아침이에요" : hour < 17 ? "좋은 오후예요" : "편안한 저녁이에요";
+
+  useEffect(() => {
+    const sync = () => setHistory(loadHistory());
+    const t = window.setTimeout(sync, 0);
+    window.addEventListener("history-changed", sync);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("history-changed", sync);
+    };
+  }, []);
+
+  if (viewing) {
+    return (
+      <div className="space-y-4">
+        <button onClick={() => setViewing(null)} className="inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
+          <ArrowLeft size={16} /> 기록으로 돌아가기
+        </button>
+        {viewing.type === "iching" ? (
+          <ResultView reading={readingFromRecord(viewing)} onRestart={() => setViewing(null)} restartLabel="닫기" />
+        ) : (
+          <YukhyoSummary record={viewing} />
+        )}
+      </div>
+    );
+  }
+
+  const shown = showAll ? history : history.slice(0, 3);
+
+  return (
+    <div className="space-y-4">
+      <div className="px-1 pt-2">
+        <p className="text-xs font-bold text-vermilion">세상에서 가장 정확한 점사풀이</p>
+        <p className="mt-1 text-sm text-muted">{greeting}</p>
+        <h1 className="mt-1 text-[26px] font-extrabold leading-tight">
+          오늘은 {day.label.replace("일", "")} 날,
+          <br />
+          어떤 괘가 나올까요
+        </h1>
+      </div>
+
+      {/* 오늘의 괘 한마디 */}
+      <motion.button
+        onClick={() => setSelected(daily)}
+        whileTap={{ scale: 0.98 }}
+        className="flex w-full items-center gap-4 rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)]"
+      >
+        <div className="shrink-0 text-gold">
+          <HexagramFigure lines={daily.lines} size={56} title={daily.name} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-vermilion">오늘의 괘 한마디</p>
+          <p className="mt-1 font-bold">
+            {daily.name} <span className="font-normal text-muted">{daily.hanja}</span>
+          </p>
+          <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground/80">{daily.advice}</p>
+        </div>
+        <ChevronRight size={18} className="shrink-0 text-muted" />
+      </motion.button>
+
+      {/* 점치기 입구 */}
+      <motion.button
+        onClick={() => go("divine")}
+        whileTap={{ scale: 0.98 }}
+        className="relative w-full overflow-hidden rounded-3xl bg-foreground p-6 text-left text-card shadow-[0_12px_40px_rgba(31,29,26,0.25)]"
+      >
+        <div className="pointer-events-none absolute -right-16 -top-10 opacity-60">
+          <HexagramWheel size={260} />
+        </div>
+        <p className="text-sm text-card/70">주역 64괘 점</p>
+        <p className="mt-2 text-2xl font-extrabold">나의 괘 뽑기</p>
+        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80">동전, 산통, 산가지 중 마음에 드는 방법으로 괘를 뽑고 오늘의 조언을 받아 보세요.</p>
+        <span className="mt-5 inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold">
+          시작하기 <ChevronRight size={16} />
+        </span>
+      </motion.button>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Card title="육효로 묻기" desc="돈, 직장, 연애처럼 구체적인 질문에 답합니다" onClick={() => go("yukhyo")} accent="bg-vermilion/10 text-vermilion" badge="상세 점" />
+        <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
+      </div>
+
+      {/* 나의 점 기록 */}
+      <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+        <div className="flex items-center justify-between">
+          <p className="font-bold">나의 점 기록</p>
+          {history.length ? (
+            <button
+              onClick={() => {
+                if (window.confirm("기록을 모두 지울까요?")) clearHistory();
+              }}
+              className="inline-flex items-center gap-1 text-xs text-muted hover:text-vermilion"
+            >
+              <Trash2 size={13} /> 모두 지우기
+            </button>
+          ) : null}
+        </div>
+        {history.length === 0 ? (
+          <p className="mt-2 text-sm text-muted">아직 기록이 없어요. 점을 치면 이 기기에 자동으로 저장됩니다.</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-border">
+            {shown.map((r) => (
+              <li key={r.id} className="flex items-center gap-3 py-3">
+                <button onClick={() => setViewing(r)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+                  <div className="shrink-0 text-foreground/70">
+                    <HexagramFigure lines={r.lines} changing={r.changing} size={30} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold">
+                      {r.type === "iching" ? readingFromRecord(r).primary.name : `${r.hexName}, ${r.categoryLabel}`}
+                      {r.type === "yukhyo" ? <span className="ml-1.5 text-xs font-bold text-vermilion">{r.level}</span> : null}
+                    </p>
+                    <p className="truncate text-xs text-muted">
+                      {formatAt(r.at)}
+                      {r.question ? ` “${r.question}”` : r.type === "iching" ? (r.method === "coin" ? " 척전법" : r.method === "yarrow" ? " 시초점" : " 산통점") : ""}
+                    </p>
+                  </div>
+                  <ChevronRight size={16} className="shrink-0 text-muted" />
+                </button>
+                <button onClick={() => removeRecord(r.id)} className="p-1 text-muted/60 hover:text-vermilion" aria-label="이 기록 지우기">
+                  <Trash2 size={14} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {history.length > 3 ? (
+          <button onClick={() => setShowAll((v) => !v)} className="mt-2 w-full rounded-xl bg-background py-2 text-sm font-semibold text-foreground/80">
+            {showAll ? "접기" : `전체 ${history.length}개 보기`}
+          </button>
+        ) : null}
+      </section>
+
+      <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+        <div className="flex items-center justify-between">
+          <p className="font-bold">64괘 원도</p>
+          <button onClick={() => go("about")} className="text-sm text-muted hover:text-foreground">
+            주역이란
+          </button>
+        </div>
+        <p className="mt-1 text-sm text-muted">천천히 도는 원 위의 괘를 눌러 보세요.</p>
+        <div className="mt-3 flex justify-center">
+          <HexagramWheel size={340} onSelect={setSelected} className="h-auto w-full max-w-[340px]" />
+        </div>
+      </div>
+
+      <p className="px-2 text-center text-xs leading-relaxed text-muted">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
+      <HexagramDetail hex={selected} onClose={() => setSelected(null)} />
+    </div>
+  );
+}
+
+function Card({ title, desc, onClick, accent, badge }: { title: string; desc: string; onClick: () => void; accent: string; badge: string }) {
+  return (
+    <motion.button
+      onClick={onClick}
+      whileTap={{ scale: 0.98 }}
+      className="flex flex-col items-start rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)]"
+    >
+      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${accent}`}>{badge}</span>
+      <span className="mt-3 text-lg font-bold">{title}</span>
+      <span className="mt-1 text-xs leading-relaxed text-muted">{desc}</span>
+    </motion.button>
+  );
+}
+
+function YukhyoSummary({ record }: { record: Extract<HistoryRecord, { type: "yukhyo" }> }) {
+  return (
+    <section className="rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+      <p className="text-sm text-muted">
+        {record.categoryLabel}
+        {record.question ? ` “${record.question}”` : ""}, {record.date}
+      </p>
+      <div className="mt-3 flex items-center gap-3">
+        <div className="text-foreground/70">
+          <HexagramFigure lines={record.lines} changing={record.changing} size={56} />
+        </div>
+        <div>
+          <p className="font-bold">{record.hexName}</p>
+          <p className="text-sm text-vermilion">
+            {record.level}, {record.title}
+          </p>
+        </div>
+      </div>
+      <p className="mt-4 leading-relaxed">{record.text}</p>
+      <p className="mt-3 text-xs text-muted">육효 기록은 종합 풀이만 저장됩니다. 자세한 도표는 새로 점을 칠 때 볼 수 있어요.</p>
+    </section>
+  );
+}
