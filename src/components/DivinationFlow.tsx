@@ -10,14 +10,16 @@ import SantongCasting from "./SantongCasting";
 import ResultView from "./ResultView";
 import YarrowCasting from "./YarrowCasting";
 import MethodGuide, { type Method } from "./MethodGuide";
+import FocusGate from "./FocusGate";
 
-type Stage = "setup" | Method | "result";
+type Stage = "setup" | "focus" | Method | "result";
 
 export default function DivinationFlow() {
   const [stage, setStage] = useState<Stage>("setup");
   const [question, setQuestion] = useState("");
   const [reading, setReading] = useState<Reading | null>(null);
   const [castKey, setCastKey] = useState(0);
+  const [pending, setPending] = useState<Method>("coin");
   const isFirstRender = useRef(true);
 
   // 단계가 바뀔 때 섹션 상단으로 스크롤해 결과가 잘리지 않게 한다 (첫 렌더는 제외)
@@ -30,8 +32,13 @@ export default function DivinationFlow() {
   }, [stage]);
 
   const start = (method: Method) => {
+    setPending(method);
+    setStage("focus");
+  };
+
+  const beginCast = () => {
     setCastKey((k) => k + 1);
-    setStage(method);
+    setStage(pending);
   };
 
   const complete = (r: Reading) => {
@@ -83,6 +90,19 @@ export default function DivinationFlow() {
                 onClick={() => start("yarrow")}
               />
             </div>
+          </motion.div>
+        ) : null}
+
+        {stage === "focus" ? (
+          <motion.div key="focus" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+            <button onClick={restart} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
+              <ArrowLeft size={16} /> 방법 다시 고르기
+            </button>
+            <FocusGate
+              action={pending === "coin" ? "동전을 던져" : pending === "santong" ? "산통을 흔들어" : "산가지를 나누어"}
+              question={question || undefined}
+              onReady={beginCast}
+            />
           </motion.div>
         ) : null}
 

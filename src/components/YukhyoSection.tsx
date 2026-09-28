@@ -8,8 +8,9 @@ import type { Reading } from "@/lib/iching";
 import { CATEGORIES, analyzeYukhyo, todayString, type Category, type YukhyoResult as Result } from "@/lib/yukhyo";
 import CoinCasting from "./CoinCasting";
 import YukhyoResult from "./YukhyoResult";
+import FocusGate from "./FocusGate";
 
-type Stage = "setup" | "cast" | "result";
+type Stage = "setup" | "focus" | "cast" | "result";
 
 export default function YukhyoSection() {
   const [stage, setStage] = useState<Stage>("setup");
@@ -103,7 +104,7 @@ export default function YukhyoSection() {
             </div>
 
             <button
-              onClick={() => setStage("cast")}
+              onClick={() => setStage("focus")}
               className="w-full rounded-full bg-vermilion py-4 text-center text-lg font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
             >
               동전으로 괘 뽑기
@@ -122,6 +123,15 @@ export default function YukhyoSection() {
                 </div>
               ) : null}
             </div>
+          </motion.div>
+        ) : null}
+
+        {stage === "focus" ? (
+          <motion.div key="focus" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+            <button onClick={restart} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
+              <ArrowLeft size={16} /> 질문 다시 고르기
+            </button>
+            <FocusGate action="동전을 던져" question={question || undefined} onReady={() => setStage("cast")} />
           </motion.div>
         ) : null}
 

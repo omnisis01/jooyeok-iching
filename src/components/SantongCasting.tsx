@@ -50,7 +50,8 @@ export default function SantongCasting({ question, onComplete }: Props) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
       <div className="flex flex-col items-center justify-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6 sm:p-10">
-        <p className="text-xs font-semibold text-vermilion">산통점은 통을 흔들어 산가지 3개를 차례로 뽑습니다</p>
+        <p className="text-sm font-bold text-vermilion">정신을 집중해서 산통을 흔들어 주세요. 집중이 강할수록 결과가 정확해집니다.</p>
+        <p className="mt-1 text-xs text-muted">산통점은 통을 흔들어 산가지 3개를 차례로 뽑습니다</p>
         <p className="mt-1 text-sm text-muted">
           {step < 3 ? `${step + 1} / 3  ` : ""}
           {STEP_LABEL[step]}

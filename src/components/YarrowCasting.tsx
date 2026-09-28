@@ -95,7 +95,8 @@ export default function YarrowCasting({ question, onComplete }: Props) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
       <div className="flex flex-col items-center rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)] sm:p-8">
-        <p className="text-xs font-semibold text-vermilion">시초점은 산가지 49개를 18번 나누어 세어 괘를 만듭니다</p>
+        <p className="text-sm font-bold text-vermilion">정신을 집중해서 산가지를 나누어 주세요. 집중이 강할수록 결과가 정확해집니다.</p>
+        <p className="mt-1 text-xs text-muted">시초점은 산가지 49개를 18번 나누어 세어 괘를 만듭니다</p>
         <p className="mt-1 text-sm text-muted">
           {done
             ? "열여덟 번의 변이 모두 끝났습니다"

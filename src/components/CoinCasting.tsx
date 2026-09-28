@@ -67,7 +67,8 @@ export default function CoinCasting({ question, onComplete }: Props) {
     <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
       {/* 동전 영역 */}
       <div className="flex flex-col items-center justify-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6 sm:p-10">
-        <p className="text-xs font-semibold text-vermilion">척전법은 동전 3개를 6번 던져 점을 칩니다</p>
+        <p className="text-sm font-bold text-vermilion">정신을 집중해서 동전을 던져 주세요. 집중이 강할수록 결과가 정확해집니다.</p>
+        <p className="mt-1 text-xs text-muted">척전법은 동전 3개를 6번 던져 점을 칩니다</p>
         <p className="mt-1 text-sm text-muted">
           {done ? "여섯 효가 모두 나왔습니다" : `${tosses.length + 1}번째 던지기, ${LINE_NAMES[tosses.length]}`}
         </p>
