@@ -56,7 +56,8 @@
 - [x] 이메일 매직링크 로그인 + 기록 동기화 `cloudSync.ts`, 홈 계정 카드 `AccountCard`
 - [x] 오늘의 괘 푸시: 서비스 워커 `public/sw.js`, 구독 `push.ts`, Edge Function `supabase/functions/daily-push`, 스키마 `supabase/migrations/0001_init.sql`
 - [x] CI에서 공개 키를 GitHub Secrets로 주입, `.env.example`, 설정 안내 `SETUP.md`
-- [ ] 사용자가 Supabase 프로젝트를 만들고 키를 넣은 뒤 실제 로그인·동기화·푸시 검증 (키가 없어 미검증)
+- [x] 자동 설정 스크립트 `scripts/setup-supabase.mjs` (프로젝트 생성부터 GitHub Secrets, 배포까지). 실계정으로는 미실행
+- [ ] 사용자가 스크립트를 실행한 뒤 실제 로그인, 동기화, 푸시 검증
 
 ## 2026-09-28 8차: 집중 안내
 - [x] 점법 선택 뒤 집중 화면 `FocusGate`(호흡 애니메이션, 3초 뒤 시작 버튼), 점치기 화면 상단 집중 문구

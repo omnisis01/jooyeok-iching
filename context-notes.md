@@ -68,3 +68,8 @@
 
 ## 2026-09-28 8차: 집중 안내
 - 사용자 요청 문구: "최대한 정신을 집중해서 (동전을 던져) 주세요. 정신 집중이 강할수록 더 정확한 결과가 나옵니다." 점법마다 동사만 바꾼다(동전을 던져 / 산통을 흔들어 / 산가지를 나누어). 육효도 같은 화면을 거친다.
+
+## 2026-09-28 9차: Supabase 자동 설정 스크립트
+- 관리 API(api.supabase.com/v1)와 CLI를 섞어 쓴다. 프로젝트 생성/키 조회/SQL 실행/인증 설정은 API, 함수 배포와 secrets는 CLI(`--use-api`라 Docker 불필요).
+- 비밀값은 인자에 두지 않고 stdin(gh secret set)이나 0600 임시 env 파일(supabase secrets set --env-file)로 넘긴다. 화면에는 변수명과 '설정됨'만 찍는다.
+- 실제 계정 없이 작성해 문법 검사와 VAPID 생성만 확인했다. 관리 API 필드명(uri_allow_list, external_email_enabled, mailer_autoconfirm, api-keys?reveal=true)이 바뀌면 그 단계에서 오류 메시지를 보고 고칠 것.

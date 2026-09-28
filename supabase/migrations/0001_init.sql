@@ -12,6 +12,7 @@ create index if not exists readings_user_created on public.readings (user_id, cr
 
 alter table public.readings enable row level security;
 
+drop policy if exists "readings: own rows" on public.readings;
 create policy "readings: own rows" on public.readings
   for all
   using (auth.uid() = user_id)
@@ -31,10 +32,13 @@ create table if not exists public.push_subscriptions (
 alter table public.push_subscriptions enable row level security;
 
 -- 누구나 자기 기기의 구독을 등록/삭제할 수 있다. 목록 조회는 서버(서비스 키)만 한다.
+drop policy if exists "push: insert" on public.push_subscriptions;
 create policy "push: insert" on public.push_subscriptions
   for insert with check (true);
+drop policy if exists "push: update own endpoint" on public.push_subscriptions;
 create policy "push: update own endpoint" on public.push_subscriptions
   for update using (true) with check (true);
+drop policy if exists "push: delete" on public.push_subscriptions;
 create policy "push: delete" on public.push_subscriptions
   for delete using (true);
 
@@ -45,11 +49,12 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 alter table public.profiles enable row level security;
+drop policy if exists "profiles: read own" on public.profiles;
 create policy "profiles: read own" on public.profiles
   for select using (auth.uid() = user_id);
 
--- 4) 매일 아침 7시(KST, UTC 22:00) 오늘의 괘 푸시. pg_cron과 pg_net 확장이 필요합니다.
--- 아래 주석을 풀고 <PROJECT_REF>와 서비스 키를 Vault에 넣은 뒤 실행하세요.
+-- 4) 매일 아침 7시(KST, UTC 22:00) 오늘의 괘 푸시. scripts/setup-supabase.mjs 가 자동으로 등록합니다.
+-- 수동으로 할 때는 아래 주석을 풀고 <PROJECT_REF>와 서비스 키를 Vault에 넣은 뒤 실행하세요.
 -- create extension if not exists pg_cron;
 -- create extension if not exists pg_net;
 -- select cron.schedule(
