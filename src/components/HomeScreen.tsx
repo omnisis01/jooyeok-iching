@@ -11,6 +11,11 @@ import HexagramWheel from "./HexagramWheel";
 import HexagramDetail from "./HexagramDetail";
 import ResultView from "./ResultView";
 import AccountCard from "./AccountCard";
+import PremiumCard from "./PremiumCard";
+import YukhyoResult from "./YukhyoResult";
+import { FREE_HISTORY_LIMIT, fetchPremiumUntil, paymentsEnabled } from "@/lib/premium";
+import { onAuthChange } from "@/lib/cloudSync";
+import { analyzeYukhyo, type Category } from "@/lib/yukhyo";
 import { dayInfo } from "@/lib/yukhyo";
 import { useToday } from "@/lib/useToday";
 import { dailyHexagram } from "@/lib/daily";
@@ -23,6 +28,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [premium, setPremium] = useState(false);
 
   const { today, hour } = useToday();
   const day = today ? dayInfo(today) : null;
@@ -39,6 +45,19 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
     };
   }, []);
 
+  // 프리미엄 여부 (결제 기능이 켜져 있을 때만 조회)
+  useEffect(() => {
+    if (!paymentsEnabled) return;
+    let cancelled = false;
+    const refresh = () => fetchPremiumUntil().then((u) => !cancelled && setPremium(Boolean(u))).catch(() => {});
+    refresh();
+    const off = onAuthChange(() => refresh());
+    return () => {
+      cancelled = true;
+      off();
+    };
+  }, []);
+
   if (viewing) {
     return (
       <div className="space-y-4">
@@ -47,6 +66,18 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </button>
         {viewing.type === "iching" ? (
           <ResultView reading={readingFromRecord(viewing)} onRestart={() => setViewing(null)} restartLabel="닫기" />
+        ) : premium || !paymentsEnabled ? (
+          <YukhyoResult
+            result={analyzeYukhyo({
+              lines: viewing.lines,
+              changingLines: viewing.changing,
+              category: viewing.category as Category,
+              gender: viewing.gender,
+              date: viewing.date,
+              question: viewing.question,
+            })}
+            onRestart={() => setViewing(null)}
+          />
         ) : (
           <YukhyoSummary record={viewing} />
         )}
@@ -54,7 +85,8 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
     );
   }
 
-  const shown = showAll ? history : history.slice(0, 3);
+  const limited = paymentsEnabled && !premium ? history.slice(0, FREE_HISTORY_LIMIT) : history;
+  const shown = showAll ? limited : limited.slice(0, 3);
 
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
@@ -116,6 +148,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       </div>
 
       <AccountCard />
+      <PremiumCard />
 
       {/* 나의 점 기록 */}
       <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
@@ -168,10 +201,13 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
             ))}
           </ul>
         )}
-        {history.length > 3 ? (
+        {limited.length > 3 ? (
           <button onClick={() => setShowAll((v) => !v)} className="mt-2 w-full rounded-xl bg-background py-2 text-sm font-semibold text-foreground/80">
-            {showAll ? "접기" : `전체 ${history.length}개 보기`}
+            {showAll ? "접기" : `전체 ${limited.length}개 보기`}
           </button>
+        ) : null}
+        {paymentsEnabled && !premium && history.length > FREE_HISTORY_LIMIT ? (
+          <p className="mt-2 text-xs text-muted">무료 회원은 최근 {FREE_HISTORY_LIMIT}개까지 볼 수 있어요. 프리미엄에서는 전부 보관됩니다.</p>
         ) : null}
       </section>
 
@@ -227,7 +263,7 @@ function YukhyoSummary({ record }: { record: Extract<HistoryRecord, { type: "yuk
         </div>
       </div>
       <p className="mt-4 leading-relaxed">{record.text}</p>
-      <p className="mt-3 text-xs text-muted">육효 기록은 종합 풀이만 저장됩니다. 자세한 도표는 새로 점을 칠 때 볼 수 있어요.</p>
+      <p className="mt-3 text-xs text-muted">무료 회원은 종합 풀이만 다시 볼 수 있어요. 프리미엄에서는 도표와 용신 풀이까지 그대로 다시 열립니다.</p>
     </section>
   );
 }

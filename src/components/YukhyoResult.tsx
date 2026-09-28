@@ -52,6 +52,7 @@ export default function YukhyoResult({ result, onRestart }: Props) {
       date: input.date,
       category: input.category,
       categoryLabel: category.label,
+      gender: input.gender,
       lines: hexagram.lines,
       changing: input.changingLines,
       hexName: hexagram.name,

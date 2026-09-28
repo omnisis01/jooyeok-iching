@@ -72,6 +72,12 @@
 - [x] 넓은 화면(1024px 이상) 왼쪽 메뉴 + 넓은 본문, 홈 카드 2열, 카드 격자 복원. 폰 가로 모드 여백 축소
 - [x] 홈 문구 "오늘 나만의 주역 괘 뽑기"
 
+## 2026-09-28 13차: 결제 준비 + 묻는 시기
+- [x] Stripe 결제: Edge Function create-checkout(결제 페이지), stripe-webhook(서명 검증 후 profiles.premium_until 갱신), 0002_premium.sql, 프리미엄 카드, 무료 기록 30개 제한, 육효 전체 복원(프리미엄), 이미지 사이트 표시 생략(프리미엄)
+- [x] 자동 설정 `scripts/setup-payments.mjs` (상품·가격·웹훅 생성, 함수 배포, GitHub Secret). 실계정 미실행
+- [x] 점치기 전에 묻는 시기 선택(오늘, 이번 주, 이번 달, 올해, 날짜 지정, 때 상관없음). 결과 제목과 조언 문구, 기록, 이미지 카드에 반영
+- [ ] 사용자가 Stripe 테스트 키로 스크립트를 실행한 뒤 시험 결제 확인
+
 ## 다음에 할 만한 것
 - [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)
 - [ ] 오늘의 괘 기록(로컬 저장) 및 히스토리

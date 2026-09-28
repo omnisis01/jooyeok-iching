@@ -11,6 +11,8 @@ import ResultView from "./ResultView";
 import YarrowCasting from "./YarrowCasting";
 import MethodGuide, { type Method } from "./MethodGuide";
 import FocusGate from "./FocusGate";
+import { PERIODS, type Period } from "@/lib/period";
+import { todayString } from "@/lib/yukhyo";
 
 type Stage = "setup" | "focus" | Method | "result";
 
@@ -20,6 +22,8 @@ export default function DivinationFlow() {
   const [reading, setReading] = useState<Reading | null>(null);
   const [castKey, setCastKey] = useState(0);
   const [pending, setPending] = useState<Method>("coin");
+  const [period, setPeriod] = useState<Period>("today");
+  const [periodDate, setPeriodDate] = useState(todayString());
   const isFirstRender = useRef(true);
 
   // 단계가 바뀔 때 섹션 상단으로 스크롤해 결과가 잘리지 않게 한다 (첫 렌더는 제외)
@@ -42,7 +46,7 @@ export default function DivinationFlow() {
   };
 
   const complete = (r: Reading) => {
-    setReading(r);
+    setReading({ ...r, period, periodDate: period === "date" ? periodDate : undefined });
     setStage("result");
   };
 
@@ -65,6 +69,28 @@ export default function DivinationFlow() {
                 className="mt-2 w-full rounded-2xl bg-card px-5 py-4 text-lg shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none transition placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
               />
             </label>
+
+            <p className="mt-6 font-bold">언제의 일을 묻나요</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {PERIODS.map((p) => (
+                <button
+                  key={p.key}
+                  onClick={() => setPeriod(p.key)}
+                  title={p.desc}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${period === p.key ? "bg-foreground text-card" : "bg-card text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.06)] hover:bg-background"}`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            {period === "date" ? (
+              <input
+                type="date"
+                value={periodDate}
+                onChange={(e) => setPeriodDate(e.target.value)}
+                className="mt-3 w-full rounded-2xl bg-card px-4 py-3 shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none focus:ring-2 focus:ring-vermilion/30 sm:w-auto"
+              />
+            ) : null}
 
             <p className="mt-8 font-bold">점치는 방법을 고르세요</p>
             <div className="mt-3 grid gap-3 md:grid-cols-3">

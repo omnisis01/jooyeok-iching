@@ -1,6 +1,7 @@
 // 점괘 결과를 SNS 공유용 이미지 카드(PNG)로 그리는 캔버스 유틸
 import { getLineText, lineTitle } from "@/data/lineTexts";
 import { trigramsOf, type Reading } from "@/lib/iching";
+import { adaptAdvice, adviceHeading } from "@/lib/period";
 
 export const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
 const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
@@ -100,10 +101,11 @@ export async function ensureFonts() {
   }
 }
 
-export async function renderShareCard(reading: Reading): Promise<Blob> {
+export async function renderShareCard(reading: Reading, opts: { premium?: boolean } = {}): Promise<Blob> {
   await ensureFonts();
-  const { primary, resulting, changingLines, question } = reading;
+  const { primary, resulting, changingLines, question, period, periodDate } = reading;
   const { lower, upper } = trigramsOf(primary);
+  const advice = adaptAdvice(primary.advice, period, periodDate);
 
   const canvas = document.createElement("canvas");
   canvas.width = W;
@@ -171,7 +173,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
 
   // 오늘의 조언 박스
   ctx.font = font(500, 32);
-  const adviceLines = wrap(ctx, primary.advice, W - 220, 4);
+  const adviceLines = wrap(ctx, advice, W - 220, 4);
   const boxH = adviceLines.length * 48 + 96;
   ctx.fillStyle = "rgba(216,69,43,0.07)";
   ctx.strokeStyle = "rgba(216,69,43,0.35)";
@@ -181,7 +183,7 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   ctx.stroke();
   ctx.fillStyle = C.muted;
   ctx.font = font(500, 22);
-  ctx.fillText("오늘 이렇게 살아보세요", W / 2, y + 44);
+  ctx.fillText(adviceHeading(period, periodDate), W / 2, y + 44);
   ctx.fillStyle = C.paper;
   ctx.font = font(500, 32);
   adviceLines.forEach((l, i) => ctx.fillText(l, W / 2, y + 96 + i * 48));
@@ -231,9 +233,11 @@ export async function renderShareCard(reading: Reading): Promise<Blob> {
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 22);
   ctx.fillText("세상에서 가장 정확한 점사풀이, 주역 마스터", W / 2, H - 96);
-  ctx.fillStyle = C.gold;
-  ctx.font = font(600, 24);
-  ctx.fillText(SITE_LABEL, W / 2, H - 58);
+  if (!opts.premium) {
+    ctx.fillStyle = C.gold;
+    ctx.font = font(600, 24);
+    ctx.fillText(SITE_LABEL, W / 2, H - 58);
+  }
 
   const out = document.createElement("canvas");
   out.width = W;
@@ -261,7 +265,7 @@ export function shareText(reading: Reading): string {
   const { primary, resulting } = reading;
   return [
     `오늘의 괘: 제${primary.number}괘 ${primary.name}(${primary.hanja}), ${primary.keyword}`,
-    primary.advice,
+    adaptAdvice(primary.advice, reading.period, reading.periodDate),
     resulting ? `앞으로의 흐름: ${resulting.name}, ${resulting.keyword}` : null,
     SITE_URL,
   ]

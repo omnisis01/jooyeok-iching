@@ -1,5 +1,6 @@
 // 점 결과를 브라우저에 저장하고 불러오는 기록 기능 (localStorage)
 import type { Reading } from "@/lib/iching";
+import type { Period } from "@/lib/period";
 import { findHexagramByLines } from "@/data/hexagrams";
 
 const KEY = "jooyeok-master-history-v1";
@@ -13,6 +14,8 @@ export type IchingRecord = {
   lines: string;
   changing: number[];
   question?: string;
+  period?: Period;
+  periodDate?: string;
 };
 
 export type YukhyoRecord = {
@@ -22,6 +25,7 @@ export type YukhyoRecord = {
   date: string;
   category: string;
   categoryLabel: string;
+  gender?: "male" | "female";
   lines: string;
   changing: number[];
   hexName: string;
@@ -86,7 +90,7 @@ export function readingFromRecord(r: IchingRecord): Reading {
   const primary = findHexagramByLines(r.lines);
   const changedLines = r.changing.reduce((acc, i) => acc.slice(0, i) + (acc[i] === "1" ? "0" : "1") + acc.slice(i + 1), r.lines);
   const resulting = r.changing.length ? findHexagramByLines(changedLines) : null;
-  return { method: r.method, primary, changingLines: r.changing, resulting, question: r.question };
+  return { method: r.method, primary, changingLines: r.changing, resulting, question: r.question, period: r.period, periodDate: r.periodDate };
 }
 
 export function formatAt(iso: string): string {

@@ -10,6 +10,7 @@ import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
 import ShareCardModal from "./ShareCardModal";
 import { renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
+import { adaptAdvice, adviceHeading, periodLabel } from "@/lib/period";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -19,7 +20,8 @@ type Props = {
 };
 
 export default function ResultView({ reading, onRestart, restartLabel = "다시 점치기" }: Props) {
-  const { primary, resulting, changingLines, question, method } = reading;
+  const { primary, resulting, changingLines, question, method, period, periodDate } = reading;
+  const advice = adaptAdvice(primary.advice, period, periodDate);
   const { lower, upper } = trigramsOf(primary);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -28,8 +30,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
   useEffect(() => {
     const at = new Date();
     const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join(""), question]);
-    saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question });
-  }, [method, primary.lines, changingLines, question]);
+    saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, period, periodDate });
+  }, [method, primary.lines, changingLines, question, period, periodDate]);
 
   const copy = async () => {
     const text = [
@@ -37,7 +39,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       `오늘의 괘: 제${primary.number}괘 ${primary.name}(${primary.hanja}) ${hexagramSymbol(primary.number)}`,
       `키워드: ${primary.keyword}`,
       `해설: ${primary.summary}`,
-      `오늘의 조언: ${primary.advice}`,
+      `${adviceHeading(period, periodDate)}: ${advice}`,
       ...changingLines.map((i) => {
         const lt = getLineText(primary.number, i);
         return `${lineTitle(primary.lines, i)} ${lt.hanja}: ${lt.text} ${lt.advice}`;
@@ -57,11 +59,10 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
-      {question ? (
-        <p className="text-center text-sm text-muted">
-          “{question}” 에 대한 오늘의 괘, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
-        </p>
-      ) : null}
+      <p className="text-center text-sm text-muted">
+        {question ? `“${question}” ` : ""}
+        {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
+      </p>
 
       {/* 본괘 */}
       <section className="grid gap-6 rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)] sm:p-8 lg:grid-cols-[auto_1fr]">
@@ -83,14 +84,14 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
           <h3 className="mt-7 text-sm font-bold text-muted">쉬운 해설</h3>
           <p className="mt-2 leading-relaxed text-foreground/90">{primary.summary}</p>
 
-          <h3 className="mt-7 text-sm font-bold text-muted">오늘 이렇게 살아보세요</h3>
+          <h3 className="mt-7 text-sm font-bold text-muted">{adviceHeading(period, periodDate)}</h3>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
             className="mt-2 rounded-2xl bg-vermilion/8 p-5 text-lg leading-relaxed"
           >
-            {primary.advice}
+            {advice}
           </motion.p>
         </div>
       </section>

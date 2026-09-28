@@ -1,6 +1,7 @@
 // 8괘(삼획괘) 정의와 점괘 계산 로직(척전법·산통)
 
 import { findHexagramByLines, type Hexagram } from "@/data/hexagrams";
+import type { Period } from "./period";
 
 export type Trigram = {
   /** 산통 산가지 번호(선천 팔괘 순서 1~8) */
@@ -85,6 +86,10 @@ export type Reading = {
   /** 변효가 있을 때의 지괘. 없으면 null */
   resulting: Hexagram | null;
   question?: string;
+  /** 묻는 시기 (기본 오늘) */
+  period?: Period;
+  /** period가 date일 때의 날짜 */
+  periodDate?: string;
 };
 
 function flipLines(lines: string, changing: number[]): string {
