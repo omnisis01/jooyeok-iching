@@ -241,6 +241,8 @@ export type YukhyoInput = {
   gender?: "male" | "female";
   date: string;
   question?: string;
+  /** 뽑은 시각 (ISO) */
+  castAt?: string;
 };
 
 export type YukhyoResult = {

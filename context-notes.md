@@ -144,3 +144,7 @@
 - 원도 뽑기: CSS 회전 그룹의 현재 각도를 getComputedStyle transform 행렬로 읽어 표식 목표각에 더한다. 뽑는 동안 회전을 일시정지(animationPlayState)하고 2.5초 뒤 재개. 배경 탭에서는 rAF가 멈추므로 setTimeout 예비 완료를 둔다.
 - head 안 인라인 script(dangerouslySetInnerHTML)는 dev에서 hydration 불일치를 냈다. next/script beforeInteractive로 교체.
 - 글자 크기는 html font-size로 올렸다(17/18px). rem 기반 Tailwind 크기가 함께 커진다. px 고정 폭(max-w-[520px])은 그대로.
+
+## 2026-09-29 23차
+- 뽑은 시각은 결과가 만들어질 때 ISO로 저장한다(readingFromValues/readingFromSantong). 기록에서 다시 열면 record.at을 castAt으로 넘긴다. 시진은 (시+1)%24 를 2로 나눈 몫(자시 23~01시).
+- 사용자 질문(시각의 중요성): 주역 효사 읽기는 시각을 계산에 쓰지 않고, 육효는 날짜(일진·월건)를 쓴다. 시진은 매화역수의 시간기괘법과 일부 육효 응기에서 쓴다. 지금은 기록만 하고 계산에는 넣지 않았다.

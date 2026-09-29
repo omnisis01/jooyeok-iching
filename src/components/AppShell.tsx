@@ -116,7 +116,7 @@ export default function AppShell() {
               ) : null}
               {tab === "hexagrams" ? (
                 <section id="hexagrams">
-                  <p className="mb-4 text-sm leading-relaxed text-muted">여섯 개의 선으로 이루어진 64가지 상황입니다. 괘를 누르면 뜻과 조언, 효사를 볼 수 있어요.</p>
+                  <p className="mb-4 text-sm leading-relaxed text-muted">줄 하나가 효, 여섯 줄을 쌓은 그림 하나가 괘예요. 64가지 괘를 누르면 뜻과 조언, 여섯 효의 효사를 볼 수 있어요.</p>
                   <HexagramGallery />
                 </section>
               ) : null}

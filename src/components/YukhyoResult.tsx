@@ -18,6 +18,7 @@ import {
 } from "@/lib/yukhyo";
 import { LINE_NAMES } from "@/lib/iching";
 import { categoryOf } from "@/lib/categories";
+import { formatCastAt } from "@/lib/castTime";
 import { makeId, saveRecord } from "@/lib/history";
 import ShareCardModal from "./ShareCardModal";
 import { renderYukhyoCard, yukhyoFileName, yukhyoShareText } from "@/lib/yukhyoCard";
@@ -48,7 +49,7 @@ export default function YukhyoResult({ result, onRestart, saveToHistory = true }
   const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
     if (!saveToHistory) return;
-    const at = new Date();
+    const at = input.castAt ? new Date(input.castAt) : new Date();
     saveRecord({
       id: makeId([at.toISOString().slice(0, 16), "yukhyo", hexagram.lines, input.changingLines.join(""), input.category, input.date]),
       type: "yukhyo",
@@ -107,7 +108,8 @@ export default function YukhyoResult({ result, onRestart, saveToHistory = true }
         <p className="mt-2 text-sm leading-relaxed text-foreground/75">{result.elementNote}</p>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
           <Chip>점친 날 {day.date.replace(/^(\d+)-(\d+)-(\d+)$/, (_, y, m, d) => `${y}년 ${Number(m)}월 ${Number(d)}일`)}</Chip>
-          <Chip>오늘의 간지 {day.label}</Chip>
+          <Chip>그날의 간지 {day.label}</Chip>
+          {input.castAt ? <Chip>뽑은 시각 {formatCastAt(input.castAt)}</Chip> : null}
           <Chip>이달 {branchLabel(day.monthBranch)}월</Chip>
           <Chip>
             빈자리(공망) {BRANCHES[day.voids[0]]}{BRANCHES[day.voids[1]]}({BRANCHES_HANJA[day.voids[0]]}{BRANCHES_HANJA[day.voids[1]]})

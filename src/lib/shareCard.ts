@@ -5,6 +5,7 @@ import { adaptAdvice, adviceHeading } from "@/lib/period";
 import { summaryOf } from "@/data/summaries";
 import { categoryOf } from "@/lib/categories";
 import { categoryReading } from "@/data/categoryReadings";
+import { formatCastAt } from "@/lib/castTime";
 
 export const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
 const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
@@ -132,8 +133,8 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   ctx.fillText("주역으로 보는 나의 운세", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
-  const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
-  ctx.fillText(today, W / 2, 150);
+  const when = reading.castAt ? formatCastAt(reading.castAt) : new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
+  ctx.fillText(when, W / 2, 150);
 
   let y = 200;
   if (question) {

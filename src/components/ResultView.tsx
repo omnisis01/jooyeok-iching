@@ -15,6 +15,8 @@ import ShareForCoupon from "./ShareForCoupon";
 import SummaryCard from "./SummaryCard";
 import { LINE_STAGE_BY_CATEGORY, categoryOf } from "@/lib/categories";
 import { categoryReading } from "@/data/categoryReadings";
+import GuaHyoExplainer from "./GuaHyoExplainer";
+import { formatCastAt } from "@/lib/castTime";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -26,7 +28,7 @@ type Props = {
 };
 
 export default function ResultView({ reading, onRestart, restartLabel = "다시 점치기", saveToHistory = true }: Props) {
-  const { primary, resulting, changingLines, question, method, period, periodDate } = reading;
+  const { primary, resulting, changingLines, question, method, period, periodDate, castAt } = reading;
   const cat = categoryOf(reading.category);
   const catText = categoryReading(primary.number, cat.key);
   const advice = adaptAdvice(primary.advice, period, periodDate);
@@ -37,10 +39,10 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
   // 결과가 나오면 이 기기에 기록한다 (같은 결과는 한 번만)
   useEffect(() => {
     if (!saveToHistory) return;
-    const at = new Date();
+    const at = castAt ? new Date(castAt) : new Date();
     const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join(""), question]);
     saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, period, periodDate, category: cat.key });
-  }, [saveToHistory, method, primary.lines, changingLines, question, period, periodDate, cat.key]);
+  }, [saveToHistory, method, primary.lines, changingLines, question, period, periodDate, cat.key, castAt]);
 
   const copy = async () => {
     const text = [
@@ -48,6 +50,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       `오늘의 괘: 제${primary.number}괘 ${primary.name}(${primary.hanja}) ${hexagramSymbol(primary.number)}`,
       `키워드: ${primary.keyword}`,
       `해설: ${primary.summary}`,
+      castAt ? `뽑은 시각: ${formatCastAt(castAt)}` : null,
       `${cat.label}: ${catText}`,
       `${adviceHeading(period, periodDate)}: ${advice}`,
       ...changingLines.map((i) => {
@@ -73,9 +76,11 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
         {cat.label}, {question ? `“${question}” ` : ""}
         {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
       </p>
+      {castAt ? <p className="-mt-3 text-center text-xs text-muted">뽑은 시각 {formatCastAt(castAt)}</p> : null}
       <p className="rounded-2xl bg-card/60 px-4 py-3 text-center text-sm leading-relaxed text-muted">
         주역은 두 겹으로 읽어요. <b className="text-foreground/80">괘사</b>는 지도, <b className="text-foreground/80">효사</b>는 지금 내 위치. 둘을 합쳐 한마디로 정리합니다.
       </p>
+      <GuaHyoExplainer />
 
       {/* 본괘 */}
       <section className="grid gap-6 rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)] sm:p-8 lg:grid-cols-[auto_1fr]">

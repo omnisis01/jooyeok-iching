@@ -35,6 +35,7 @@ export default function YukhyoSection() {
         gender,
         date,
         question: question || undefined,
+        castAt: reading.castAt ?? new Date().toISOString(),
       }),
     );
     setStage("result");

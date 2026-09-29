@@ -2,6 +2,7 @@
 import Taegeuk from "./Taegeuk";
 import MethodGuide from "./MethodGuide";
 import { ThemeSetting } from "./ThemeToggle";
+import { GuaHyoBody } from "./GuaHyoExplainer";
 import { TRIGRAMS } from "@/lib/iching";
 
 export default function AboutScreen() {
@@ -20,6 +21,13 @@ export default function AboutScreen() {
         <div className="mt-5 space-y-3 text-[15px] leading-relaxed text-foreground/85">
           <p>주역은 세상의 모든 변화를 음과 양, 두 가지 선의 조합으로 설명합니다. 음과 양은 서로 반대이면서 서로를 낳는 기운입니다. 밤과 낮, 쉼과 움직임처럼 한쪽만으로는 세상이 돌아가지 않습니다.</p>
           <p>선 세 개를 쌓으면 8괘가 되고, 8괘를 위아래로 겹치면 64괘가 됩니다. 괘 하나는 상황을, 여섯 효는 그 상황 안에서의 위치와 단계를 뜻합니다. 점을 쳐서 나온 괘는 지금 내가 어떤 국면에 서 있는지 비추어 주는 거울입니다.</p>
+        </div>
+      </section>
+
+      <section className="rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+        <h3 className="text-lg font-bold">괘와 효는 무엇이 다른가요</h3>
+        <div className="mt-4">
+          <GuaHyoBody />
         </div>
       </section>
 

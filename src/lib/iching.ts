@@ -93,6 +93,8 @@ export type Reading = {
   periodDate?: string;
   /** 운세 분류 (기본 총운) */
   category?: Category;
+  /** 뽑은 시각 (ISO) */
+  castAt?: string;
 };
 
 function flipLines(lines: string, changing: number[]): string {
@@ -108,7 +110,7 @@ export function readingFromValues(values: LineValue[], question?: string, method
   const changing = values.flatMap((v, i) => (isChanging(v) ? [i] : []));
   const primary = findHexagramByLines(lines);
   const resulting = changing.length ? findHexagramByLines(flipLines(lines, changing)) : null;
-  return { method, primary, changingLines: changing, resulting, question };
+  return { method, primary, changingLines: changing, resulting, question, castAt: new Date().toISOString() };
 }
 
 /** 시초점 한 번의 '변(變)': 49개(또는 남은 수)를 둘로 나누고 4개씩 세어 남는 것을 덜어낸다 */
@@ -153,7 +155,7 @@ export function readingFromSantong(lower: number, upper: number, moving: number,
   const changing = [moving - 1];
   const primary = findHexagramByLines(lines);
   const resulting = findHexagramByLines(flipLines(lines, changing));
-  return { method: "santong", primary, changingLines: changing, resulting, question };
+  return { method: "santong", primary, changingLines: changing, resulting, question, castAt: new Date().toISOString() };
 }
 
 export const LINE_NAMES = ["초효", "이효", "삼효", "사효", "오효", "상효"];
