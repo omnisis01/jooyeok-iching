@@ -107,7 +107,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       {changingLines.length ? (
         <section className="grid gap-6 lg:grid-cols-[1fr_auto_1fr]">
           <div className="rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-            <h3 className="text-sm font-bold text-vermilion">움직이는 효의 효사</h3>
+            <h3 className="text-sm font-bold text-vermilion">변효 풀이</h3>
             <ul className="mt-3 space-y-4 text-sm leading-relaxed text-foreground/90">
               {[...changingLines].reverse().map((i) => {
                 const lt = getLineText(primary.number, i);
@@ -130,6 +130,17 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
             {changingLinesRule(changingLines.length) ? (
               <p className="mt-4 text-xs leading-relaxed text-muted">{changingLinesRule(changingLines.length)}</p>
             ) : null}
+            <div className="mt-4 space-y-1.5 border-t border-border pt-3 text-xs leading-relaxed text-muted">
+              <p>
+                <b className="text-foreground/80">변효(움직이는 효)</b>는 괘 그림에서 빨갛게 표시된 줄입니다. 동전 세 개가 모두 앞면(합 9)이거나 모두 뒷면(합 6)이면 그 줄은 곧 반대로 뒤집히는 늙은 양이나 음이라 움직인다고 봅니다. 나머지 줄은 그대로 머뭅니다.
+              </p>
+              <p>
+                <b className="text-foreground/80">효사</b>는 주역 원문에서 여섯 줄 하나하나에 붙은 짧은 글입니다. 64괘에 여섯 개씩, 모두 384개가 있습니다. 주역 점에서는 괘 전체의 뜻보다 지금 움직이는 줄에 붙은 글이 나에게 하는 말이라고 봅니다. 아래 줄부터 일의 시작, 위 줄로 갈수록 마무리 단계라 같은 괘라도 어느 줄이 움직이느냐에 따라 답이 달라집니다.
+              </p>
+              <p>
+                <b className="text-foreground/80">지괘</b>는 움직이는 줄을 뒤집어 만든 새 괘입니다. 본괘가 지금의 상황이라면 지괘는 앞으로 흘러갈 방향입니다.
+              </p>
+            </div>
           </div>
 
           <div className="hidden items-center lg:flex">

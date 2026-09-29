@@ -204,7 +204,7 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
     const lt = getLineText(primary.number, focus);
     ctx.fillStyle = C.vermilion;
     ctx.font = font(700, 26);
-    ctx.fillText(`움직이는 효  ${changingLines.map((i) => lineTitle(primary.lines, i)).join(", ")}`, W / 2, y);
+    ctx.fillText(`변효  ${changingLines.map((i) => lineTitle(primary.lines, i)).join(", ")}`, W / 2, y);
     y += 44;
     ctx.fillStyle = C.goldSoft;
     ctx.font = font(500, 28);
