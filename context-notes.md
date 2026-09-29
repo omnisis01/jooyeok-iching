@@ -134,3 +134,6 @@
 - 토스 SDK v2는 동적 import로 결제 시작 시에만 불러온다(번들 크기).
 - 결제 코드는 실제 토스 계정이 없어 실행 검증을 못 했다. 카드 응답 필드명(card.number, issuerCode)이 다르면 카드 라벨만 비게 되고 결제는 영향 없다.
 - 약관/개인정보처리방침은 정적 페이지(/terms/, /privacy/)로 만들었고 앱 셸 밖에 있다(상대 링크 terms/ privacy/).
+
+## 2026-09-29 21차: 로그인 메일
+- /auth/v1/settings(anon 키)로 external.email=true, mailer_autoconfirm=true, disable_signup=false 확인. Supabase 기본 SMTP는 조직 구성원 주소로만 발송하고 시간당 한도가 매우 낮다. 실사용자 로그인에는 커스텀 SMTP 필수. 관리 API PATCH config/auth의 smtp_* 필드로 설정한다(`setup-smtp.mjs`).
