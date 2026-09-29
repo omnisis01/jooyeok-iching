@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f0e8",
+  themeColor: "#0b0d14",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -20,12 +20,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html lang="ko" className="h-full antialiased" data-theme="dark" suppressHydrationWarning>
       <head>
         {/* 저장된 테마를 첫 그림 전에 적용해 흰 화면이 번쩍이지 않게 한다 */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("jooyeok-master-theme");if(t==="dark")document.documentElement.dataset.theme="dark";}catch(e){}`,
+            __html: `try{var t=localStorage.getItem("jooyeok-master-theme");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}`,
           }}
         />
         <link

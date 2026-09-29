@@ -17,11 +17,11 @@ function apply(theme: Theme) {
 }
 
 export default function ThemeToggle({ className = "" }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
     // layout의 인라인 스크립트가 먼저 적용해 둔 값을 읽는다
-    const t = window.setTimeout(() => setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light"), 0);
+    const t = window.setTimeout(() => setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark"), 0);
     return () => window.clearTimeout(t);
   }, []);
 
