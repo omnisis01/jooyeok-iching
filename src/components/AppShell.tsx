@@ -93,8 +93,8 @@ export default function AppShell() {
             <Taegeuk size={26} />
             {TITLES[tab]}
           </button>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted">{dateLabel}</span>
+          <div className="flex items-center gap-2">
+            <span className="hidden text-sm text-muted sm:inline">{dateLabel}</span>
             <ThemeToggle />
           </div>
         </header>

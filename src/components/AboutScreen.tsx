@@ -1,11 +1,14 @@
 // 알아보기 화면: 주역과 음양, 8괘, 점치는 방법 설명
 import Taegeuk from "./Taegeuk";
 import MethodGuide from "./MethodGuide";
+import { ThemeSetting } from "./ThemeToggle";
 import { TRIGRAMS } from "@/lib/iching";
 
 export default function AboutScreen() {
   return (
     <div className="space-y-4">
+      <ThemeSetting />
+
       <section className="rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
         <div className="flex items-center gap-4">
           <Taegeuk size={72} className="animate-spin-slow" />
