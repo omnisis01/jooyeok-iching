@@ -89,5 +89,6 @@
 - [ ] 사용자 실기기 QA 진행, 발견 사항 수정
 
 ## 다음에 할 만한 것
+- [ ] 배포 채널 계획 `PLAN-distribution.md` 검토 후 순서 확정(권장: 토스페이먼츠 → 앱인토스 → 구글 플레이 → 애플)
 - [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)
 - [ ] 오늘의 괘 기록(로컬 저장) 및 히스토리
