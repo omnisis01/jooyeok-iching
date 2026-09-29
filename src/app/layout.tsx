@@ -22,6 +22,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
       <head>
+        {/* 저장된 테마를 첫 그림 전에 적용해 흰 화면이 번쩍이지 않게 한다 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("jooyeok-master-theme");if(t==="dark")document.documentElement.dataset.theme="dark";}catch(e){}`,
+          }}
+        />
         <link
           rel="stylesheet"
           as="style"

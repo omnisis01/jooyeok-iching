@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { BookOpen, Compass, Grid3x3, Home, Sparkles } from "lucide-react";
 import Taegeuk from "./Taegeuk";
+import ThemeToggle from "./ThemeToggle";
 import { useToday } from "@/lib/useToday";
 import HomeScreen from "./HomeScreen";
 import DivinationFlow from "./DivinationFlow";
@@ -80,7 +81,10 @@ export default function AppShell() {
             );
           })}
         </ul>
-        <p className="mt-auto px-2 text-xs text-muted">{dateLabel}</p>
+        <div className="mt-auto flex items-center justify-between px-2">
+          <p className="text-xs text-muted">{dateLabel}</p>
+          <ThemeToggle />
+        </div>
       </aside>
 
       <div className="mx-auto min-h-screen w-full max-w-[520px] bg-background sm:shadow-[0_0_60px_rgba(31,29,26,0.08)] lg:max-w-none lg:bg-transparent lg:shadow-none">
@@ -89,7 +93,10 @@ export default function AppShell() {
             <Taegeuk size={26} />
             {TITLES[tab]}
           </button>
-          <span className="text-sm text-muted">{dateLabel}</span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted">{dateLabel}</span>
+            <ThemeToggle />
+          </div>
         </header>
 
         <main className="px-4 pb-28 pt-2 lg:mx-auto lg:max-w-4xl lg:px-8 lg:pb-12 lg:pt-8">

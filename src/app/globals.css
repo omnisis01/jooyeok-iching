@@ -14,6 +14,21 @@
   --border: #e8e1d6;
 }
 
+/* 어두운 테마: 처음 만들었던 먹색 바탕과 금색 포인트 */
+:root[data-theme="dark"] {
+  --background: #0b0d14;
+  --foreground: #ece4d4;
+  --paper: #ffffff;
+  --ink: #1f1d1a;
+  --gold: #c9a44a;
+  --gold-soft: #e6cf8a;
+  --vermilion: #e0553c;
+  --jade: #6fae98;
+  --muted: #9a927f;
+  --card: #141827;
+  --border: #2a3047;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -53,6 +68,16 @@ body {
 
 input[type="date"] {
   color-scheme: light;
+}
+
+:root[data-theme="dark"] input[type="date"] {
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] .app-backdrop {
+  background-image:
+    radial-gradient(ellipse 70% 50% at 20% 0%, rgba(201, 164, 74, 0.10), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 100%, rgba(79, 143, 123, 0.10), transparent 60%);
 }
 
 /* 폰을 가로로 눕힌 짧은 화면: 큰 여백을 줄인다 */
