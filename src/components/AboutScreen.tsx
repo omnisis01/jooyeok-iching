@@ -43,7 +43,11 @@ export default function AboutScreen() {
         <MethodGuide method="yukhyo" />
       </section>
 
-      <p className="px-2 pb-2 text-center text-xs leading-relaxed text-muted">이 앱의 해설은 통행본 주역을 바탕으로 쉽게 풀어 쓴 것입니다. 삶의 중요한 선택은 언제나 여러분의 몫입니다.</p>
+      <p className="px-2 pb-2 text-center text-xs leading-relaxed text-muted">
+        이 앱의 해설은 통행본 주역을 바탕으로 쉽게 풀어 쓴 것입니다. 삶의 중요한 선택은 언제나 여러분의 몫입니다.
+        <br />
+        <a href="terms/" className="underline">이용약관</a> <span className="mx-1">|</span> <a href="privacy/" className="underline">개인정보처리방침</a>
+      </p>
     </div>
   );
 }

@@ -126,3 +126,11 @@
 ## 2026-09-29 19차
 - 다크 테마는 `:root[data-theme="dark"]`에서 토큰만 바꾼다. 컴포넌트가 토큰 클래스만 쓰므로 대부분 그대로 따라온다. 캔버스 이미지 카드는 항상 밝은 색으로 그린다.
 - 사용자 언급: 예전 검정 배경도 괜찮았다. 기본은 흰색 유지, 토글 제공.
+
+## 2026-09-29 20차: 토스페이먼츠 정기결제
+- 흐름: 클라이언트 requestBillingAuth(카드 등록 창) → successUrl(?billing=success&authKey&customerKey)로 복귀 → toss-billing-confirm이 사용자 토큰을 확인하고 /v1/billing/authorizations/issue로 빌링키 발급 → 바로 /v1/billing/{billingKey}로 첫 달 결제 → profiles.premium_until +1개월, billing_status=active, payments 기록.
+- 갱신: 매일 21:00 UTC cron이 toss-billing-renew를 서비스 키로 호출, premium_until이 24시간 안이면 결제해 한 달 연장. 실패하면 billing_status=failed(카드 재등록 유도). 해지는 빌링키 삭제와 cancelled 표시, 남은 기간 유지.
+- customerKey는 사용자 uuid. 함수가 토큰의 user.id와 같은지 검사한다.
+- 토스 SDK v2는 동적 import로 결제 시작 시에만 불러온다(번들 크기).
+- 결제 코드는 실제 토스 계정이 없어 실행 검증을 못 했다. 카드 응답 필드명(card.number, issuerCode)이 다르면 카드 라벨만 비게 되고 결제는 영향 없다.
+- 약관/개인정보처리방침은 정적 페이지(/terms/, /privacy/)로 만들었고 앱 셸 밖에 있다(상대 링크 terms/ privacy/).

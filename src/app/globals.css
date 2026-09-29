@@ -108,3 +108,21 @@ input[type="date"] {
     animation: none;
   }
 }
+
+/* 약관, 개인정보처리방침 같은 긴 글 */
+.legal h2 {
+  margin-top: 1.75rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.legal p,
+.legal li {
+  margin-top: 0.6rem;
+  line-height: 1.75;
+  color: color-mix(in srgb, var(--foreground) 88%, transparent);
+}
+.legal ul {
+  margin-top: 0.4rem;
+  padding-left: 1.2rem;
+  list-style: disc;
+}

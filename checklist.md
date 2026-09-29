@@ -97,6 +97,14 @@
 - [x] 어두운 테마 토글(상단 바, 왼쪽 메뉴), localStorage 기억, 첫 그림 전 적용 스크립트. 기본은 밝은 테마
 - [x] 육효 설명 패널 맨 위에 "쉽게 말하면" 비유 설명 추가
 
+## 2026-09-29 20차: 다크 기본 + 토스페이먼츠 정기결제 준비 + 약관
+- [x] 다크 테마 기본(저장값이 light일 때만 밝게), 매니페스트와 theme-color도 어둡게
+- [x] 토스페이먼츠 빌링: Edge Function toss-billing-confirm(빌링키 발급 + 첫 결제), toss-billing-cancel, toss-billing-renew(매일 06:00 KST cron), 0003_toss.sql(payments 테이블, 빌링 컬럼), 공용 `_shared/toss.ts`
+- [x] 클라이언트: `@tosspayments/tosspayments-sdk` requestBillingAuth, 돌아온 뒤 confirm, 해지 버튼, 상태 표시. provider 플래그로 Stripe도 유지
+- [x] 자동 설정 `scripts/setup-payments-toss.mjs`, SETUP.md 4절 교체, CI 환경변수 추가
+- [x] 이용약관 `/terms/`, 개인정보처리방침 `/privacy/` 페이지와 링크(알아보기 하단, 프리미엄 카드)
+- [ ] 사용자가 토스 테스트 키로 스크립트 실행 → 카드 등록과 첫 결제, 해지, 다음날 갱신 확인
+
 ## 다음에 할 만한 것
 - [ ] 배포 채널 계획 `PLAN-distribution.md` 검토 후 순서 확정(권장: 토스페이먼츠 → 앱인토스 → 구글 플레이 → 애플)
 - [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)

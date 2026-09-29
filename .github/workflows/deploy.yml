@@ -31,6 +31,9 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}
           NEXT_PUBLIC_PAYMENTS_ENABLED: ${{ secrets.NEXT_PUBLIC_PAYMENTS_ENABLED }}
+          NEXT_PUBLIC_PAYMENT_PROVIDER: ${{ secrets.NEXT_PUBLIC_PAYMENT_PROVIDER }}
+          NEXT_PUBLIC_TOSS_CLIENT_KEY: ${{ secrets.NEXT_PUBLIC_TOSS_CLIENT_KEY }}
+          NEXT_PUBLIC_PREMIUM_PRICE_KRW: ${{ secrets.NEXT_PUBLIC_PREMIUM_PRICE_KRW }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
