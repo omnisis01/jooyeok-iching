@@ -15,7 +15,8 @@ import PremiumCard from "./PremiumCard";
 import YukhyoResult from "./YukhyoResult";
 import { FREE_HISTORY_LIMIT, fetchPremiumUntil, paymentsEnabled } from "@/lib/premium";
 import { onAuthChange } from "@/lib/cloudSync";
-import { analyzeYukhyo, type Category } from "@/lib/yukhyo";
+import { analyzeYukhyo } from "@/lib/yukhyo";
+import { categoryOf, normalizeCategory } from "@/lib/categories";
 import { QuotaBadge } from "./QuotaGate";
 import { dayInfo } from "@/lib/yukhyo";
 import { useToday } from "@/lib/useToday";
@@ -72,7 +73,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
             result={analyzeYukhyo({
               lines: viewing.lines,
               changingLines: viewing.changing,
-              category: viewing.category as Category,
+              category: normalizeCategory(viewing.category),
               gender: viewing.gender,
               date: viewing.date,
               question: viewing.question,
@@ -109,7 +110,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
             주역이란
           </button>
         </div>
-        <p className="mt-1 text-sm text-muted">천천히 도는 원 위의 괘를 눌러 보세요.</p>
+        <p className="mt-1 text-sm text-muted">원 아무 곳이나 누르면 화살표가 돌다가 괘 하나를 골라 줘요.</p>
         <div className="mt-3 flex justify-center">
           <HexagramWheel size={340} onSelect={setSelected} className="h-auto w-full max-w-[340px]" />
         </div>
@@ -195,7 +196,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
                     </p>
                     <p className="truncate text-xs text-muted">
                       {formatAt(r.at)}
-                      {r.question ? ` “${r.question}”` : r.type === "iching" ? (r.method === "coin" ? " 척전법" : r.method === "yarrow" ? " 시초점" : " 산통점") : ""}
+                      {r.type === "iching" ? ` ${categoryOf(r.category).label} ${r.method === "coin" ? "척전법" : r.method === "yarrow" ? "시초점" : "산통점"}` : r.question ? ` “${r.question}”` : ""}
                     </p>
                   </div>
                   <ChevronRight size={16} className="shrink-0 text-muted" />

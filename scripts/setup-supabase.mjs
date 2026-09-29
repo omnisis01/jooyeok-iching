@@ -88,7 +88,7 @@ function sleep(ms) {
 }
 
 async function main() {
-  console.log("주역 마스터 Supabase 자동 설정을 시작합니다.");
+  console.log("주역으로 보는 나의 운세 Supabase 자동 설정을 시작합니다.");
 
   // 0. 토큰
   let token = process.env.SUPABASE_ACCESS_TOKEN;

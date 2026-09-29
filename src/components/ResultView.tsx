@@ -13,6 +13,8 @@ import { renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
 import { adaptAdvice, adviceHeading, periodLabel } from "@/lib/period";
 import ShareForCoupon from "./ShareForCoupon";
 import SummaryCard from "./SummaryCard";
+import { LINE_STAGE_BY_CATEGORY, categoryOf } from "@/lib/categories";
+import { categoryReading } from "@/data/categoryReadings";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -25,6 +27,8 @@ type Props = {
 
 export default function ResultView({ reading, onRestart, restartLabel = "다시 점치기", saveToHistory = true }: Props) {
   const { primary, resulting, changingLines, question, method, period, periodDate } = reading;
+  const cat = categoryOf(reading.category);
+  const catText = categoryReading(primary.number, cat.key);
   const advice = adaptAdvice(primary.advice, period, periodDate);
   const { lower, upper } = trigramsOf(primary);
   const [copied, setCopied] = useState(false);
@@ -35,8 +39,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
     if (!saveToHistory) return;
     const at = new Date();
     const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join(""), question]);
-    saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, period, periodDate });
-  }, [saveToHistory, method, primary.lines, changingLines, question, period, periodDate]);
+    saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, period, periodDate, category: cat.key });
+  }, [saveToHistory, method, primary.lines, changingLines, question, period, periodDate, cat.key]);
 
   const copy = async () => {
     const text = [
@@ -44,6 +48,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       `오늘의 괘: 제${primary.number}괘 ${primary.name}(${primary.hanja}) ${hexagramSymbol(primary.number)}`,
       `키워드: ${primary.keyword}`,
       `해설: ${primary.summary}`,
+      `${cat.label}: ${catText}`,
       `${adviceHeading(period, periodDate)}: ${advice}`,
       ...changingLines.map((i) => {
         const lt = getLineText(primary.number, i);
@@ -65,8 +70,11 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
       <p className="text-center text-sm text-muted">
-        {question ? `“${question}” ` : ""}
+        {cat.label}, {question ? `“${question}” ` : ""}
         {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
+      </p>
+      <p className="rounded-2xl bg-card/60 px-4 py-3 text-center text-sm leading-relaxed text-muted">
+        주역은 두 겹으로 읽어요. <b className="text-foreground/80">괘사</b>는 지도, <b className="text-foreground/80">효사</b>는 지금 내 위치. 둘을 합쳐 한마디로 정리합니다.
       </p>
 
       {/* 본괘 */}
@@ -86,8 +94,11 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
           </h2>
           <p className="mt-2 text-lg text-gold-soft">{primary.keyword}</p>
 
-          <h3 className="mt-7 text-sm font-bold text-muted">쉬운 해설</h3>
-          <p className="mt-2 leading-relaxed text-foreground/90">{primary.summary}</p>
+          <h3 className="mt-7 text-sm font-bold text-muted">① 괘사로 보는 큰 흐름</h3>
+          <p className="mt-2 text-lg leading-relaxed text-foreground/90">{primary.summary}</p>
+
+          <h3 className="mt-6 text-sm font-bold text-vermilion">{cat.label}으로 보면</h3>
+          <p className="mt-2 text-lg font-semibold leading-relaxed">{catText}</p>
 
           <h3 className="mt-7 text-sm font-bold text-muted">{adviceHeading(period, periodDate)}</h3>
           <motion.p
@@ -101,14 +112,14 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
         </div>
       </section>
 
-      <SummaryCard number={primary.number} period={period} periodDate={periodDate} />
+      <SummaryCard number={primary.number} period={period} periodDate={periodDate} step="③" />
 
       {/* 변효 + 지괘 */}
       {changingLines.length ? (
         <section className="grid gap-6 lg:grid-cols-[1fr_auto_1fr]">
           <div className="rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-            <h3 className="text-sm font-bold text-vermilion">변효 풀이</h3>
-            <ul className="mt-3 space-y-4 text-sm leading-relaxed text-foreground/90">
+            <h3 className="text-sm font-bold text-vermilion">② 효사로 보는 지금 내 자리 (변효 풀이)</h3>
+            <ul className="mt-3 space-y-4 text-base leading-relaxed text-foreground/90">
               {[...changingLines].reverse().map((i) => {
                 const lt = getLineText(primary.number, i);
                 const isFocus = changingLines.length === 2 ? i === Math.max(...changingLines) : changingLines.length === 1;
@@ -122,6 +133,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
                       {isFocus && changingLines.length > 1 ? <span className="text-xs text-muted">중심 효</span> : null}
                     </div>
                     <p className="mt-2">{lt.text}</p>
+                    <p className="mt-1.5 font-semibold text-foreground">{cat.short}운으로 보면, {LINE_STAGE_BY_CATEGORY[cat.key][i]}</p>
                     <p className="mt-1.5 text-foreground/75"><span className="mr-1.5 rounded bg-foreground/8 px-1.5 py-0.5 text-[11px] font-semibold text-foreground/70">조언</span>{lt.advice}</p>
                   </li>
                 );

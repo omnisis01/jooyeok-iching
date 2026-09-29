@@ -13,6 +13,7 @@ import MethodGuide, { type Method } from "./MethodGuide";
 import FocusGate from "./FocusGate";
 import { PERIODS, type Period } from "@/lib/period";
 import { todayString } from "@/lib/yukhyo";
+import { CATEGORIES, categoryOf, type Category } from "@/lib/categories";
 import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
 import { consumeCast } from "@/lib/quota";
 
@@ -20,7 +21,7 @@ type Stage = "setup" | "focus" | Method | "result";
 
 export default function DivinationFlow() {
   const [stage, setStage] = useState<Stage>("setup");
-  const [question, setQuestion] = useState("");
+  const [category, setCategory] = useState<Category>("overall");
   const [reading, setReading] = useState<Reading | null>(null);
   const [castKey, setCastKey] = useState(0);
   const [pending, setPending] = useState<Method>("coin");
@@ -50,7 +51,7 @@ export default function DivinationFlow() {
 
   const complete = (r: Reading) => {
     consumeCast();
-    setReading({ ...r, period, periodDate: period === "date" ? periodDate : undefined });
+    setReading({ ...r, category, period, periodDate: period === "date" ? periodDate : undefined });
     setStage("result");
   };
 
@@ -63,16 +64,20 @@ export default function DivinationFlow() {
     <div className="relative">
         {stage === "setup" ? (
           <motion.div key="setup" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <label className="block">
-              <span className="font-bold">마음속 질문을 적어 보세요</span> <span className="text-xs text-muted">선택</span>
-              <input
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                maxLength={80}
-                placeholder="예) 오늘 새 프로젝트를 시작해도 좋을까?"
-                className="mt-2 w-full rounded-2xl bg-card px-5 py-4 text-lg shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none transition placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
-              />
-            </label>
+            <p className="font-bold">무엇이 궁금하세요?</p>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c.key}
+                  onClick={() => setCategory(c.key)}
+                  aria-pressed={category === c.key}
+                  className={`rounded-2xl px-2 py-3 text-center transition ${category === c.key ? "bg-foreground text-card" : "bg-card text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.06)] hover:bg-background"}`}
+                >
+                  <span className="block text-base font-bold">{c.label}</span>
+                  <span className={`mt-0.5 block text-[11px] ${category === c.key ? "text-card/70" : "text-muted"}`}>{c.desc}</span>
+                </button>
+              ))}
+            </div>
 
             <p className="mt-6 font-bold">언제의 일을 묻나요</p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -138,7 +143,7 @@ export default function DivinationFlow() {
             </button>
             <FocusGate
               action={pending === "coin" ? "동전을 던져" : pending === "santong" ? "산통을 흔들어" : "산가지를 나누어"}
-              question={question || undefined}
+              topic={categoryOf(category).label}
               onReady={beginCast}
             />
           </motion.div>
@@ -149,16 +154,16 @@ export default function DivinationFlow() {
             <button onClick={restart} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
               <ArrowLeft size={16} /> 방법 다시 고르기
             </button>
-            {question ? <p className="mb-4 text-center text-muted">“{question}”</p> : null}
+            <p className="mb-4 text-center text-muted">{categoryOf(category).label}을 묻습니다</p>
             <div className="mb-5">
               <MethodGuide method={stage} />
             </div>
             {stage === "coin" ? (
-              <CoinCasting question={question || undefined} onComplete={complete} />
+              <CoinCasting onComplete={complete} />
             ) : stage === "santong" ? (
-              <SantongCasting question={question || undefined} onComplete={complete} />
+              <SantongCasting onComplete={complete} />
             ) : (
-              <YarrowCasting question={question || undefined} onComplete={complete} />
+              <YarrowCasting onComplete={complete} />
             )}
           </motion.div>
         ) : null}

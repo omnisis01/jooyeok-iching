@@ -50,6 +50,14 @@
 
 html {
   scroll-behavior: smooth;
+  /* 시인성을 위해 기본 글자를 키운다 */
+  font-size: 17px;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 18px;
+  }
 }
 
 body {

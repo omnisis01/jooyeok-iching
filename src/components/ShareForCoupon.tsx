@@ -6,7 +6,7 @@ import { Check, Share2 } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
 import { grantShareCoupon, quotaState } from "@/lib/quota";
 
-const SHARE_TEXT = "주역 마스터에서 오늘 나만의 괘를 뽑아 봤어요. 세상에서 가장 정확한 점사풀이, 같이 해 봐요.";
+const SHARE_TEXT = "주역으로 보는 나의 운세에서 오늘 나만의 괘를 뽑아 봤어요. 세상에서 가장 정확한 점사풀이, 같이 해 봐요.";
 
 type Props = {
   /** 쿠폰을 받은 뒤 할 일 (예: 바로 다시 뽑기) */
@@ -27,7 +27,7 @@ export default function ShareForCoupon({ onGranted, className, label = "친구�
       let shared = false;
       if (typeof navigator.share === "function") {
         try {
-          await navigator.share({ title: "주역 마스터", text: SHARE_TEXT, url: SITE_URL });
+          await navigator.share({ title: "주역으로 보는 나의 운세", text: SHARE_TEXT, url: SITE_URL });
           shared = true;
         } catch (e) {
           if (e instanceof DOMException && e.name === "AbortError") {

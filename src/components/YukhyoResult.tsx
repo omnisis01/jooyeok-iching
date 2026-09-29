@@ -9,7 +9,6 @@ import {
   BEAST_MEANING,
   BRANCHES,
   BRANCHES_HANJA,
-  CATEGORIES,
   ELEMENT_HANJA,
   RELATION_HANJA,
   STEMS_HANJA,
@@ -18,6 +17,7 @@ import {
   type YukhyoResult as Result,
 } from "@/lib/yukhyo";
 import { LINE_NAMES } from "@/lib/iching";
+import { categoryOf } from "@/lib/categories";
 import { makeId, saveRecord } from "@/lib/history";
 import ShareCardModal from "./ShareCardModal";
 import { renderYukhyoCard, yukhyoFileName, yukhyoShareText } from "@/lib/yukhyoCard";
@@ -44,7 +44,7 @@ const JUDGE_LABEL = { 왕: "힘이 있어요", 평: "보통이에요", 쇠: "힘
 
 export default function YukhyoResult({ result, onRestart, saveToHistory = true }: Props) {
   const { hexagram, changedHexagram, palace, day, lines, useRelation, useLine, hiddenUse, useJudgement, worldJudgement, verdict, timing, input } = result;
-  const category = CATEGORIES.find((c) => c.key === input.category)!;
+  const category = categoryOf(input.category);
   const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
     if (!saveToHistory) return;

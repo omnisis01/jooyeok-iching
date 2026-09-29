@@ -7,7 +7,7 @@ export default function LegalPage({ title, updated, children }: { title: string;
       <div className="mx-auto max-w-2xl px-5 py-8 sm:px-8">
         <a href="./" className="inline-flex items-center gap-2 text-lg font-bold">
           <Taegeuk size={26} />
-          주역 마스터
+          주역으로 보는 나의 운세
         </a>
         <h1 className="mt-6 text-3xl font-extrabold">{title}</h1>
         <p className="mt-1 text-sm text-muted">최근 수정 {updated}</p>

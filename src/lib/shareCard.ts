@@ -3,6 +3,8 @@ import { getLineText, lineTitle } from "@/data/lineTexts";
 import { trigramsOf, type Reading } from "@/lib/iching";
 import { adaptAdvice, adviceHeading } from "@/lib/period";
 import { summaryOf } from "@/data/summaries";
+import { categoryOf } from "@/lib/categories";
+import { categoryReading } from "@/data/categoryReadings";
 
 export const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
 const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
@@ -127,7 +129,7 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   ctx.textAlign = "center";
   ctx.fillStyle = C.goldSoft;
   ctx.font = font(500, 26);
-  ctx.fillText("주역 마스터", W / 2, 110);
+  ctx.fillText("주역으로 보는 나의 운세", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
   const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
@@ -171,6 +173,18 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   ctx.font = font(600, 36);
   ctx.fillText(primary.keyword, W / 2, y);
   y += 44;
+
+  // 운세 분류별 괘사 풀이
+  const cat = categoryOf(reading.category);
+  ctx.fillStyle = C.vermilion;
+  ctx.font = font(700, 26);
+  ctx.fillText(`${cat.label}으로 보면`, W / 2, y);
+  y += 38;
+  ctx.fillStyle = C.paper;
+  ctx.font = font(500, 30);
+  const catLines = wrap(ctx, categoryReading(primary.number, cat.key), W - 200, 3);
+  catLines.forEach((l, i) => ctx.fillText(l, W / 2, y + i * 42));
+  y += catLines.length * 42 + 10;
 
   // 한마디 결론
   const oneLiner = adaptAdvice(summaryOf(primary.number).lines[0], period, periodDate);
@@ -241,7 +255,7 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   const H = Math.min(H_MAX, Math.max(H_MIN, y + 150));
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 22);
-  ctx.fillText("세상에서 가장 정확한 점사풀이, 주역 마스터", W / 2, H - 96);
+  ctx.fillText("세상에서 가장 정확한 점사풀이, 주역으로 보는 나의 운세", W / 2, H - 96);
   if (!opts.premium) {
     ctx.fillStyle = C.gold;
     ctx.font = font(600, 24);
@@ -274,6 +288,7 @@ export function shareText(reading: Reading): string {
   const { primary, resulting } = reading;
   return [
     `오늘의 괘: 제${primary.number}괘 ${primary.name}(${primary.hanja}), ${primary.keyword}`,
+    `${categoryOf(reading.category).label}: ${categoryReading(primary.number, categoryOf(reading.category).key)}`,
     adaptAdvice(primary.advice, reading.period, reading.periodDate),
     resulting ? `앞으로의 흐름: ${resulting.name}, ${resulting.keyword}` : null,
     SITE_URL,

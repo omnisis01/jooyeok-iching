@@ -1,0 +1,97 @@
+// 점을 볼 때 고르는 운세 분류 6가지 (주역점과 육효가 함께 쓴다)
+export type Category = "wealth" | "love" | "exam" | "contract" | "health" | "overall";
+
+export type CategoryDef = {
+  key: Category;
+  label: string;
+  short: string;
+  desc: string;
+};
+
+export const CATEGORIES: CategoryDef[] = [
+  { key: "overall", label: "총운", short: "총운", desc: "오늘 전체 흐름" },
+  { key: "wealth", label: "재물운", short: "재물", desc: "돈, 투자, 장사" },
+  { key: "love", label: "애정운", short: "애정", desc: "연애, 결혼, 관계" },
+  { key: "exam", label: "합격운", short: "합격", desc: "시험, 면접, 승진" },
+  { key: "contract", label: "계약(프로젝트)운", short: "계약", desc: "계약, 거래, 일의 성사" },
+  { key: "health", label: "건강운", short: "건강", desc: "몸과 마음" },
+];
+
+export function categoryOf(key: string | undefined): CategoryDef {
+  return CATEGORIES.find((c) => c.key === normalizeCategory(key)) ?? CATEGORIES[0];
+}
+
+/** 예전 기록의 분류 키를 새 6분류로 맞춘다 */
+export function normalizeCategory(key: string | undefined): Category {
+  switch (key) {
+    case "wealth":
+    case "love":
+    case "health":
+      return key;
+    case "career":
+    case "exam":
+      return "exam";
+    case "document":
+    case "contract":
+      return "contract";
+    case "children":
+    case "friend":
+    case "move":
+    case "self":
+    case "overall":
+    default:
+      return "overall";
+  }
+}
+
+/** 효의 자리(아래부터 시작, 위로 갈수록 마무리)와 운세를 합친 한 줄 */
+export const LINE_STAGE_BY_CATEGORY: Record<Category, [string, string, string, string, string, string]> = {
+  overall: [
+    "일이 이제 막 싹트는 자리예요. 서두르지 말고 기초부터.",
+    "안에서 힘을 모으는 자리예요. 실무를 꼼꼼히 챙기면 도움이 옵니다.",
+    "안에서 밖으로 넘어가는 문턱이에요. 흔들리기 쉬우니 위험을 먼저 살피세요.",
+    "윗사람 곁에서 일하는 자리예요. 내 뜻보다 함께하는 뜻을 먼저.",
+    "가장 중심이 되는 자리예요. 바르게 결정하면 사람들이 따릅니다.",
+    "일이 끝에 이른 자리예요. 지나침을 경계하고 마무리에 힘쓰세요.",
+  ],
+  wealth: [
+    "돈 문제는 아직 시작 단계예요. 투자보다 준비와 정보 모으기.",
+    "돈이 안에서 쌓이는 단계예요. 꾸준한 수입 관리가 먼저입니다.",
+    "돈이 밖으로 나가려는 문턱이에요. 지출과 위험을 미리 계산하세요.",
+    "큰돈이 오가는 자리 가까이에 있어요. 혼자 결정하지 말고 상의하세요.",
+    "재물의 중심 자리예요. 결단이 곧 수익으로 이어지는 때입니다.",
+    "재물 흐름이 끝에 왔어요. 더 벌기보다 지키고 정리할 때입니다.",
+  ],
+  love: [
+    "마음이 이제 막 움직이기 시작했어요. 고백은 조금 더 뒤에.",
+    "관계가 안에서 다져지는 단계예요. 작은 약속을 잘 지키세요.",
+    "관계가 다음 단계로 넘어가는 문턱이에요. 감정이 크게 출렁일 수 있어요.",
+    "상대에게 가까이 다가선 자리예요. 상대의 뜻을 먼저 헤아리세요.",
+    "관계의 중심에 선 자리예요. 분명하게 마음을 정하면 상대가 따라옵니다.",
+    "관계가 한 단락을 맺는 자리예요. 붙잡기보다 정리와 감사가 어울립니다.",
+  ],
+  exam: [
+    "준비의 첫 단계예요. 계획표부터 다시 짜세요.",
+    "실력이 안에서 쌓이는 단계예요. 기본 문제를 반복하세요.",
+    "실전으로 넘어가는 문턱이에요. 긴장을 다스리는 연습이 필요합니다.",
+    "합격선 바로 아래 자리예요. 약한 과목 하나에 집중하세요.",
+    "가장 잘 풀리는 자리예요. 자신 있게 임하면 좋은 결과가 옵니다.",
+    "결과가 나오는 자리예요. 결과가 어떻든 다음 단계를 준비하세요.",
+  ],
+  contract: [
+    "일이 이제 막 제안된 단계예요. 조건을 꼼꼼히 확인하세요.",
+    "일이 안에서 준비되는 단계예요. 문서와 실무를 챙기세요.",
+    "계약이 성사되기 직전 문턱이에요. 사소한 조항에서 어긋날 수 있어요.",
+    "결정권자 곁에 있는 자리예요. 상대의 입장을 먼저 정리해 주세요.",
+    "일이 성사되는 중심 자리예요. 지금 결정하면 잘 마무리됩니다.",
+    "일이 끝에 왔어요. 마무리 조건과 사후 관리를 챙기세요.",
+  ],
+  health: [
+    "몸의 신호가 이제 막 나타나는 단계예요. 작을 때 살피세요.",
+    "몸이 안에서 회복하는 단계예요. 규칙적인 식사와 잠이 약입니다.",
+    "몸이 무리로 넘어가는 문턱이에요. 일정을 줄이세요.",
+    "치료나 관리를 받는 자리예요. 전문가의 말을 따르세요.",
+    "몸이 가장 잘 회복되는 자리예요. 좋은 습관을 이어 가세요.",
+    "몸이 한 고비를 넘긴 자리예요. 방심하지 말고 마무리 관리를.",
+  ],
+};

@@ -24,7 +24,7 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
 ];
 
 const TITLES: Record<Tab, string> = {
-  home: "주역 마스터",
+  home: "주역으로 보는 나의 운세",
   divine: "점보기",
   yukhyo: "육효로 묻기",
   hexagrams: "64괘",
@@ -61,7 +61,7 @@ export default function AppShell() {
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-border bg-card/90 px-4 py-6 backdrop-blur lg:flex">
         <button onClick={() => go("home")} className="flex items-center gap-2 px-2 text-lg font-bold">
           <Taegeuk size={28} />
-          주역 마스터
+          주역으로 보는 나의 운세
         </button>
         <p className="mt-1 px-2 text-xs text-vermilion">세상에서 가장 정확한 점사풀이</p>
         <ul className="mt-8 space-y-1">

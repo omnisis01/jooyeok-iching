@@ -61,7 +61,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
     if (!blob || !reading) return;
     const file = new File([blob], reading.fileName, { type: "image/png" });
     try {
-      await navigator.share({ files: [file], title: "주역 마스터", text: reading.text });
+      await navigator.share({ files: [file], title: "주역으로 보는 나의 운세", text: reading.text });
       setStatus("공유했습니다");
     } catch (e) {
       // 사용자가 공유 시트를 닫은 경우는 오류가 아니다

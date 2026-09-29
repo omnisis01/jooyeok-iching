@@ -1,5 +1,8 @@
 // 육효점(납갑서법) 엔진: 납갑·팔궁·세응·육친·육수·일진·월건·공망·용신·왕쇠·응기 계산
 import { HEXAGRAMS, findHexagramByLines, type Hexagram } from "@/data/hexagrams";
+import { CATEGORIES, normalizeCategory, type Category } from "./categories";
+export { CATEGORIES };
+export type { Category };
 
 /* ---------- 기본 표 ---------- */
 
@@ -196,21 +199,15 @@ export function dayInfo(dateStr: string): DayInfo {
 
 /* ---------- 질문 분류와 용신 ---------- */
 
-export type Category = "wealth" | "career" | "love" | "health" | "document" | "children" | "friend" | "move" | "self";
-
-export type CategoryDef = { key: Category; label: string; desc: string; target: Relation | "세" | "응" | "love" };
-
-export const CATEGORIES: CategoryDef[] = [
-  { key: "wealth", label: "재물과 사업", desc: "돈, 장사, 투자, 거래", target: "처재" },
-  { key: "career", label: "직장, 시험, 명예", desc: "취업, 승진, 합격, 관운", target: "관귀" },
-  { key: "love", label: "연애와 결혼", desc: "인연, 상대의 마음", target: "love" },
-  { key: "health", label: "건강", desc: "몸 상태, 회복", target: "세" },
-  { key: "document", label: "문서, 계약, 학업", desc: "계약, 부동산, 시험공부, 윗사람", target: "부모" },
-  { key: "children", label: "자녀와 아랫사람", desc: "자식, 후배, 반려동물", target: "자손" },
-  { key: "friend", label: "친구와 경쟁", desc: "동료, 동업자, 경쟁자", target: "형제" },
-  { key: "move", label: "이사와 여행", desc: "옮김, 떠남, 방향", target: "세" },
-  { key: "self", label: "나의 운세", desc: "지금 내 상태 전반", target: "세" },
-];
+/** 운세 분류별 용신: 처재(돈), 관귀(합격), 부모(계약과 문서), 세효(나 자신). 애정은 성별에 따라 다르다 */
+const CATEGORY_TARGET: Record<Category, Relation | "세" | "love"> = {
+  overall: "세",
+  wealth: "처재",
+  love: "love",
+  exam: "관귀",
+  contract: "부모",
+  health: "세",
+};
 
 /* ---------- 분석 ---------- */
 
@@ -365,7 +362,7 @@ const VERDICTS: Record<Category, Record<"길" | "평" | "흉", string>> = {
     평: "재물이 오가되 크게 남지는 않습니다. 무리한 확장보다 현상 유지가 낫습니다.",
     흉: "재물의 기운이 약합니다. 지출을 줄이고 새 투자나 큰 거래는 미루는 것이 안전합니다.",
   },
-  career: {
+  exam: {
     길: "관운이 살아 있습니다. 시험, 승진, 취업에 좋은 소식이 기대됩니다. 준비한 만큼 인정받습니다.",
     평: "가능성은 있으나 결정적이지 않습니다. 부족한 부분을 보완하면서 때를 기다리세요.",
     흉: "관운이 약합니다. 이번에는 결과를 얻기 어렵거나 늦어질 수 있으니 다음 기회를 준비하세요.",
@@ -380,27 +377,12 @@ const VERDICTS: Record<Category, Record<"길" | "평" | "흉", string>> = {
     평: "큰 탈은 없으나 방심하면 잔병이 생깁니다. 무리하지 말고 규칙적으로 지내세요.",
     흉: "세효가 약합니다. 몸이 지쳐 있으니 휴식과 검진을 챙기고 무리한 일정을 피하세요.",
   },
-  document: {
+  contract: {
     길: "문서와 계약, 학업의 기운이 살아 있습니다. 계약 성사나 좋은 성적이 기대됩니다.",
     평: "일이 진행은 되나 더디거나 조건이 애매합니다. 서류와 조건을 꼼꼼히 확인하세요.",
     흉: "문서의 기운이 약합니다. 계약은 서두르지 말고, 공부는 방법을 바꿔야 효과가 납니다.",
   },
-  children: {
-    길: "자손효가 힘이 있어 자녀와 아랫사람에게 기쁜 일이 있고 근심이 풀립니다.",
-    평: "특별한 문제는 없지만 기대만큼의 진전도 없습니다. 지켜보며 도와주세요.",
-    흉: "자손효가 약합니다. 자녀나 아랫사람의 일에 걱정이 생길 수 있으니 살펴 주세요.",
-  },
-  friend: {
-    길: "형제효가 힘이 있어 동료와 친구의 도움을 받거나 경쟁에서 밀리지 않습니다.",
-    평: "관계가 무난합니다. 다만 형제효는 재물을 다투는 별이라 돈 문제는 분명히 하세요.",
-    흉: "형제효가 약하거나 흔들립니다. 친구나 동업자와의 다툼이나 손해를 조심하세요.",
-  },
-  move: {
-    길: "세효가 힘이 있어 이사, 여행, 출행에 무리가 없습니다. 움직이면 좋은 결과가 있습니다.",
-    평: "움직여도 무방하나 큰 이득은 없습니다. 준비를 충분히 하고 떠나세요.",
-    흉: "세효가 약하니 지금은 움직임이 불리합니다. 일정을 미루거나 조심스럽게 진행하세요.",
-  },
-  self: {
+  overall: {
     길: "세효가 왕성해 지금의 흐름이 좋습니다. 하려는 일을 적극적으로 추진하세요.",
     평: "평온한 시기입니다. 큰 변화보다 현재를 정돈하는 데 힘쓰세요.",
     흉: "세효가 약해 기운이 눌려 있습니다. 무리하지 말고 주변의 도움을 받으며 때를 기다리세요.",
@@ -443,10 +425,11 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
   });
 
   // 용신 결정
-  const def = CATEGORIES.find((c) => c.key === category)!;
+  const cat = normalizeCategory(category);
+  const target = CATEGORY_TARGET[cat];
   let useRelation: Relation | "세" | "응";
-  if (def.target === "love") useRelation = gender === "female" ? "관귀" : "처재";
-  else useRelation = def.target;
+  if (target === "love") useRelation = gender === "female" ? "관귀" : "처재";
+  else useRelation = target as Relation | "세" | "응";
 
   let useLine: LineInfo | null = null;
   let hiddenUse: YukhyoResult["hiddenUse"] = null;
@@ -517,7 +500,7 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
     hiddenUse,
     useJudgement,
     worldJudgement,
-    verdict: { level, title: titleMap[level], text: VERDICTS[category][level] },
+    verdict: { level, title: titleMap[level], text: VERDICTS[cat][level] },
     timing,
     elementNote,
   };

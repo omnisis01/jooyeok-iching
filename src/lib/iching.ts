@@ -2,6 +2,7 @@
 
 import { findHexagramByLines, type Hexagram } from "@/data/hexagrams";
 import type { Period } from "./period";
+import type { Category } from "./categories";
 
 export type Trigram = {
   /** 산통 산가지 번호(선천 팔괘 순서 1~8) */
@@ -90,6 +91,8 @@ export type Reading = {
   period?: Period;
   /** period가 date일 때의 날짜 */
   periodDate?: string;
+  /** 운세 분류 (기본 총운) */
+  category?: Category;
 };
 
 function flipLines(lines: string, changing: number[]): string {

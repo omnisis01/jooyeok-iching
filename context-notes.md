@@ -137,3 +137,10 @@
 
 ## 2026-09-29 21차: 로그인 메일
 - /auth/v1/settings(anon 키)로 external.email=true, mailer_autoconfirm=true, disable_signup=false 확인. Supabase 기본 SMTP는 조직 구성원 주소로만 발송하고 시간당 한도가 매우 낮다. 실사용자 로그인에는 커스텀 SMTP 필수. 관리 API PATCH config/auth의 smtp_* 필드로 설정한다(`setup-smtp.mjs`).
+
+## 2026-09-29 22차
+- 운세 분류는 `src/lib/categories.ts` 하나가 진실이다. 육효의 CATEGORIES는 여기서 재수출하고 용신은 CATEGORY_TARGET(총운·건강=세효, 재물=처재, 합격=관귀, 계약=부모, 애정=성별)로 정한다.
+- 괘사·효사 두 겹 읽기 설명은 "지도와 현재 위치" 비유 한 줄 + ①②③ 번호로만 한다. 길게 쓰지 않는다.
+- 원도 뽑기: CSS 회전 그룹의 현재 각도를 getComputedStyle transform 행렬로 읽어 표식 목표각에 더한다. 뽑는 동안 회전을 일시정지(animationPlayState)하고 2.5초 뒤 재개. 배경 탭에서는 rAF가 멈추므로 setTimeout 예비 완료를 둔다.
+- head 안 인라인 script(dangerouslySetInnerHTML)는 dev에서 hydration 불일치를 냈다. next/script beforeInteractive로 교체.
+- 글자 크기는 html font-size로 올렸다(17/18px). rem 기반 Tailwind 크기가 함께 커진다. px 고정 폭(max-w-[520px])은 그대로.

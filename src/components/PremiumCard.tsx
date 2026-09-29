@@ -87,7 +87,7 @@ export default function PremiumCard() {
     <section className="rounded-3xl bg-gradient-to-br from-foreground to-[#3a2f24] p-5 text-card shadow-[0_12px_40px_rgba(31,29,26,0.25)]">
       <div className="flex items-center gap-2">
         <Crown size={18} className="text-gold-soft" />
-        <p className="font-bold">{status.until ? "프리미엄 이용 중" : "주역 마스터 프리미엄"}</p>
+        <p className="font-bold">{status.until ? "프리미엄 이용 중" : "프리미엄으로 더 깊게"}</p>
       </div>
 
       {status.until ? (

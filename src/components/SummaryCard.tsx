@@ -17,9 +17,11 @@ type Props = {
   periodDate?: string;
   /** 모달 안처럼 좁은 곳에서는 compact */
   compact?: boolean;
+  /** 결과 화면에서 읽는 순서 표시 (예: ③) */
+  step?: string;
 };
 
-export default function SummaryCard({ number, period, periodDate, compact = false }: Props) {
+export default function SummaryCard({ number, period, periodDate, compact = false, step }: Props) {
   const s = summaryOf(number);
   const accent = ACCENT[s.mood];
   const [head, why, todo] = s.lines.map((l) => adaptAdvice(l, period, periodDate));
@@ -33,12 +35,12 @@ export default function SummaryCard({ number, period, periodDate, compact = fals
     >
       <div className={`absolute inset-y-0 left-0 w-1.5 ${accent.bar}`} />
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-bold text-muted">그래서, 한마디로</p>
+        <p className="text-sm font-bold text-muted">{step ? `${step} ` : ""}그래서, 한마디로</p>
         <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${accent.badge}`}>{MOOD_LABEL[s.mood]}</span>
       </div>
       <p className={`mt-3 font-extrabold leading-tight tracking-tight ${compact ? "text-xl" : "text-2xl sm:text-3xl"}`}>{head}</p>
-      <p className={`mt-4 leading-relaxed text-foreground/85 ${compact ? "text-[15px]" : "text-[17px]"}`}>{why}</p>
-      <p className={`mt-3 leading-relaxed text-foreground ${compact ? "text-[15px]" : "text-[17px]"}`}>{todo}</p>
+      <p className={`mt-4 leading-relaxed text-foreground/85 ${compact ? "text-[15px]" : "text-lg"}`}>{why}</p>
+      <p className={`mt-3 leading-relaxed text-foreground ${compact ? "text-[15px]" : "text-lg"}`}>{todo}</p>
     </motion.section>
   );
 }

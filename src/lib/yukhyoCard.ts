@@ -1,5 +1,6 @@
 // 육효 결과를 공유용 이미지 카드로 그리는 캔버스 유틸
-import { BEASTS, BRANCHES_HANJA, CATEGORIES, STEMS_HANJA, branchLabel, type YukhyoResult } from "@/lib/yukhyo";
+import { BEASTS, BRANCHES_HANJA, STEMS_HANJA, branchLabel, type YukhyoResult } from "@/lib/yukhyo";
+import { categoryOf } from "@/lib/categories";
 import { C, W, ensureFonts, font, roundRect, wrap, SITE_URL } from "@/lib/shareCard";
 
 const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
@@ -12,7 +13,7 @@ export async function renderYukhyoCard(r: YukhyoResult): Promise<Blob> {
   canvas.height = H_MAX;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("canvas not supported");
-  const category = CATEGORIES.find((c) => c.key === r.input.category)!;
+  const category = categoryOf(r.input.category);
 
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H_MAX);
@@ -25,7 +26,7 @@ export async function renderYukhyoCard(r: YukhyoResult): Promise<Blob> {
   ctx.textAlign = "center";
   ctx.fillStyle = C.goldSoft;
   ctx.font = font(500, 26);
-  ctx.fillText("주역 마스터  육효점", W / 2, 110);
+  ctx.fillText("주역으로 보는 나의 운세  육효점", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
   const [y0, m0, d0] = r.day.date.split("-").map(Number);
@@ -134,7 +135,7 @@ export async function renderYukhyoCard(r: YukhyoResult): Promise<Blob> {
   const H = Math.min(H_MAX, Math.max(1350, y + 150));
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 22);
-  ctx.fillText("세상에서 가장 정확한 점사풀이, 주역 마스터", W / 2, H - 96);
+  ctx.fillText("세상에서 가장 정확한 점사풀이, 주역으로 보는 나의 운세", W / 2, H - 96);
   ctx.fillStyle = C.gold;
   ctx.font = font(600, 24);
   ctx.fillText(SITE_LABEL, W / 2, H - 58);
@@ -156,6 +157,6 @@ export function yukhyoFileName(r: YukhyoResult): string {
 }
 
 export function yukhyoShareText(r: YukhyoResult): string {
-  const category = CATEGORIES.find((c) => c.key === r.input.category)!;
+  const category = categoryOf(r.input.category);
   return [`육효점 ${category.label}: ${r.hexagram.name}, ${r.verdict.level} ${r.verdict.title}`, r.verdict.text, SITE_URL].join("\n");
 }

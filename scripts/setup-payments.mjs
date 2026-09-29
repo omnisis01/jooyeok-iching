@@ -69,7 +69,7 @@ function runWithInput(cmd, args, input) {
 }
 
 async function main() {
-  console.log("주역 마스터 결제(프리미엄) 자동 설정을 시작합니다.");
+  console.log("주역으로 보는 나의 운세 결제(프리미엄) 자동 설정을 시작합니다.");
   let token = process.env.SUPABASE_ACCESS_TOKEN || (await askHidden("Supabase 액세스 토큰 (화면에 안 보임): "));
   if (!token) fail("토큰이 비어 있습니다.");
   console.log("Stripe 대시보드 > 개발자 > API 키 에서 '비밀 키'(sk_test_ 로 시작하는 테스트 키)를 복사해 넣으세요.");
@@ -87,7 +87,7 @@ async function main() {
   log(2, "Stripe 상품과 월 요금을 만듭니다 (이미 있으면 재사용)");
   const products = await stripe(stripeKey, "GET", "/v1/products?active=true&limit=100");
   let product = products.data.find((p) => p.metadata?.app === "jooyeok-master");
-  if (!product) product = await stripe(stripeKey, "POST", "/v1/products", { name: "주역 마스터 프리미엄", "metadata[app]": "jooyeok-master" });
+  if (!product) product = await stripe(stripeKey, "POST", "/v1/products", { name: "프리미엄", "metadata[app]": "jooyeok-master" });
   const prices = await stripe(stripeKey, "GET", `/v1/prices?product=${product.id}&active=true&limit=10`);
   let price = prices.data.find((p) => p.recurring?.interval === "month" && p.currency === "krw" && p.unit_amount === PRICE_KRW);
   if (!price) price = await stripe(stripeKey, "POST", "/v1/prices", { product: product.id, currency: "krw", unit_amount: String(PRICE_KRW), "recurring[interval]": "month" });

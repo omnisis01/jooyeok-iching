@@ -8,11 +8,13 @@ import Taegeuk from "./Taegeuk";
 type Props = {
   /** 예) "동전을 던져" */
   action: string;
+  /** 예) "재물운" */
+  topic?: string;
   question?: string;
   onReady: () => void;
 };
 
-export default function FocusGate({ action, question, onReady }: Props) {
+export default function FocusGate({ action, topic, question, onReady }: Props) {
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
@@ -42,6 +44,11 @@ export default function FocusGate({ action, question, onReady }: Props) {
           <>
             <br />
             마음속으로 “{question}” 를 또렷이 떠올리세요.
+          </>
+        ) : topic ? (
+          <>
+            <br />
+            {topic}에 대해 궁금한 것을 마음속으로 또렷이 떠올리세요.
           </>
         ) : (
           <>

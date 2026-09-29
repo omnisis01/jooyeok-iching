@@ -5,7 +5,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import type { Reading } from "@/lib/iching";
-import { CATEGORIES, analyzeYukhyo, todayString, type Category, type YukhyoResult as Result } from "@/lib/yukhyo";
+import { analyzeYukhyo, todayString, type YukhyoResult as Result } from "@/lib/yukhyo";
+import { CATEGORIES, categoryOf, type Category } from "@/lib/categories";
 import CoinCasting from "./CoinCasting";
 import YukhyoResult from "./YukhyoResult";
 import FocusGate from "./FocusGate";
@@ -16,7 +17,7 @@ type Stage = "setup" | "focus" | "cast" | "result";
 
 export default function YukhyoSection() {
   const [stage, setStage] = useState<Stage>("setup");
-  const [category, setCategory] = useState<Category>("wealth");
+  const [category, setCategory] = useState<Category>("overall");
   const [gender, setGender] = useState<"male" | "female">("male");
   const [question, setQuestion] = useState("");
   const [date, setDate] = useState(todayString());
@@ -149,7 +150,7 @@ export default function YukhyoSection() {
             <button onClick={restart} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
               <ArrowLeft size={16} /> 질문 다시 고르기
             </button>
-            <FocusGate action="동전을 던져" question={question || undefined} onReady={() => setStage("cast")} />
+            <FocusGate action="동전을 던져" topic={categoryOf(category).label} question={question || undefined} onReady={() => setStage("cast")} />
           </motion.div>
         ) : null}
 
@@ -159,7 +160,7 @@ export default function YukhyoSection() {
               <ArrowLeft size={16} /> 질문 다시 고르기
             </button>
             <p className="mb-4 text-center text-sm text-muted">
-              {CATEGORIES.find((c) => c.key === category)?.label}
+              {categoryOf(category).label}
               {question ? ` “${question}”` : ""} {date}
             </p>
             <CoinCasting question={question || undefined} onComplete={complete} />
