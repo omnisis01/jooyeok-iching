@@ -102,6 +102,19 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </h1>
       </div>
 
+      <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+        <div className="flex items-center justify-between">
+          <p className="font-bold">64괘 원도</p>
+          <button onClick={() => go("about")} className="text-sm text-muted hover:text-foreground">
+            주역이란
+          </button>
+        </div>
+        <p className="mt-1 text-sm text-muted">천천히 도는 원 위의 괘를 눌러 보세요.</p>
+        <div className="mt-3 flex justify-center">
+          <HexagramWheel size={340} onSelect={setSelected} className="h-auto w-full max-w-[340px]" />
+        </div>
+      </div>
+
       {/* 오늘의 괘 한마디 */}
       <motion.button
         onClick={() => daily && setSelected(daily)}
@@ -147,13 +160,8 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </span>
       </motion.button>
 
-      <div className="grid grid-cols-2 gap-3 lg:col-span-2">
-        <Card title="육효로 묻기" desc="돈, 직장, 연애처럼 구체적인 질문에 답합니다" onClick={() => go("yukhyo")} accent="bg-vermilion/10 text-vermilion" badge="상세 점" />
-        <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
-      </div>
 
-      <AccountCard />
-      <PremiumCard />
+      <Card title="육효로 묻기" desc="돈, 직장, 연애처럼 구체적인 질문에 답합니다" onClick={() => go("yukhyo")} accent="bg-vermilion/10 text-vermilion" badge="상세 점" />
 
       {/* 나의 점 기록 */}
       <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
@@ -216,18 +224,10 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         ) : null}
       </section>
 
-      <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-        <div className="flex items-center justify-between">
-          <p className="font-bold">64괘 원도</p>
-          <button onClick={() => go("about")} className="text-sm text-muted hover:text-foreground">
-            주역이란
-          </button>
-        </div>
-        <p className="mt-1 text-sm text-muted">천천히 도는 원 위의 괘를 눌러 보세요.</p>
-        <div className="mt-3 flex justify-center">
-          <HexagramWheel size={340} onSelect={setSelected} className="h-auto w-full max-w-[340px]" />
-        </div>
-      </div>
+
+      <AccountCard />
+      <PremiumCard />
+      <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
 
       <p className="px-2 text-center text-xs leading-relaxed text-muted lg:col-span-2">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
       <HexagramDetail hex={selected} onClose={() => setSelected(null)} />
@@ -240,7 +240,7 @@ function Card({ title, desc, onClick, accent, badge }: { title: string; desc: st
     <motion.button
       onClick={onClick}
       whileTap={{ scale: 0.98 }}
-      className="flex flex-col items-start rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)]"
+      className="flex w-full flex-col items-start rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)]"
     >
       <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${accent}`}>{badge}</span>
       <span className="mt-3 text-lg font-bold">{title}</span>
