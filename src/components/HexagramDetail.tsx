@@ -8,6 +8,7 @@ import { hexagramSymbol, type Hexagram } from "@/data/hexagrams";
 import { LINE_NAMES, trigramsOf } from "@/lib/iching";
 import { getAllLineTexts, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
+import SummaryCard from "./SummaryCard";
 
 type Props = {
   hex: Hexagram | null;
@@ -93,6 +94,10 @@ export function DetailBody({ hex }: { hex: Hexagram }) {
 
         <h4 className="mt-6 text-sm font-bold text-muted">오늘의 조언</h4>
         <p className="mt-2 rounded-2xl bg-vermilion/8 p-4 leading-relaxed">{hex.advice}</p>
+
+        <div className="mt-6">
+          <SummaryCard number={hex.number} compact />
+        </div>
 
         <button
           onClick={() => setShowLines((v) => !v)}

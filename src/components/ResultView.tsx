@@ -12,6 +12,7 @@ import ShareCardModal from "./ShareCardModal";
 import { renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
 import { adaptAdvice, adviceHeading, periodLabel } from "@/lib/period";
 import ShareForCoupon from "./ShareForCoupon";
+import SummaryCard from "./SummaryCard";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -99,6 +100,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
           </motion.p>
         </div>
       </section>
+
+      <SummaryCard number={primary.number} period={period} periodDate={periodDate} />
 
       {/* 변효 + 지괘 */}
       {changingLines.length ? (

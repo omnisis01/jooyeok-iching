@@ -2,6 +2,7 @@
 import { getLineText, lineTitle } from "@/data/lineTexts";
 import { trigramsOf, type Reading } from "@/lib/iching";
 import { adaptAdvice, adviceHeading } from "@/lib/period";
+import { summaryOf } from "@/data/summaries";
 
 export const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
 const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
@@ -170,6 +171,14 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   ctx.font = font(600, 36);
   ctx.fillText(primary.keyword, W / 2, y);
   y += 44;
+
+  // 한마디 결론
+  const oneLiner = adaptAdvice(summaryOf(primary.number).lines[0], period, periodDate);
+  ctx.fillStyle = C.paper;
+  ctx.font = font(800, 40);
+  const olLines = wrap(ctx, oneLiner, W - 200, 2);
+  olLines.forEach((l, i) => ctx.fillText(l, W / 2, y + i * 50));
+  y += olLines.length * 50 + 18;
 
   // 오늘의 조언 박스
   ctx.font = font(500, 32);
