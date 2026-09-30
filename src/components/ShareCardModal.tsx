@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Check, Download, Link2, Share2, X } from "lucide-react";
+import { Check, Download, ImageDown, Link2, X } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
 
 type Props = {
@@ -19,6 +19,8 @@ export default function ShareCardModal({ job, onClose }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [canShareFiles, setCanShareFiles] = useState(false);
+  // 손가락으로 쓰는 기기(휴대폰, 태블릿)인지: 길게 눌러 저장 안내를 보여 준다
+  const [touch, setTouch] = useState(false);
 
   useEffect(() => {
     if (!reading) return;
@@ -33,6 +35,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
         setUrl(objectUrl);
         const file = new File([b], reading.fileName, { type: "image/png" });
         setCanShareFiles(typeof navigator.canShare === "function" && navigator.canShare({ files: [file] }));
+        setTouch(window.matchMedia("(pointer: coarse)").matches);
       })
       .catch((e: unknown) => {
         if (!cancelled) setError(e instanceof Error ? e.message : "이미지를 만들지 못했습니다");
@@ -54,7 +57,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
     a.href = url;
     a.download = reading.fileName;
     a.click();
-    setStatus("이미지를 저장했습니다");
+    setStatus(touch ? "다운로드 폴더에 파일로 저장했어요. 사진첩에 넣으려면 이미지를 길게 누르세요" : "이미지를 저장했어요");
   };
 
   const share = async () => {
@@ -62,7 +65,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
     const file = new File([blob], reading.fileName, { type: "image/png" });
     try {
       await navigator.share({ files: [file], title: "주역으로 보는 나의 운세", text: reading.text });
-      setStatus("공유했습니다");
+      setStatus("보냈어요. 사진첩에 넣었다면 앨범에서 확인해 보세요");
     } catch (e) {
       // 사용자가 공유 시트를 닫은 경우는 오류가 아니다
       if (!(e instanceof DOMException && e.name === "AbortError")) setStatus("공유에 실패했습니다. 이미지를 저장해서 올려 주세요");
@@ -119,26 +122,38 @@ export default function ShareCardModal({ job, onClose }: Props) {
               )}
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              <button
-                onClick={download}
-                disabled={!url}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-card transition hover:opacity-90 disabled:opacity-50"
-              >
-                <Download size={16} /> 저장
-              </button>
+            {touch && url ? <p className="mt-2 text-center text-xs text-muted">이미지를 길게 누르면 사진첩에 바로 저장할 수 있어요</p> : null}
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
               {canShareFiles ? (
+                <>
+                  <button
+                    onClick={share}
+                    disabled={!blob}
+                    className="col-span-2 inline-flex items-center justify-center gap-2 rounded-full bg-vermilion px-4 py-3.5 text-base font-bold text-card transition hover:brightness-105 disabled:opacity-50"
+                  >
+                    <ImageDown size={18} /> 사진에 저장하거나 보내기
+                  </button>
+                  <button
+                    onClick={download}
+                    disabled={!url}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60 disabled:opacity-50"
+                  >
+                    <Download size={16} /> 파일로 내려받기
+                  </button>
+                </>
+              ) : (
                 <button
-                  onClick={share}
-                  disabled={!blob}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-vermilion px-4 py-3 text-sm font-semibold text-card transition hover:brightness-105 disabled:opacity-50"
+                  onClick={download}
+                  disabled={!url}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-card transition hover:opacity-90 disabled:opacity-50"
                 >
-                  <Share2 size={16} /> 공유
+                  <Download size={16} /> 이미지 저장
                 </button>
-              ) : null}
+              )}
               <button
                 onClick={copyLink}
-                className={`inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60 ${canShareFiles ? "col-span-2 sm:col-span-1" : ""}`}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60"
               >
                 <Link2 size={16} /> 글로 복사
               </button>
@@ -149,9 +164,9 @@ export default function ShareCardModal({ job, onClose }: Props) {
                   <Check size={12} /> {status}
                 </span>
               ) : canShareFiles ? (
-                "공유를 누르면 카카오톡, 인스타그램 등 기기의 공유 목록이 열립니다."
+                "위 버튼을 누르면 사진 앱에 저장하거나 카카오톡, 인스타그램으로 보낼 수 있어요."
               ) : (
-                "이 브라우저는 이미지 직접 공유를 지원하지 않아 저장 후 올려 주세요."
+                "이 브라우저는 사진 앱 저장을 지원하지 않아 파일로 내려받습니다."
               )}
             </p>
           </motion.div>
