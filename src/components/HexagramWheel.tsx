@@ -1,7 +1,7 @@
-// 선천 64괘 방원도. 아무 곳이나 누르면 화살표가 원을 돌다 한 괘에 멈추고 그 괘를 보여준다
+// 선천 64괘 방원도. 괘를 직접 누르면 그 괘가, 빈 곳을 누르면 무작위 괘가 바로 열린다
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { HEXAGRAMS, type Hexagram } from "@/data/hexagrams";
 import { TRIGRAMS } from "@/lib/iching";
@@ -38,61 +38,33 @@ const FIG_LINE = 3.2;
 const FIG_GAP = 2.6;
 const FIG_H = 6 * FIG_LINE + 5 * FIG_GAP;
 
-/** CSS 애니메이션으로 돌고 있는 그룹의 현재 회전각(도) */
-function currentRotation(el: Element | null): number {
-  if (!el) return 0;
-  try {
-    const m = new DOMMatrix(getComputedStyle(el).transform);
-    return (Math.atan2(m.b, m.a) * 180) / Math.PI;
-  } catch {
-    return 0;
-  }
-}
-
 export default function HexagramWheel({ size = 560, onSelect, className, resetKey = 0 }: Props) {
   const outerRef = useRef<SVGGElement>(null);
   const innerRef = useRef<SVGGElement>(null);
-  const [markerAngle, setMarkerAngle] = useState(-90);
-  const [picking, setPicking] = useState(false);
   const [picked, setPicked] = useState<number | null>(null);
   const [pickedAtKey, setPickedAtKey] = useState(resetKey);
   // 팝업이 닫혀 resetKey가 바뀌면 표시를 감춘다
   const showPick = picked !== null && pickedAtKey === resetKey;
-  const pendingRef = useRef<Hexagram | null>(null);
-  const pickingRef = useRef(false);
-  const fallbackRef = useRef<number | undefined>(undefined);
+  const busyRef = useRef(false);
 
-  const pick = () => {
-    if (!onSelect || pickingRef.current) return;
-    pickingRef.current = true;
-    const index = randomIndex();
-    pendingRef.current = FUXI_ORDER[index];
-    // 원을 멈추고, 지금 회전각을 더해 화살표가 정확히 그 괘를 가리키게 한다
+  /** 고른 괘를 잠깐 빛내고 바로 연다. 회전은 팝업이 떠 있는 동안 멈춘다 */
+  const open = (index: number) => {
+    if (!onSelect || busyRef.current) return;
+    busyRef.current = true;
     for (const el of [outerRef.current, innerRef.current]) if (el) el.style.animationPlayState = "paused";
-    const rot = currentRotation(outerRef.current);
-    const target = (index / FUXI_ORDER.length) * 360 - 90 + rot;
-    const delta = (((target - markerAngle) % 360) + 360) % 360;
     setPicked(index);
     setPickedAtKey(resetKey);
-    setPicking(true);
-    setMarkerAngle(markerAngle + 720 + delta);
-    // 탭이 가려져 애니메이션이 멈춘 경우에도 결과는 나오게 한다
-    window.clearTimeout(fallbackRef.current);
-    fallbackRef.current = window.setTimeout(landed, 2300);
+    window.setTimeout(() => {
+      onSelect(FUXI_ORDER[index]);
+      busyRef.current = false;
+    }, 260);
   };
+  const pickRandom = () => open(randomIndex());
 
-  const landed = () => {
-    if (!pickingRef.current) return;
-    pickingRef.current = false;
-    window.clearTimeout(fallbackRef.current);
-    setPicking(false);
-    window.setTimeout(() => {
-      if (pendingRef.current) onSelect?.(pendingRef.current);
-    }, 450);
-    window.setTimeout(() => {
-      for (const el of [outerRef.current, innerRef.current]) if (el) el.style.animationPlayState = "running";
-    }, 2500);
-  };
+  // 팝업이 닫히면 다시 돈다
+  useEffect(() => {
+    for (const el of [outerRef.current, innerRef.current]) if (el) el.style.animationPlayState = "running";
+  }, [resetKey]);
 
   return (
     <svg
@@ -101,8 +73,8 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
       height={size}
       className={`${className ?? ""} ${onSelect ? "cursor-pointer select-none" : ""}`}
       role={onSelect ? "button" : "img"}
-      aria-label={onSelect ? "64괘 원도, 누르면 괘 하나를 뽑습니다" : "선천 64괘 방원도"}
-      onClick={pick}
+      aria-label={onSelect ? "64괘 원도, 괘를 누르면 그 괘가 열리고 빈 곳을 누르면 무작위로 하나가 열립니다" : "선천 64괘 방원도"}
+      onClick={pickRandom}
     >
       <defs>
         <radialGradient id="wheel-glow" cx="50%" cy="50%" r="50%">
@@ -123,8 +95,22 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
           const y = round2(CENTER + OUTER * Math.sin(rad));
           const isPicked = showPick && picked === i;
           return (
-            <g key={hex.number} transform={`translate(${x} ${y}) rotate(${angle + 90}) translate(${-FIG_W / 2} ${-FIG_H / 2})`} opacity={isPicked ? 1 : 0.85}>
+            <g
+              key={hex.number}
+              transform={`translate(${x} ${y}) rotate(${angle + 90}) translate(${-FIG_W / 2} ${-FIG_H / 2})`}
+              opacity={isPicked ? 1 : 0.85}
+              onClick={
+                onSelect
+                  ? (e) => {
+                      e.stopPropagation();
+                      open(i);
+                    }
+                  : undefined
+              }
+            >
               <title>{`${hex.number}. ${hex.name} ${hex.hanja}`}</title>
+              {/* 손가락으로 누르기 쉽게 보이지 않는 넓은 영역 */}
+              <rect x={-14} y={-14} width={FIG_W + 28} height={FIG_H + 28} fill="transparent" />
               {isPicked ? (
                 <motion.circle
                   cx={FIG_W / 2}
@@ -134,8 +120,8 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
                   stroke="var(--vermilion)"
                   strokeWidth={2}
                   initial={{ scale: 0.6, opacity: 0 }}
-                  animate={picking ? { scale: 0.6, opacity: 0 } : { scale: [1, 1.25, 1], opacity: [1, 0.7, 1] }}
-                  transition={picking ? { duration: 0.1 } : { duration: 1.2, repeat: 2 }}
+                  animate={{ scale: [1, 1.3, 1], opacity: [1, 0.75, 1] }}
+                  transition={{ duration: 0.9, repeat: Infinity }}
                   style={{ transformOrigin: `${FIG_W / 2}px ${FIG_H / 2}px` }}
                 />
               ) : null}
@@ -176,23 +162,9 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
         <circle cx="50" cy="50" r="49" fill="none" stroke="var(--gold)" strokeWidth="1.5" />
       </g>
 
-      {/* 화살표 표식: 원 바깥을 돌다가 뽑힌 괘 앞에 멈춘다 */}
-      {onSelect ? (
-        <motion.g
-          initial={false}
-          animate={{ rotate: markerAngle }}
-          transition={{ duration: picking ? 1.7 : 0, ease: [0.15, 0.85, 0.25, 1] }}
-          onAnimationComplete={landed}
-          style={{ transformOrigin: `${CENTER}px ${CENTER}px` }}
-        >
-          <polygon points={`${CENTER + OUTER + 44},${CENTER - 11} ${CENTER + OUTER + 44},${CENTER + 11} ${CENTER + OUTER + 24},${CENTER}`} fill="var(--vermilion)" />
-          <circle cx={CENTER + OUTER + 50} cy={CENTER} r={5} fill="var(--vermilion)" opacity={0.5} />
-        </motion.g>
-      ) : null}
-
-      {onSelect && !picking && !showPick ? (
+      {onSelect && !showPick ? (
         <text x={CENTER} y={R * 2 - 8} textAnchor="middle" fontSize="15" fill="var(--muted)">
-          원 아무 곳이나 누르면 괘 하나가 뽑혀요
+          괘를 누르면 그 괘, 빈 곳을 누르면 무작위 괘
         </text>
       ) : null}
     </svg>

@@ -143,7 +143,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
             주역이란
           </button>
         </div>
-        <p className="mt-1 text-sm text-muted">원 아무 곳이나 누르면 화살표가 돌다가 괘 하나를 골라 줘요.</p>
+        <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘가, 빈 곳을 누르면 무작위 괘 하나가 바로 열려요.</p>
         <div className="mt-3 flex justify-center">
           <HexagramWheel size={340} onSelect={setSelected} resetKey={wheelReset} className="h-auto w-full max-w-[340px]" />
         </div>
