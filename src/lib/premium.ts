@@ -1,4 +1,4 @@
-// 프리미엄 상태 조회와 결제 시작 (토스페이먼츠 정기결제 기본, Stripe는 대안)
+// Pro 상태 조회와 결제 시작 (토스페이먼츠 정기결제 기본, Stripe는 대안)
 import { cloudEnabled, supabase } from "./supabase";
 import { cachePremiumUntil } from "./quota";
 import { SITE_URL } from "./shareCard";

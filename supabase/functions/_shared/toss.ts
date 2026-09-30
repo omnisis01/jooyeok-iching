@@ -44,7 +44,7 @@ export async function chargeMonth(admin: SupabaseClient, userId: string, billing
   const res = await fetch(`${API}/billing/${billingKey}`, {
     method: "POST",
     headers: tossHeaders(),
-    body: JSON.stringify({ customerKey, amount, orderId, orderName: "프리미엄 1개월", customerEmail: email ?? undefined }),
+    body: JSON.stringify({ customerKey, amount, orderId, orderName: "Pro 1개월", customerEmail: email ?? undefined }),
   });
   const payment = await res.json();
   const ok = res.ok && payment.status === "DONE";

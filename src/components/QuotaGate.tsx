@@ -1,4 +1,4 @@
-// 오늘 남은 무료 횟수를 보여주고, 다 쓰면 공유 쿠폰이나 프리미엄으로 안내하는 카드
+// 오늘 남은 무료 횟수를 보여주고, 다 쓰면 공유 쿠폰이나 Pro로 안내하는 카드
 "use client";
 
 import { useEffect, useState } from "react";
@@ -24,7 +24,7 @@ export function useQuota(): QuotaState {
 /** 남은 횟수 한 줄 표시 */
 export function QuotaBadge() {
   const q = useQuota();
-  if (q.premium) return <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold">프리미엄, 횟수 제한 없음</span>;
+  if (q.premium) return <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold">Pro, 횟수 제한 없음</span>;
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-background px-3 py-1 text-xs font-bold text-foreground">
       <Ticket size={12} /> 오늘 남은 무료 점 {q.remaining}회
@@ -44,7 +44,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
       <ShareForCoupon className="mt-5" label="친구에게 공유하고 한 번 더 뽑기" />
       {paymentsEnabled ? (
         <button onClick={onGoPremium} className="mt-3 w-full rounded-full bg-vermilion px-5 py-3 text-sm font-bold text-card transition hover:brightness-105">
-          프리미엄으로 횟수 제한 없이 보기
+          Pro로 횟수 제한 없이 보기
         </button>
       ) : null}
       <p className="mt-4 text-xs text-muted">무료 횟수는 매일 자정에 다시 채워져요.</p>

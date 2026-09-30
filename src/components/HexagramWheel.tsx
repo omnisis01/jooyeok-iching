@@ -1,4 +1,4 @@
-// 선천 64괘 방원도. 괘를 직접 누르면 그 괘가, 빈 곳을 누르면 무작위 괘가 바로 열린다
+// 선천 64괘 방원도. 괘를 누르면 그 괘가 바로 열린다. 무작위 뽑기는 바깥 버튼이 pickRandomRef로 부른다
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -9,8 +9,10 @@ import { HexagramLines } from "./HexagramFigure";
 
 type Props = {
   size?: number;
-  /** 있으면 누를 때마다 무작위로 한 괘를 골라 알려 준다 */
+  /** 있으면 괘를 누를 때 그 괘를 알려 준다 */
   onSelect?: (hex: Hexagram) => void;
+  /** 바깥의 "무작위로 하나 뽑기" 버튼이 부를 함수를 받아 간다 */
+  randomRef?: React.MutableRefObject<(() => void) | null>;
   className?: string;
   /** 값이 바뀌면 뽑힌 괘 표시를 지운다 (팝업을 닫을 때 올려 준다) */
   resetKey?: number;
@@ -38,7 +40,7 @@ const FIG_LINE = 3.2;
 const FIG_GAP = 2.6;
 const FIG_H = 6 * FIG_LINE + 5 * FIG_GAP;
 
-export default function HexagramWheel({ size = 560, onSelect, className, resetKey = 0 }: Props) {
+export default function HexagramWheel({ size = 560, onSelect, className, resetKey = 0, randomRef }: Props) {
   const outerRef = useRef<SVGGElement>(null);
   const innerRef = useRef<SVGGElement>(null);
   const [picked, setPicked] = useState<number | null>(null);
@@ -59,7 +61,13 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
       busyRef.current = false;
     }, 260);
   };
-  const pickRandom = () => open(randomIndex());
+  useEffect(() => {
+    if (!randomRef) return;
+    randomRef.current = () => open(randomIndex());
+    return () => {
+      randomRef.current = null;
+    };
+  });
 
   // 팝업이 닫히면 다시 돈다
   useEffect(() => {
@@ -71,10 +79,9 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
       viewBox={`0 0 ${R * 2} ${R * 2}`}
       width={size}
       height={size}
-      className={`${className ?? ""} ${onSelect ? "cursor-pointer select-none" : ""}`}
+      className={`${className ?? ""} ${onSelect ? "select-none" : ""}`}
       role={onSelect ? "button" : "img"}
-      aria-label={onSelect ? "64괘 원도, 괘를 누르면 그 괘가 열리고 빈 곳을 누르면 무작위로 하나가 열립니다" : "선천 64괘 방원도"}
-      onClick={pickRandom}
+      aria-label={onSelect ? "64괘 원도, 괘를 누르면 그 괘가 열립니다" : "선천 64괘 방원도"}
     >
       <defs>
         <radialGradient id="wheel-glow" cx="50%" cy="50%" r="50%">
@@ -99,6 +106,7 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
               key={hex.number}
               transform={`translate(${x} ${y}) rotate(${angle + 90}) translate(${-FIG_W / 2} ${-FIG_H / 2})`}
               opacity={isPicked ? 1 : 0.85}
+              className={onSelect ? "cursor-pointer" : undefined}
               onClick={
                 onSelect
                   ? (e) => {
@@ -162,11 +170,6 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
         <circle cx="50" cy="50" r="49" fill="none" stroke="var(--gold)" strokeWidth="1.5" />
       </g>
 
-      {onSelect && !showPick ? (
-        <text x={CENTER} y={R * 2 - 8} textAnchor="middle" fontSize="15" fill="var(--muted)">
-          괘를 누르면 그 괘, 빈 곳을 누르면 무작위 괘
-        </text>
-      ) : null}
     </svg>
   );
 }

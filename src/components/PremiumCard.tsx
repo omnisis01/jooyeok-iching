@@ -1,4 +1,4 @@
-// 홈의 프리미엄 카드: 혜택 안내, 카드 등록과 첫 결제, 이용 중 상태와 해지
+// 홈의 Pro 카드: 혜택 안내, 카드 등록과 첫 결제, 이용 중 상태와 해지
 "use client";
 
 import { useEffect, useState } from "react";
@@ -52,7 +52,7 @@ export default function PremiumCard() {
           } else if (back.kind === "toss") {
             setMessage(back.message);
           } else {
-            setMessage(back.result === "success" ? "결제가 접수되었어요. 잠시 뒤 프리미엄이 켜집니다" : "결제를 취소했어요");
+            setMessage(back.result === "success" ? "결제가 접수되었어요. 잠시 뒤 Pro가 켜집니다" : "결제를 취소했어요");
             if (back.result === "success") timers.push(window.setTimeout(refresh, 4000));
           }
         }, 0),
@@ -87,7 +87,7 @@ export default function PremiumCard() {
     <section className="rounded-3xl bg-gradient-to-br from-foreground to-[#3a2f24] p-5 text-card shadow-[0_12px_40px_rgba(31,29,26,0.25)]">
       <div className="flex items-center gap-2">
         <Crown size={18} className="text-gold-soft" />
-        <p className="font-bold">{status.until ? "프리미엄 이용 중" : "프리미엄으로 더 깊게"}</p>
+        <p className="font-bold">{status.until ? "Pro 이용 중" : "Pro로 더 깊게"}</p>
       </div>
 
       {status.until ? (

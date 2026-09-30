@@ -1,9 +1,9 @@
 // 홈 화면: 오늘의 괘 한마디, 점치기 입구, 나의 점 기록
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ChevronRight, ImageDown, Trash2 } from "lucide-react";
+import { ArrowLeft, ChevronRight, ImageDown, Shuffle, Trash2 } from "lucide-react";
 import ShareCardModal from "./ShareCardModal";
 import { renderDailyStoryCard, storyFileName } from "@/lib/storyCard";
 import { SITE_URL } from "@/lib/shareCard";
@@ -34,6 +34,7 @@ import { deleteRemote } from "@/lib/cloudSync";
 export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [selected, setSelected] = useState<Hexagram | null>(null);
   const [wheelReset, setWheelReset] = useState(0);
+  const wheelRandom = useRef<(() => void) | null>(null);
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -79,7 +80,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
     };
   }, []);
 
-  // 프리미엄 여부 (결제 기능이 켜져 있을 때만 조회)
+  // Pro 여부 (결제 기능이 켜져 있을 때만 조회)
   useEffect(() => {
     if (!paymentsEnabled) return;
     let cancelled = false;
@@ -143,9 +144,14 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
             주역이란
           </button>
         </div>
-        <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘가, 빈 곳을 누르면 무작위 괘 하나가 바로 열려요.</p>
+        <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘의 뜻과 효사가 바로 열려요.</p>
         <div className="mt-3 flex justify-center">
-          <HexagramWheel size={340} onSelect={setSelected} resetKey={wheelReset} className="h-auto w-full max-w-[340px]" />
+          <HexagramWheel size={340} onSelect={setSelected} resetKey={wheelReset} randomRef={wheelRandom} className="h-auto w-full max-w-[340px]" />
+        </div>
+        <div className="mt-2 flex justify-center">
+          <button onClick={() => wheelRandom.current?.()} className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
+            <Shuffle size={15} /> 무작위로 하나 뽑기
+          </button>
         </div>
       </div>
 
@@ -275,7 +281,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           </button>
         ) : null}
         {paymentsEnabled && !premium && history.length > FREE_HISTORY_LIMIT ? (
-          <p className="mt-2 text-xs text-muted">무료 회원은 최근 {FREE_HISTORY_LIMIT}개까지 볼 수 있어요. 프리미엄에서는 전부 보관됩니다.</p>
+          <p className="mt-2 text-xs text-muted">무료 회원은 최근 {FREE_HISTORY_LIMIT}개까지 볼 수 있어요. Pro에서는 전부 보관됩니다.</p>
         ) : null}
       </section>
 
@@ -329,7 +335,7 @@ function YukhyoSummary({ record }: { record: Extract<HistoryRecord, { type: "yuk
         </div>
       </div>
       <p className="mt-4 leading-relaxed">{record.text}</p>
-      <p className="mt-3 text-xs text-muted">무료 회원은 종합 풀이만 다시 볼 수 있어요. 프리미엄에서는 도표와 용신 풀이까지 그대로 다시 열립니다.</p>
+      <p className="mt-3 text-xs text-muted">무료 회원은 종합 풀이만 다시 볼 수 있어요. Pro에서는 도표와 용신 풀이까지 그대로 다시 열립니다.</p>
     </section>
   );
 }

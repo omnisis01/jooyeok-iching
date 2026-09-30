@@ -1,5 +1,5 @@
 // 결과 하나의 "깊이 읽기"를 건별로 여는 결제 (토스페이먼츠 일반 결제, 카드 한 번 결제)
-// 프리미엄이면 모두 열려 있고, 아니면 결과마다 한 번 산다. 산 결과의 열쇠는 서버(unlocks)와 이 기기(localStorage) 양쪽에 둔다
+// Pro이면 모두 열려 있고, 아니면 결과마다 한 번 산다. 산 결과의 열쇠는 서버(unlocks)와 이 기기(localStorage) 양쪽에 둔다
 import type { Reading } from "./iching";
 import { cloudEnabled, supabase } from "./supabase";
 import { isPremiumNow } from "./quota";

@@ -1,5 +1,5 @@
 // 결과 하나의 "깊이 읽기": 운세 6분류 전부, 지괘의 분류별 풀이, 같은 괘를 육효로 다시 읽기
-// 프리미엄이거나 건별 결제로 열었을 때만 펼쳐진다. 결제가 꺼져 있으면 카드 자체를 보이지 않는다
+// Pro이거나 건별 결제로 열었을 때만 펼쳐진다. 결제가 꺼져 있으면 카드 자체를 보이지 않는다
 "use client";
 
 import { useEffect, useState } from "react";
@@ -67,7 +67,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
           <button disabled={busy} onClick={buy} className="mt-4 w-full rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] disabled:opacity-50">
             {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기
           </button>
-          <p className="mt-2 text-center text-[11px] text-muted">한 번 결제한 결과는 기록에서 언제든 다시 볼 수 있어요. 프리미엄은 모든 결과가 열려 있어요.</p>
+          <p className="mt-2 text-center text-[11px] text-muted">한 번 결제한 결과는 기록에서 언제든 다시 볼 수 있어요. Pro는 모든 결과가 열려 있어요.</p>
           {message ? <p className="mt-2 text-center text-xs text-vermilion">{message}</p> : null}
         </div>
       ) : open ? (

@@ -32,7 +32,7 @@ function write(q: Quota) {
   window.dispatchEvent(new Event("quota-changed"));
 }
 
-/** 프리미엄 만료일을 기기에 기억해 두어 점치기 흐름에서 바로 쓴다 */
+/** Pro 만료일을 기기에 기억해 두어 점치기 흐름에서 바로 쓴다 */
 export function cachePremiumUntil(until: Date | null) {
   try {
     if (until) localStorage.setItem(PREMIUM_KEY, until.toISOString());
@@ -57,7 +57,7 @@ export type QuotaState = {
   used: number;
   coupons: number;
   shares: number;
-  /** 남은 횟수 (프리미엄이면 Infinity) */
+  /** 남은 횟수 (Pro이면 Infinity) */
   remaining: number;
   canShareForCoupon: boolean;
 };
