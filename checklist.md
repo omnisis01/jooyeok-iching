@@ -148,6 +148,7 @@
 - [x] 예약 두 개: `push-morning` 매일 07:30 KST, `push-sunday-night` 일요일 21:30 KST (`pushCronSql`, 초기 설정 스크립트와 `scripts/setup-push-schedule.mjs` 공용)
 - [x] "한 번만 뽑기" 문구를 효용 중심으로("처음 뽑은 답이 가장 정확하고, 다시 뽑으면 효과가 없어요")
 - [ ] 사용자: `node scripts/setup-push-schedule.mjs` 실행(함수 재배포 + 예약 등록 + 시험 발송)
+- [x] `PLAN-growth.md` 작성(수익 모델 순서, 채널 순서, 홍보 순서, 측정 항목, 바로 할 개발). 설정 스크립트가 macOS 키체인에서 토큰을 읽도록(`scripts/token.mjs`)
 - [ ] 설날·추석 표는 2028년까지. 이후 해마다 messages.ts HOLIDAYS에 추가
 
 ## 다음에 할 만한 것
