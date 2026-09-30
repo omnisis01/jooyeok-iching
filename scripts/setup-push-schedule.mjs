@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createInterface } from "node:readline";
+import { getSupabaseToken } from "./token.mjs";
 import { pushCronSql } from "./setup-supabase.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
