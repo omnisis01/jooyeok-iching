@@ -98,6 +98,9 @@ export function DetailBody({ hex }: { hex: Hexagram }) {
         <div className="mt-6">
           <SummaryCard number={hex.number} compact />
         </div>
+        <a href={`hexagram/${hex.number}/`} className="mt-4 inline-block text-sm font-semibold text-vermilion underline">
+          이 괘의 전체 풀이 페이지 열기
+        </a>
 
         <button
           onClick={() => setShowLines((v) => !v)}

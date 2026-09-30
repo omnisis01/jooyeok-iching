@@ -3,13 +3,16 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 
+// 하위 경로 페이지(64괘 페이지 등)에서도 아이콘과 매니페스트를 찾도록 절대 경로로 둔다
+const BASE = process.env.GITHUB_PAGES === "true" ? "/jooyeok-iching" : "";
+
 export const metadata: Metadata = {
   title: "주역으로 보는 나의 운세, 세상에서 가장 정확한 점사풀이",
   description: "주역 64괘와 육효로 오늘의 운을 묻습니다. 동전, 산통, 산가지로 괘를 뽑고 쉬운 말로 풀어낸 조언을 받아 보세요.",
   applicationName: "주역으로 보는 나의 운세",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "주역으로 보는 나의 운세" },
-  manifest: "manifest.webmanifest",
-  icons: { icon: "icon.svg", apple: "apple-touch-icon.png" },
+  manifest: `${BASE}/manifest.webmanifest`,
+  icons: { icon: `${BASE}/icon.svg`, apple: `${BASE}/apple-touch-icon.png` },
 };
 
 export const viewport: Viewport = {

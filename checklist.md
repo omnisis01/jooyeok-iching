@@ -151,6 +151,14 @@
 - [x] `PLAN-growth.md` 작성(수익 모델 순서, 채널 순서, 홍보 순서, 측정 항목, 바로 할 개발). 설정 스크립트가 macOS 키체인에서 토큰을 읽도록(`scripts/token.mjs`)
 - [ ] 설날·추석 표는 2028년까지. 이후 해마다 messages.ts HOLIDAYS에 추가
 
+## 2026-09-30 28차: 64괘 개별 페이지(검색 유입), 아이폰 알림 안내
+- [x] `/hexagram/` 목록과 `/hexagram/1/`~`/64/` 정적 페이지: 제목·설명 메타, canonical, OpenGraph, Article JSON-LD, 세 줄 요약, 괘사 풀이, 운세 6분류, 여섯 효사 전부 펼침, 이전·다음 괘, 앱으로 가는 버튼. 페이지당 본문 약 1,300자
+- [x] `sitemap.xml`, `robots.txt` (정적 생성, `src/lib/site.ts`의 배포 주소)
+- [x] 루트 레이아웃의 아이콘·매니페스트 경로를 절대 경로로(하위 경로 페이지에서 404 나던 것)
+- [x] 64괘 팝업에서 "전체 풀이 페이지 열기" 링크, 64괘 탭 소개에 목록 링크
+- [x] 계정 카드: 아이폰 사파리 탭이면 "홈 화면에 추가" 안내, 알림 버튼 문구 "아침 알림 받기"
+- [ ] 사용자: Google Search Console에 https://omnisis01.github.io/jooyeok-iching/ 등록 후 sitemap.xml 제출
+
 ## 다음에 할 만한 것
 - [ ] 배포 채널 계획 `PLAN-distribution.md` 검토 후 순서 확정(권장: 토스페이먼츠 → 앱인토스 → 구글 플레이 → 애플)
 - [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)

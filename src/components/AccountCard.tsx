@@ -9,6 +9,14 @@ import { getSession, onAuthChange, pushOne, sendMagicLink, signOut, syncAll } fr
 import { currentSubscription, pushEnabled, pushSupported, subscribePush, unsubscribePush } from "@/lib/push";
 import { loadHistory } from "@/lib/history";
 
+/** 아이폰 사파리에서 홈 화면 앱이 아닌 탭으로 열었는지 */
+function iosSafariTab(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const standalone = (navigator as Navigator & { standalone?: boolean }).standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+  return ios && !standalone;
+}
+
 export default function AccountCard() {
   const [session, setSession] = useState<Session | null>(null);
   const [email, setEmail] = useState("");
@@ -79,6 +87,11 @@ export default function AccountCard() {
             >
               <RefreshCw size={14} /> 지금 동기화
             </button>
+            {pushEnabled && !pushSupported() && iosSafariTab() ? (
+              <p className="w-full rounded-2xl bg-background px-4 py-3 text-xs leading-relaxed text-muted">
+                아이폰에서 아침 알림을 받으려면 사파리 공유 버튼에서 <b className="text-foreground">홈 화면에 추가</b>를 누른 뒤, 홈 화면의 아이콘으로 열어 주세요. 그 안에서 알림을 켤 수 있어요.
+              </p>
+            ) : null}
             {pushEnabled && pushSupported() ? (
               subscribed ? (
                 <button
@@ -92,7 +105,7 @@ export default function AccountCard() {
                   }
                   className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-sm font-semibold disabled:opacity-50"
                 >
-                  <BellOff size={14} /> 오늘의 괘 알림 끄기
+                  <BellOff size={14} /> 아침 알림 끄기
                 </button>
               ) : (
                 <button
@@ -101,12 +114,12 @@ export default function AccountCard() {
                     run(async () => {
                       await subscribePush(session.user.id);
                       setSubscribed(true);
-                      return "매일 아침 7시에 오늘의 괘를 보내 드릴게요";
+                      return "매일 아침 7시 30분에 뽑을 이유를 담아 보내 드릴게요";
                     })
                   }
                   className="inline-flex items-center gap-1.5 rounded-full bg-vermilion px-4 py-2 text-sm font-semibold text-card disabled:opacity-50"
                 >
-                  <Bell size={14} /> 오늘의 괘 알림 받기
+                  <Bell size={14} /> 아침 알림 받기
                 </button>
               )
             ) : null}

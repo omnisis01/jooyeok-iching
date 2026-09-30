@@ -171,3 +171,7 @@
 - setup-supabase.mjs는 pushCronSql을 export 하므로 import 될 때 main이 돌지 않게 argv 가드를 넣었다.
 - Supabase 새 프로젝트는 예전 service_role JWT가 Edge Function 안의 SUPABASE_SERVICE_ROLE_KEY와 일치하지 않을 수 있다(새 형식 sb_secret_ 키로 넘어가는 중). 함수는 SUPABASE_SERVICE_ROLE_KEY와 SUPABASE_SECRET_KEYS 둘 다 허용하고, cron이 쓰는 vault 값은 sb_secret_ 키로 둔다. 설정 스크립트는 secret 형식을 우선 고른다.
 - 설정 스크립트 토큰은 macOS 키체인 항목 jooyeok-supabase-token 에서 읽는다(scripts/token.mjs). 이제 Bash에서 프롬프트 없이 실행할 수 있다.
+
+## 2026-09-30 28차
+- 정적 내보내기에서 하위 경로 페이지는 링크를 상대 경로("../../")로 쓴다. basePath가 붙는 배포와 로컬 둘 다 맞는다. 메타데이터의 아이콘·매니페스트는 상대 경로면 하위 페이지에서 깨지므로 GITHUB_PAGES 값으로 절대 경로를 만든다.
+- 동적 라우트의 PageProps 타입은 빌드가 생성하므로 tsc는 build 뒤에 돌려야 통과한다.
