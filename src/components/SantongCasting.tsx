@@ -153,6 +153,8 @@ function Cylinder({ count, shaking, risen, step }: { count: number; shaking: boo
   const tubeW = 100;
   const tubeTop = 120;
   const tubeBottom = 285;
+  // 산가지 아랫부분은 통 안에서 끝나게 해서 흔들 때 통 바닥 아래로 삐져나오지 않게 한다
+  const stickBottom = tubeTop + 115;
   const sticks = Array.from({ length: count }, (_, i) => i + 1);
 
   return (
@@ -196,7 +198,7 @@ function Cylinder({ count, shaking, risen, step }: { count: number; shaking: boo
             }
             transition={shaking ? { duration: SHAKE_MS / 1000, delay: i * 0.03 } : { type: "spring", stiffness: 180, damping: 16, duration: RISE_MS / 1000 }}
           >
-            <rect x={x - 5} y={baseTop} width={10} height={tubeBottom - baseTop} rx={3} fill="url(#stick)" stroke="#7c6a3c" strokeWidth={0.6} />
+            <rect x={x - 5} y={baseTop} width={10} height={stickBottom - baseTop} rx={3} fill="url(#stick)" stroke="#7c6a3c" strokeWidth={0.6} />
             <text x={x} y={baseTop + 16} textAnchor="middle" fontSize="10" fontWeight={700} fill={isRisen ? "var(--vermilion)" : "#6f5a2a"} style={{ writingMode: "vertical-rl" }}>
               {isRisen ? n : "|"}
             </text>

@@ -17,6 +17,8 @@ import { LINE_STAGE_BY_CATEGORY, categoryOf } from "@/lib/categories";
 import { categoryReading } from "@/data/categoryReadings";
 import GuaHyoExplainer from "./GuaHyoExplainer";
 import { formatCastAt } from "@/lib/castTime";
+import FlowOverview from "./FlowOverview";
+import InteractiveHexagram from "./InteractiveHexagram";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -77,15 +79,12 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
         {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
       </p>
       {castAt ? <p className="-mt-3 text-center text-xs text-muted">뽑은 시각 {formatCastAt(castAt)}</p> : null}
-      <p className="rounded-2xl bg-card/60 px-4 py-3 text-center text-sm leading-relaxed text-muted">
-        주역은 두 겹으로 읽어요. <b className="text-foreground/80">괘사</b>는 지도, <b className="text-foreground/80">효사</b>는 지금 내 위치. 둘을 합쳐 한마디로 정리합니다.
-      </p>
-      <GuaHyoExplainer />
+      <FlowOverview primary={primary} changingLines={changingLines} resulting={resulting} />
 
       {/* 본괘 */}
       <section className="grid gap-6 rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)] sm:p-8 lg:grid-cols-[auto_1fr]">
-        <div className="flex flex-col items-center gap-4 text-gold-soft">
-          <HexagramFigure lines={primary.lines} changing={changingLines} size={170} animate title={primary.name} />
+        <div className="flex flex-col items-center gap-4 text-gold-soft lg:w-80">
+          <InteractiveHexagram primary={primary} changingLines={changingLines} resulting={resulting} />
           <div className="text-5xl text-foreground/70">{hexagramSymbol(primary.number)}</div>
           <div className="flex gap-2 text-xs text-muted">
             <span className="rounded-full bg-background px-2.5 py-1">위 {upper.symbol} {upper.nature}</span>
@@ -185,6 +184,12 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
           움직이는 효가 없습니다. 지금의 상황이 그대로 이어지는 흐름이니, 본괘의 뜻을 오늘 하루의 지침으로 삼으세요.
         </section>
       )}
+
+      {/* 읽는 법과 용어 설명은 결과를 다 본 뒤에 */}
+      <p className="rounded-2xl bg-card/60 px-4 py-3 text-center text-sm leading-relaxed text-muted">
+        주역은 두 겹으로 읽어요. <b className="text-foreground/80">괘사</b>는 지도, <b className="text-foreground/80">효사</b>는 지금 내 위치. 둘을 합쳐 한마디로 정리합니다.
+      </p>
+      <GuaHyoExplainer />
 
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <button

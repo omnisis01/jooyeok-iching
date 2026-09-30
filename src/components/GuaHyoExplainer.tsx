@@ -10,15 +10,15 @@ const LINE_LABELS = ["상효", "오효", "사효", "삼효", "이효", "초효"]
 const EXAMPLE = "100101";
 
 function Diagram() {
-  const w = 300;
+  const w = 340;
   const lineH = 14;
   const gap = 12;
   const top = 18;
-  const left = 96;
+  const left = 136;
   const width = 120;
   const half = (width - width * 0.2) / 2;
   return (
-    <svg viewBox={`0 0 ${w} 190`} className="mx-auto h-auto w-full max-w-[300px]" role="img" aria-label="괘 하나가 여섯 효로 이루어진 그림">
+    <svg viewBox={`0 0 ${w} 190`} className="mx-auto h-auto w-full max-w-[340px]" role="img" aria-label="괘 하나가 여섯 효로 이루어진 그림">
       {LINE_LABELS.map((label, row) => {
         const i = 5 - row;
         const y = top + row * (lineH + gap);
