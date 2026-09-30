@@ -1,8 +1,10 @@
-// 매일 아침 오늘의 괘를 모든 푸시 구독자에게 보내는 Supabase Edge Function (Deno)
+// 아침(매일)과 밤(일요일)에 "지금 뽑어 볼 이유"를 담은 푸시를 모든 구독자에게 보내는 Supabase Edge Function (Deno)
+// 요청 본문 { "slot": "morning" | "evening" }. 없으면 한국 시간으로 정오 전은 아침, 뒤는 밤으로 본다
 // 비밀 값은 Edge Function Secrets에만 둔다: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT
 import { createClient } from "npm:@supabase/supabase-js@2";
 import webpush from "npm:web-push@3";
 import hexagrams from "./hexagrams.json" with { type: "json" };
+import { buildMessage, type Slot } from "./messages.ts";
 
 type Hex = { number: number; name: string; hanja: string; keyword: string; advice: string };
 
@@ -13,9 +15,11 @@ function dailyHexagram(dateStr: string): Hex {
   return (hexagrams as Hex[])[h % (hexagrams as Hex[]).length];
 }
 
+function kstNow(): Date {
+  return new Date(Date.now() + 9 * 60 * 60 * 1000);
+}
 function kstDateString(): string {
-  const now = new Date(Date.now() + 9 * 60 * 60 * 1000);
-  return now.toISOString().slice(0, 10);
+  return kstNow().toISOString().slice(0, 10);
 }
 
 Deno.serve(async (req) => {
@@ -36,12 +40,20 @@ Deno.serve(async (req) => {
   const { data: subs, error } = await supabase.from("push_subscriptions").select("endpoint, keys, fail_count").lt("fail_count", 5);
   if (error) return new Response(error.message, { status: 500 });
 
+  let slot: Slot | undefined;
+  try {
+    const body = await req.json();
+    if (body?.slot === "morning" || body?.slot === "evening") slot = body.slot;
+  } catch {
+    // 본문이 없으면 시간으로 정한다
+  }
+  slot ??= kstNow().getUTCHours() < 12 ? "morning" : "evening";
   const hex = dailyHexagram(kstDateString());
-  const payload = JSON.stringify({
-    title: `오늘의 괘, ${hex.name} ${hex.hanja}`,
-    body: `${hex.keyword}. ${hex.advice}`,
-    url: "./#home",
-  });
+  const message = buildMessage(kstDateString(), slot, hex);
+  if (!message) {
+    return new Response(JSON.stringify({ date: kstDateString(), slot, sent: 0, skipped: true }), { headers: { "Content-Type": "application/json" } });
+  }
+  const payload = JSON.stringify(message);
 
   let sent = 0;
   let removed = 0;
@@ -61,7 +73,7 @@ Deno.serve(async (req) => {
     }
   }
 
-  return new Response(JSON.stringify({ date: kstDateString(), hexagram: hex.name, sent, removed }), {
+  return new Response(JSON.stringify({ date: kstDateString(), slot, reason: message.reason, title: message.title, sent, removed }), {
     headers: { "Content-Type": "application/json" },
   });
 });

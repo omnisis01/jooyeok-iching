@@ -87,6 +87,26 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+/** 아침(매일)과 밤(일요일) 푸시 예약 SQL. setup-push-schedule.mjs 와 같은 내용 */
+export function pushCronSql(supabaseUrl) {
+  const job = (name, cron, slot) => `
+    do $$ begin
+      if exists (select 1 from cron.job where jobname = '${name}') then perform cron.unschedule('${name}'); end if;
+    end $$;
+    select cron.schedule('${name}', '${cron}', $job$
+      select net.http_post(
+        url := '${supabaseUrl}/functions/v1/daily-push',
+        headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')),
+        body := '{"slot":"${slot}"}'::jsonb
+      );
+    $job$);`;
+  return [
+    "do $$ begin if exists (select 1 from cron.job where jobname = 'daily-hexagram-push') then perform cron.unschedule('daily-hexagram-push'); end if; end $$;",
+    job("push-morning", "30 22 * * *", "morning"),
+    job("push-sunday-night", "30 12 * * 0", "evening"),
+  ].join("\n");
+}
+
 async function main() {
   console.log("주역으로 보는 나의 운세 Supabase 자동 설정을 시작합니다.");
 
@@ -201,26 +221,10 @@ async function main() {
         perform vault.create_secret('${service}', 'service_role_key');
       end if;
     end $$;
-    do $$
-    begin
-      if exists (select 1 from cron.job where jobname = 'daily-hexagram-push') then
-        perform cron.unschedule('daily-hexagram-push');
-      end if;
-    end $$;
-    select cron.schedule(
-      'daily-hexagram-push',
-      '0 22 * * *',
-      $job$
-      select net.http_post(
-        url := '${supabaseUrl}/functions/v1/daily-push',
-        headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')),
-        body := '{}'::jsonb
-      );
-      $job$
-    );
+    ${pushCronSql(supabaseUrl)}
     `,
   );
-  console.log("예약 완료 (UTC 22:00 = 한국 07:00)");
+  console.log("예약 완료 (아침 한국 07:30 매일, 밤 한국 21:30 일요일만)");
 
   // 9. GitHub Secrets
   log(9, "GitHub 저장소에 공개 키를 등록합니다");
@@ -247,4 +251,5 @@ async function main() {
   console.log("푸시를 바로 시험하려면 Supabase 대시보드 > Edge Functions > daily-push 에서 Invoke 하세요.");
 }
 
-main().catch((e) => fail(e.message));
+// 다른 스크립트가 pushCronSql 만 가져다 쓸 때는 실행하지 않는다
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main().catch((e) => fail(e.message));

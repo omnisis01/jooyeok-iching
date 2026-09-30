@@ -192,7 +192,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       <GuaHyoExplainer />
 
       <p className="text-center text-xs leading-relaxed text-muted">
-        이 답은 한 번만 받는 것이 원칙이에요. 같은 질문을 다시 뽑기보다, 다른 궁금한 것을 물어보세요.
+        처음 뽑은 답이 가장 정확해요. 같은 질문을 다시 뽑으면 효과가 없으니, 다른 궁금한 것을 물어보세요.
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <button

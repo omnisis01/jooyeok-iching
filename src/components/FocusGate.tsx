@@ -59,7 +59,7 @@ export default function FocusGate({ action, topic, question, onReady }: Props) {
       </p>
       <p className="mt-4 text-xs text-muted">천천히 숨을 들이쉬고 내쉬며 원이 커졌다 작아지는 것을 따라가 보세요.</p>
       <p className="mt-4 rounded-2xl bg-background px-4 py-3 text-sm leading-relaxed text-foreground/85">
-        <b className="text-foreground">한 가지 질문에 한 번만 뽑아요.</b> 마음에 안 든다고 같은 질문을 다시 뽑으면 답이 흐려져요. 주역은 처음 물을 때 가장 정확하다고 가르칩니다.
+        <b className="text-foreground">한 가지 질문에 한 번만 뽑아요.</b> 처음 뽑은 답이 가장 정확해요. 마음에 안 든다고 같은 질문을 다시 뽑으면 효과가 없어요.
       </p>
 
       <button
