@@ -12,6 +12,8 @@ type Props = {
   /** 있으면 누를 때마다 무작위로 한 괘를 골라 알려 준다 */
   onSelect?: (hex: Hexagram) => void;
   className?: string;
+  /** 값이 바뀌면 뽑힌 괘 표시를 지운다 (팝업을 닫을 때 올려 준다) */
+  resetKey?: number;
 };
 
 /** 선천(복희) 순서: 효를 이진수로 읽어 정렬 (상효가 최상위 비트) */
@@ -47,12 +49,15 @@ function currentRotation(el: Element | null): number {
   }
 }
 
-export default function HexagramWheel({ size = 560, onSelect, className }: Props) {
+export default function HexagramWheel({ size = 560, onSelect, className, resetKey = 0 }: Props) {
   const outerRef = useRef<SVGGElement>(null);
   const innerRef = useRef<SVGGElement>(null);
   const [markerAngle, setMarkerAngle] = useState(-90);
   const [picking, setPicking] = useState(false);
   const [picked, setPicked] = useState<number | null>(null);
+  const [pickedAtKey, setPickedAtKey] = useState(resetKey);
+  // 팝업이 닫혀 resetKey가 바뀌면 표시를 감춘다
+  const showPick = picked !== null && pickedAtKey === resetKey;
   const pendingRef = useRef<Hexagram | null>(null);
   const pickingRef = useRef(false);
   const fallbackRef = useRef<number | undefined>(undefined);
@@ -68,6 +73,7 @@ export default function HexagramWheel({ size = 560, onSelect, className }: Props
     const target = (index / FUXI_ORDER.length) * 360 - 90 + rot;
     const delta = (((target - markerAngle) % 360) + 360) % 360;
     setPicked(index);
+    setPickedAtKey(resetKey);
     setPicking(true);
     setMarkerAngle(markerAngle + 720 + delta);
     // 탭이 가려져 애니메이션이 멈춘 경우에도 결과는 나오게 한다
@@ -115,7 +121,7 @@ export default function HexagramWheel({ size = 560, onSelect, className }: Props
           const rad = (angle * Math.PI) / 180;
           const x = round2(CENTER + OUTER * Math.cos(rad));
           const y = round2(CENTER + OUTER * Math.sin(rad));
-          const isPicked = picked === i;
+          const isPicked = showPick && picked === i;
           return (
             <g key={hex.number} transform={`translate(${x} ${y}) rotate(${angle + 90}) translate(${-FIG_W / 2} ${-FIG_H / 2})`} opacity={isPicked ? 1 : 0.85}>
               <title>{`${hex.number}. ${hex.name} ${hex.hanja}`}</title>
@@ -184,7 +190,7 @@ export default function HexagramWheel({ size = 560, onSelect, className }: Props
         </motion.g>
       ) : null}
 
-      {onSelect && !picking && picked === null ? (
+      {onSelect && !picking && !showPick ? (
         <text x={CENTER} y={R * 2 - 8} textAnchor="middle" fontSize="15" fill="var(--muted)">
           원 아무 곳이나 누르면 괘 하나가 뽑혀요
         </text>

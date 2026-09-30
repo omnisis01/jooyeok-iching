@@ -27,6 +27,7 @@ import { deleteRemote } from "@/lib/cloudSync";
 
 export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [selected, setSelected] = useState<Hexagram | null>(null);
+  const [wheelReset, setWheelReset] = useState(0);
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -106,14 +107,14 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
 
       <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
         <div className="flex items-center justify-between">
-          <p className="font-bold">64괘 원도</p>
+          <p className="font-bold">64괘</p>
           <button onClick={() => go("about")} className="text-sm text-muted hover:text-foreground">
             주역이란
           </button>
         </div>
         <p className="mt-1 text-sm text-muted">원 아무 곳이나 누르면 화살표가 돌다가 괘 하나를 골라 줘요.</p>
         <div className="mt-3 flex justify-center">
-          <HexagramWheel size={340} onSelect={setSelected} className="h-auto w-full max-w-[340px]" />
+          <HexagramWheel size={340} onSelect={setSelected} resetKey={wheelReset} className="h-auto w-full max-w-[340px]" />
         </div>
       </div>
 
@@ -232,7 +233,13 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
 
       <p className="px-2 text-center text-xs leading-relaxed text-muted lg:col-span-2">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
-      <HexagramDetail hex={selected} onClose={() => setSelected(null)} />
+      <HexagramDetail
+        hex={selected}
+        onClose={() => {
+          setSelected(null);
+          setWheelReset((k) => k + 1);
+        }}
+      />
     </div>
   );
 }
