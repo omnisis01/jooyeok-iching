@@ -245,7 +245,7 @@ function StepFlow({ onStart }: { onStart: () => void }) {
           <b className="text-foreground">변효가 없으면</b> 지괘도 없어요. 괘사만으로 읽어요.
         </li>
         <li className="rounded-2xl bg-background p-3">
-          <b className="text-foreground">한 질문에 한 번만 뽑아요.</b> 주역 몽괘의 괘사에 "처음 물으면 알려 주지만 두 번 세 번 물으면 알려 주지 않는다"고 적혀 있어요. 결과가 마음에 안 들어도 같은 질문을 다시 뽑으면 답이 흐려져요.
+          <b className="text-foreground">한 질문에 한 번만 뽑아요.</b> 주역 몽괘의 괘사에 “처음 물으면 알려 주지만 두 번 세 번 물으면 알려 주지 않는다”고 적혀 있어요. 결과가 마음에 안 들어도 같은 질문을 다시 뽑으면 답이 흐려져요.
         </li>
         <li className="rounded-2xl bg-background p-3">
           <b className="text-foreground">변효가 여럿이면</b> 전통 규칙에 따라 어느 효사를 중심으로 읽을지 앱이 골라 줘요. 여섯 줄이 모두 변효일 때도 있는데(4096번에 한 번쯤) 그때는 지괘의 괘사가 곧 답이에요.
