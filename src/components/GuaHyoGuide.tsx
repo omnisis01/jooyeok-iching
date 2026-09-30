@@ -141,7 +141,7 @@ function StepGua() {
         <GuideHex lines={EX_PRIMARY.lines} reveal={reveal} names />
       </div>
       <div className="mt-3 flex items-center justify-between text-xs text-muted">
-        <span>아래가 일의 시작, 위가 일의 끝</span>
+        <span>첫 줄이 맨 아래, 여섯째 줄이 맨 위</span>
         <button
           onClick={() => {
             setReveal(0);
@@ -158,7 +158,7 @@ function StepGua() {
             여섯 줄이 모여 괘 하나, <span className="text-vermilion">{EX_PRIMARY.name}</span>
           </>
         ) : (
-          `${LINE_NAMES[Math.max(0, reveal - 1)]}까지 쌓았어요`
+          `${reveal}번째 뽑기, ${LINE_NAMES[Math.max(0, reveal - 1)]}`
         )}
       </p>
     </div>
@@ -245,7 +245,7 @@ function StepFlow({ onStart }: { onStart: () => void }) {
           <b className="text-foreground">변효가 없으면</b> 지괘도 없어요. 괘사만으로 읽어요.
         </li>
         <li className="rounded-2xl bg-background p-3">
-          <b className="text-foreground">변효가 여럿이면</b> 전통 규칙에 따라 어느 효사를 중심으로 읽을지 앱이 골라 줘요.
+          <b className="text-foreground">변효가 여럿이면</b> 전통 규칙에 따라 어느 효사를 중심으로 읽을지 앱이 골라 줘요. 여섯 줄이 모두 변효일 때도 있는데(4096번에 한 번쯤) 그때는 지괘의 괘사가 곧 답이에요.
         </li>
       </ul>
       <button onClick={onStart} className="w-full rounded-full bg-vermilion py-3.5 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
@@ -258,15 +258,15 @@ function StepFlow({ onStart }: { onStart: () => void }) {
 const STEPS = [
   {
     title: "효는 줄 하나예요",
-    body: "주역은 세상 모든 일을 두 가지 줄로 그려요. 이어진 줄은 양, 끊어진 줄은 음입니다. 이 줄 하나를 효라고 불러요.",
+    body: "주역은 세상 모든 일을 두 가지 줄로 그려요. 이어진 줄은 양, 끊어진 줄은 음입니다. 이 줄 하나를 효라고 불러요. 점을 칠 때는 동전이나 산가지로 이 줄을 한 번에 하나씩, 모두 여섯 번 뽑아요.",
   },
   {
-    title: "괘는 여섯 줄을 쌓은 그림이에요",
-    body: "줄은 아래에서 위로 쌓아요. 맨 아래가 초효, 맨 위가 상효예요. 줄마다 음 아니면 양이니 여섯 줄이면 64가지 그림이 나오고, 이것이 64괘입니다. 괘에 붙은 글인 괘사가 지금 상황 전체를 알려 줘요.",
+    title: "여섯 번 뽑은 줄이 쌓여 괘 하나가 돼요",
+    body: "여섯 번 뽑은 줄 여섯 개를 아래에서 위로 쌓으면 괘 하나가 돼요. 첫 번째 뽑은 줄이 맨 아래 초효, 여섯 번째가 맨 위 상효예요. 줄마다 음 아니면 양이니 여섯 줄로 만들 수 있는 그림은 64가지, 이것이 64괘입니다. 괘에 붙은 글인 괘사가 큰 판세를 알려 줘요.",
   },
   {
-    title: "변효는 이번 점에서 움직인 줄이에요",
-    body: "동전 세 개를 던져 셋이 모두 앞면이거나 모두 뒷면이면, 그 줄은 힘이 끝까지 차서 곧 반대로 바뀌어요. 이어진 줄이면 끊어지고, 끊어진 줄이면 이어집니다. 이렇게 바뀌려는 줄이 변효예요. 같은 괘 안에서 지금 내가 선 자리를 짚어 주기 때문에, 변효의 효사를 가장 먼저 읽어요.",
+    title: "변효는 여섯 줄 중 곧 바뀌려는 줄이에요",
+    body: "여섯 번 뽑는 동안 동전 세 개가 모두 앞면이거나 모두 뒷면으로 나오는 때가 있어요. 그 줄은 지금은 양(또는 음)이지만 힘이 끝까지 차서 곧 반대로 넘어가요. 한낮이 지나면 해가 기울듯이요. 지금 모습과 곧 될 모습이 다른 이 줄을 변효, 곧 움직이는 효라고 해요. 여섯 줄 가운데 실제로 변화가 일어나는 자리라서 그 효사를 가장 먼저 읽어요.",
   },
   {
     title: "지괘는 변효가 뒤집힌 뒤의 괘예요",
