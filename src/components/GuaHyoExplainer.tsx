@@ -73,6 +73,9 @@ export function GuaHyoBody() {
       <p>
         그래서 <b className="text-foreground">괘사</b>는 괘 전체에 붙은 글, 곧 큰 판세이고, <b className="text-foreground">효사</b>는 줄 하나하나에 붙은 글, 곧 그 단계에서의 조언입니다. 점을 치면 괘로 지금 상황을 보고, 그중 움직이는 효(빨간 줄)로 지금 내 자리를 봅니다.
       </p>
+      <p>
+        <b className="text-foreground">한 질문에 한 번만</b> 뽑는 것이 주역의 오랜 원칙이에요. 몽괘 괘사는 "처음 물으면 알려 주지만 두 번 세 번 물으면 알려 주지 않는다"고 말합니다. 같은 질문을 다시 뽑으면 답이 흐려지니, 마음을 모아 한 번 묻고 그 답을 곰곰이 새기세요.
+      </p>
     </div>
   );
 }

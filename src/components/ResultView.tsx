@@ -191,6 +191,9 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       </p>
       <GuaHyoExplainer />
 
+      <p className="text-center text-xs leading-relaxed text-muted">
+        이 답은 한 번만 받는 것이 원칙이에요. 같은 질문을 다시 뽑기보다, 다른 궁금한 것을 물어보세요.
+      </p>
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <button
           onClick={onRestart}

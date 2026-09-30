@@ -40,7 +40,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
     <section className="rounded-3xl bg-card p-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <Ticket size={28} className="mx-auto text-vermilion" />
       <h3 className="mt-3 text-lg font-bold">오늘의 무료 점 {FREE_PER_DAY}회를 모두 썼어요</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted">점은 하루에 정성껏 몇 번만 치는 것이 좋다고 해요. 그래도 더 보고 싶다면 아래 방법이 있어요.</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">주역은 한 질문에 한 번만 뽑고, 하루에도 정성껏 몇 번만 치는 것이 좋다고 해요. 그래도 다른 것을 더 묻고 싶다면 아래 방법이 있어요.</p>
       <ShareForCoupon className="mt-5" label="친구에게 공유하고 한 번 더 뽑기" />
       {paymentsEnabled ? (
         <button onClick={onGoPremium} className="mt-3 w-full rounded-full bg-vermilion px-5 py-3 text-sm font-bold text-card transition hover:brightness-105">
