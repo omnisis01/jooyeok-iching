@@ -167,6 +167,14 @@
 - [x] `scripts/capture-today-card.mjs` + `.github/workflows/daily-card.yml`: 매일 07:00 KST에 Playwright로 카드 PNG를 만들어 아티팩트(14일 보관)로 올림. 수동 실행 시 날짜 지정 가능
 - [x] Playwright로 실제 PNG 세 장을 뽑아 눈으로 확인(겹침 수정 뒤 정상)
 
+## 2026-09-30 30차: 광고 자리, 건별 결제 "깊이 읽기"
+- [x] `AdSlot`: 애드센스 게시자·슬롯 ID가 있고 프리미엄이 아닐 때만 한 칸. 주역 결과 버튼 아래, 육효 결과 아래. 배포 워크플로가 ads.txt 생성
+- [x] `DeepReading` + `src/lib/unlock.ts`: 결과마다 1,000원(`NEXT_PUBLIC_UNLOCK_PRICE_KRW`) 토스 일반 결제(카드). 열쇠는 괘·변효·시각(분). 서버 `unlocks`(RLS 읽기만) + 기기 localStorage. 내용은 운세 6분류, 지괘 6분류, 같은 괘의 육효 분석(`YukhyoResult embedded`)
+- [x] `toss-payment-confirm` Edge Function: 금액 검증, 주문번호의 사용자 접두 검증, 같은 주문 중복 승인 방지, payments 기록, unlocks upsert. `0004_unlocks.sql`
+- [x] 홈: `?unlock=success` 복귀 시 승인 후 해당 기록을 바로 열고 안내 문구. 실패는 문구만
+- [x] 결제가 꺼진 지금은 두 요소 모두 보이지 않는 것을 확인(결과 화면 변화 없음)
+- [ ] 실제 결제 흐름은 토스 테스트 키로 `setup-payments-toss.mjs` 실행 뒤 검증(테스트 카드번호로 승인까지)
+
 ## 다음에 할 만한 것
 - [ ] 배포 채널 계획 `PLAN-distribution.md` 검토 후 순서 확정(권장: 토스페이먼츠 → 앱인토스 → 구글 플레이 → 애플)
 - [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)

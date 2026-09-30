@@ -17,6 +17,7 @@ const PROJECT_NAME = process.env.SUPABASE_PROJECT_NAME || "jooyeok-master";
 const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
 const GITHUB_REPO = "omnisis01/jooyeok-iching";
 const PRICE_KRW = String(process.env.PREMIUM_PRICE_KRW || 4900);
+const UNLOCK_KRW = String(process.env.UNLOCK_PRICE_KRW || 1000);
 
 const log = (n, m) => console.log(`\n[${n}] ${m}`);
 const fail = (m) => {
@@ -81,14 +82,16 @@ async function main() {
   log(2, "스키마를 확장합니다");
   await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0002_premium.sql"), "utf8") });
   await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0003_toss.sql"), "utf8") });
+  await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0004_unlocks.sql"), "utf8") });
 
-  log(3, "결제 함수 세 개를 배포하고 비밀값을 등록합니다");
+  log(3, "결제 함수 네 개를 배포하고 비밀값을 등록합니다");
+  run("npx", ["-y", "supabase", "functions", "deploy", "toss-payment-confirm", "--use-api", "--project-ref", ref], envTok);
   run("npx", ["-y", "supabase", "functions", "deploy", "toss-billing-confirm", "--use-api", "--project-ref", ref], envTok);
   run("npx", ["-y", "supabase", "functions", "deploy", "toss-billing-cancel", "--use-api", "--project-ref", ref], envTok);
   run("npx", ["-y", "supabase", "functions", "deploy", "toss-billing-renew", "--no-verify-jwt", "--use-api", "--project-ref", ref], envTok);
   const tmp = mkdtempSync(join(tmpdir(), "jm-toss-"));
   const envFile = join(tmp, "secrets.env");
-  writeFileSync(envFile, `TOSS_SECRET_KEY=${secretKey}\nPREMIUM_PRICE_KRW=${PRICE_KRW}\nSITE_URL=${SITE_URL}\n`, { mode: 0o600 });
+  writeFileSync(envFile, `TOSS_SECRET_KEY=${secretKey}\nPREMIUM_PRICE_KRW=${PRICE_KRW}\nUNLOCK_PRICE_KRW=${UNLOCK_KRW}\nSITE_URL=${SITE_URL}\n`, { mode: 0o600 });
   try {
     run("npx", ["-y", "supabase", "secrets", "set", "--env-file", envFile, "--project-ref", ref], envTok);
   } finally {
@@ -118,6 +121,7 @@ async function main() {
   runWithInput("gh", ["secret", "set", "NEXT_PUBLIC_TOSS_CLIENT_KEY", "--repo", GITHUB_REPO], clientKey);
   runWithInput("gh", ["secret", "set", "NEXT_PUBLIC_PAYMENT_PROVIDER", "--repo", GITHUB_REPO], "toss");
   runWithInput("gh", ["secret", "set", "NEXT_PUBLIC_PREMIUM_PRICE_KRW", "--repo", GITHUB_REPO], PRICE_KRW);
+  runWithInput("gh", ["secret", "set", "NEXT_PUBLIC_UNLOCK_PRICE_KRW", "--repo", GITHUB_REPO], UNLOCK_KRW);
   runWithInput("gh", ["secret", "set", "NEXT_PUBLIC_PAYMENTS_ENABLED", "--repo", GITHUB_REPO], "true");
   run("gh", ["workflow", "run", "deploy.yml", "--repo", GITHUB_REPO]);
   console.log("GitHub Secrets 설정됨, 배포 요청 완료");

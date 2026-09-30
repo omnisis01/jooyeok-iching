@@ -23,12 +23,15 @@ import { makeId, saveRecord } from "@/lib/history";
 import ShareCardModal from "./ShareCardModal";
 import { renderYukhyoCard, yukhyoFileName, yukhyoShareText } from "@/lib/yukhyoCard";
 import ShareForCoupon from "./ShareForCoupon";
+import AdSlot from "./AdSlot";
 
 type Props = {
   result: Result;
   onRestart: () => void;
   /** 기록에서 다시 여는 경우 false */
   saveToHistory?: boolean;
+  /** 다른 결과 안에 끼워 넣을 때: 버튼과 공유 안내를 숨긴다 */
+  embedded?: boolean;
 };
 
 const LEVEL_STYLE = {
@@ -43,7 +46,7 @@ const JUDGE_STYLE = {
 };
 const JUDGE_LABEL = { 왕: "힘이 있어요", 평: "보통이에요", 쇠: "힘이 약해요" };
 
-export default function YukhyoResult({ result, onRestart, saveToHistory = true }: Props) {
+export default function YukhyoResult({ result, onRestart, saveToHistory = true, embedded = false }: Props) {
   const { hexagram, changedHexagram, palace, day, lines, useRelation, useLine, hiddenUse, useJudgement, worldJudgement, verdict, timing, input } = result;
   const category = categoryOf(input.category);
   const [shareOpen, setShareOpen] = useState(false);
@@ -175,6 +178,8 @@ export default function YukhyoResult({ result, onRestart, saveToHistory = true }
         </ul>
       </section>
 
+      {embedded ? null : (
+      <>
       <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
         <button onClick={onRestart} className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 font-semibold text-card transition hover:opacity-90">
           <RotateCcw size={18} /> 다시 묻기
@@ -191,6 +196,9 @@ export default function YukhyoResult({ result, onRestart, saveToHistory = true }
         onClose={() => setShareOpen(false)}
       />
       <ShareForCoupon className="mx-auto max-w-sm pt-2" />
+      <AdSlot />
+      </>
+      )}
       <p className="text-center text-xs leading-relaxed text-muted">
         육효는 점친 날의 일진과 월건을 함께 보는 점법이라 같은 괘라도 날짜에 따라 풀이가 달라집니다. 결과는 참고로만 삼아 주세요.
       </p>

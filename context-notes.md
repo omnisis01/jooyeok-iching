@@ -180,3 +180,8 @@
 - 캔버스 카드는 눈으로 확인해야 한다. 브라우저 패널이 최소화되어 스크린샷이 안 될 때는 scratchpad에 playwright를 설치하고 페이지의 blob을 dataURL로 받아 PNG로 저장한 뒤 Read로 본다. 첫 판에서 지괘 블록이 바닥 글과 겹쳤다.
 - 세로 카드는 고정 높이라 내용이 넘칠 수 있다. 블록마다 "자리가 있으면 그림, 없으면 한 줄" 식의 예비 배치를 둔다.
 - 매일 이미지 자동 생성은 Edge Function 대신 GitHub Actions + Playwright로 한다. Deno에서 한글 폰트로 캔버스를 그리기 어렵고, 배포된 페이지가 이미 같은 렌더러를 갖고 있기 때문.
+
+## 2026-09-30 30차
+- 건별 결제는 토스 v2 SDK의 `payment().requestPayment({method:"CARD", amount:{currency,value}, orderId, orderName, successUrl, failUrl})` 리다이렉트 방식. 돌아오는 주소에 paymentKey, orderId, amount가 붙고 서버에서 `/v1/payments/confirm`으로 승인해야 돈이 실제로 나간다. 승인 전에 금액과 주문번호 접두(사용자 ID 앞 8자)를 검증한다.
+- 결과 식별 열쇠는 `lines-changing-castAt(분)`. castAt이 없는 옛 기록은 시각 부분이 비어 같은 괘·변효면 같은 열쇠가 된다(허용).
+- 광고와 결제는 모두 환경 변수로만 켜진다. 키가 없으면 UI가 아예 없어 무료판 QA에 영향이 없다.

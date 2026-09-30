@@ -7,6 +7,9 @@ import { ArrowLeft, ChevronRight, ImageDown, Trash2 } from "lucide-react";
 import ShareCardModal from "./ShareCardModal";
 import { renderDailyStoryCard, storyFileName } from "@/lib/storyCard";
 import { SITE_URL } from "@/lib/shareCard";
+import { confirmUnlock, unlockReturn } from "@/lib/unlock";
+import { clearReturnParams } from "@/lib/premium";
+import { readingKey } from "@/lib/unlock";
 import type { Hexagram } from "@/data/hexagrams";
 import type { Tab } from "./AppShell";
 import HexagramFigure from "./HexagramFigure";
@@ -36,8 +39,32 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [showAll, setShowAll] = useState(false);
   const [premium, setPremium] = useState(false);
   const [dailyShare, setDailyShare] = useState(false);
+  const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
 
   const { today, hour } = useToday();
+
+  // 건별 결제창에서 돌아왔으면 승인하고, 그 결과 기록을 바로 연다
+  useEffect(() => {
+    const back = unlockReturn();
+    if (!back) return;
+    clearReturnParams();
+    const t = window.setTimeout(async () => {
+      if (back.result === "fail") {
+        setUnlockMessage(back.message);
+        return;
+      }
+      setUnlockMessage("결제를 확인하는 중이에요");
+      try {
+        await confirmUnlock(back);
+        setUnlockMessage("깊이 읽기가 열렸어요");
+        const rec = loadHistory().find((r) => r.type === "iching" && readingKey(readingFromRecord(r)) === back.key);
+        if (rec) setViewing(rec);
+      } catch (e) {
+        setUnlockMessage(e instanceof Error ? e.message : "결제 확인에 실패했어요");
+      }
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, []);
   const day = today ? dayInfo(today) : null;
   const daily = today ? dailyHexagram(today) : null;
   const greeting = hour === null ? "" : hour < 5 ? "고요한 밤이에요" : hour < 11 ? "좋은 아침이에요" : hour < 17 ? "좋은 오후예요" : "편안한 저녁이에요";
@@ -121,6 +148,8 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           <HexagramWheel size={340} onSelect={setSelected} resetKey={wheelReset} className="h-auto w-full max-w-[340px]" />
         </div>
       </div>
+
+      {unlockMessage ? <p className="rounded-2xl bg-card px-4 py-3 text-center text-sm font-semibold text-gold-soft">{unlockMessage}</p> : null}
 
       {/* 오늘의 괘 한마디 */}
       <motion.button

@@ -20,6 +20,8 @@ import GuaHyoExplainer from "./GuaHyoExplainer";
 import { formatCastAt } from "@/lib/castTime";
 import FlowOverview from "./FlowOverview";
 import InteractiveHexagram from "./InteractiveHexagram";
+import DeepReading from "./DeepReading";
+import AdSlot from "./AdSlot";
 import { makeId, saveRecord } from "@/lib/history";
 
 type Props = {
@@ -192,6 +194,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       </p>
       <GuaHyoExplainer />
 
+      <DeepReading reading={reading} />
+
       <p className="text-center text-xs leading-relaxed text-muted">
         처음 뽑은 답이 가장 정확해요. 같은 질문을 다시 뽑으면 효과가 없으니, 다른 궁금한 것을 물어보세요.
       </p>
@@ -215,6 +219,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
           {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "복사되었습니다" : "글로 복사"}
         </button>
       </div>
+      <AdSlot className="mt-2" />
       <ShareCardModal
         job={shareOpen ? { render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading), renderStory: () => renderStoryCard(reading), storyFileName: storyFileName("나의괘", reading.primary) } : null}
         onClose={() => setShareOpen(false)}
