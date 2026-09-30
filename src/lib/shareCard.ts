@@ -91,6 +91,61 @@ export function drawHexagram(
   }
 }
 
+/** 본괘, 변효 이름, 지괘를 한 줄로 그린다. 그린 높이를 돌려준다 */
+export function drawFlow(
+  ctx: CanvasRenderingContext2D,
+  reading: Reading,
+  cx: number,
+  top: number,
+  figW: number,
+  lineH: number,
+  gap: number,
+  colors: { primary: string; resulting: string; text: string; muted: string; changing: string },
+  fontScale = 1,
+): number {
+  const { primary, resulting, changingLines } = reading;
+  const figH = 6 * lineH + 5 * gap;
+  const nameSize = Math.round(30 * fontScale);
+  const smallSize = Math.round(22 * fontScale);
+  if (!resulting) {
+    drawHexagram(ctx, primary.lines, changingLines, cx, top, figW, lineH, gap, colors.primary);
+    return figH;
+  }
+  const colGap = figW * 0.9;
+  const leftX = cx - figW / 2 - colGap / 2;
+  const rightX = cx + figW / 2 + colGap / 2;
+  drawHexagram(ctx, primary.lines, changingLines, leftX, top, figW, lineH, gap, colors.primary);
+  drawHexagram(ctx, resulting.lines, [], rightX, top, figW, lineH, gap, colors.resulting);
+  // 가운데 화살촉
+  const my = top + figH / 2;
+  const s = figW * 0.11;
+  ctx.strokeStyle = colors.muted;
+  ctx.lineWidth = Math.max(3, s / 4);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(cx - s / 2, my - s);
+  ctx.lineTo(cx + s / 2, my);
+  ctx.lineTo(cx - s / 2, my + s);
+  ctx.stroke();
+  // 이름표
+  ctx.textAlign = "center";
+  let y = top + figH + Math.round(38 * fontScale);
+  ctx.fillStyle = colors.muted;
+  ctx.font = font(500, smallSize);
+  ctx.fillText("지금, 본괘", leftX, y);
+  ctx.fillText("앞으로, 지괘", rightX, y);
+  y += Math.round(38 * fontScale);
+  ctx.fillStyle = colors.text;
+  ctx.font = font(800, nameSize);
+  ctx.fillText(primary.name, leftX, y);
+  ctx.fillText(resulting.name, rightX, y);
+  ctx.fillStyle = colors.changing;
+  ctx.font = font(700, smallSize);
+  ctx.fillText(`변효 ${changingLines.map((i) => lineTitle(primary.lines, i)).join(", ")}`, cx, y);
+  return y - top;
+}
+
 export async function ensureFonts() {
   try {
     await Promise.all([
@@ -145,10 +200,10 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
     y += qLines.length * 42 + 10;
   }
 
-  // 괘 그림
+  // 본괘, 변효, 지괘 흐름
   const figTop = y + 10;
-  drawHexagram(ctx, primary.lines, changingLines, W / 2, figTop, 300, 28, 20, C.goldSoft);
-  y = figTop + 6 * 28 + 5 * 20 + 50;
+  const flowH = drawFlow(ctx, reading, W / 2, figTop, resulting ? 230 : 300, resulting ? 22 : 28, resulting ? 16 : 20, { primary: C.goldSoft, resulting: C.jade, text: C.paper, muted: C.muted, changing: C.vermilion });
+  y = figTop + flowH + 50;
 
   // 이름
   ctx.fillStyle = C.muted;
@@ -231,20 +286,14 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
     ltLines.forEach((l, i) => ctx.fillText(l, W / 2, y + i * 38));
     y += ltLines.length * 38 + 30;
 
-    // 지괘
-    drawHexagram(ctx, resulting.lines, [], 200, y - 6, 110, 11, 8, C.jade);
-    ctx.textAlign = "left";
+    // 지괘 한 줄
     ctx.fillStyle = C.jade;
-    ctx.font = font(700, 24);
-    ctx.fillText("앞으로의 흐름, 지괘", 290, y + 18);
-    ctx.fillStyle = C.paper;
-    ctx.font = font(700, 34);
-    ctx.fillText(`${resulting.name}  ${resulting.hanja}`, 290, y + 62);
+    ctx.font = font(700, 26);
+    ctx.fillText(`앞으로의 흐름, 지괘  ${resulting.name} ${resulting.hanja}`, W / 2, y + 10);
     ctx.fillStyle = C.goldSoft;
     ctx.font = font(500, 26);
-    ctx.fillText(resulting.keyword, 290, y + 98);
-    ctx.textAlign = "center";
-    y += 120;
+    ctx.fillText(resulting.keyword, W / 2, y + 48);
+    y += 70;
   } else {
     ctx.fillStyle = C.muted;
     ctx.font = font(400, 26);

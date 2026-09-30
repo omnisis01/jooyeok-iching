@@ -2,6 +2,8 @@
 "use client";
 
 import { useState } from "react";
+import { useShake } from "@/lib/useShake";
+import ShakeHint from "./ShakeHint";
 import { AnimatePresence, motion } from "motion/react";
 import { Hand, Sparkles } from "lucide-react";
 import { LINE_NAMES, readingFromSantong, trigramByNumber, type Reading } from "@/lib/iching";
@@ -41,6 +43,8 @@ export default function SantongCasting({ question, onComplete }: Props) {
       }, RISE_MS + 900);
     }, SHAKE_MS);
   };
+
+  const shakeDetect = useShake(() => shake(), phase === "idle" && step < 3);
 
   const lower = draws[0] ? trigramByNumber(draws[0]) : null;
   const upper = draws[1] ? trigramByNumber(draws[1]) : null;
@@ -91,7 +95,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
           </AnimatePresence>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col items-center gap-3">
           {step < 3 ? (
             <motion.button
               onClick={shake}
@@ -111,6 +115,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
               <Sparkles size={18} /> 괘 풀이 보기
             </motion.button>
           )}
+          {step < 3 ? <ShakeHint state={shakeDetect.state} onEnable={shakeDetect.requestPermission} verb="흔들" /> : null}
         </div>
       </div>
 

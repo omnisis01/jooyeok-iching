@@ -2,6 +2,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useShake } from "@/lib/useShake";
+import ShakeHint from "./ShakeHint";
 import { AnimatePresence, motion } from "motion/react";
 import { Coins, FastForward, Sparkles } from "lucide-react";
 import {
@@ -51,6 +53,8 @@ export default function CoinCasting({ question, onComplete }: Props) {
       setTossing(false);
     }, TOSS_MS);
   }, [tossing, done]);
+
+  const shake = useShake(() => toss(), !done && !tossing && !autoRun);
 
   useEffect(() => {
     if (!autoRun || tossing || done) return;
@@ -116,6 +120,9 @@ export default function CoinCasting({ question, onComplete }: Props) {
               >
                 <FastForward size={16} /> 남은 효 한 번에 던지기
               </button>
+              <div className="basis-full text-center">
+                <ShakeHint state={shake.state} onEnable={shake.requestPermission} verb="던질" />
+              </div>
             </>
           ) : (
             <motion.button

@@ -185,3 +185,7 @@
 - 건별 결제는 토스 v2 SDK의 `payment().requestPayment({method:"CARD", amount:{currency,value}, orderId, orderName, successUrl, failUrl})` 리다이렉트 방식. 돌아오는 주소에 paymentKey, orderId, amount가 붙고 서버에서 `/v1/payments/confirm`으로 승인해야 돈이 실제로 나간다. 승인 전에 금액과 주문번호 접두(사용자 ID 앞 8자)를 검증한다.
 - 결과 식별 열쇠는 `lines-changing-castAt(분)`. castAt이 없는 옛 기록은 시각 부분이 비어 같은 괘·변효면 같은 열쇠가 된다(허용).
 - 광고와 결제는 모두 환경 변수로만 켜진다. 키가 없으면 UI가 아예 없어 무료판 QA에 영향이 없다.
+
+## 2026-09-30 31차
+- 흔들기 감지는 accelerationIncludingGravity 세 축의 변화량 합이 문턱을 넘을 때. 아이폰 사파리는 사용자 제스처 안에서 DeviceMotionEvent.requestPermission()을 불러야 하므로 안내 문구 자체를 버튼으로 두었다. 데스크톱(pointer: fine)에서는 안내를 숨긴다.
+- 공유 카드는 결과 화면의 FlowOverview와 같은 순서(본괘 → 변효 → 지괘)를 맨 위에 둔다. 사용자가 "괘가 안 뜬다"고 느낀 것은 지괘와 변효가 그림으로 함께 보이지 않아서였다.

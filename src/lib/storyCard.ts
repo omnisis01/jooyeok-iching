@@ -9,7 +9,7 @@ import { trigramsOf, type Reading } from "@/lib/iching";
 import { adaptAdvice } from "@/lib/period";
 import { formatCastAt } from "@/lib/castTime";
 import { dayInfo } from "@/lib/yukhyo";
-import { drawHexagram, ensureFonts, font, roundRect, wrap } from "@/lib/shareCard";
+import { drawFlow, drawHexagram, ensureFonts, font, roundRect, wrap } from "@/lib/shareCard";
 
 export const SW = 1080;
 export const SH = 1920;
@@ -110,8 +110,8 @@ export async function renderStoryCard(reading: Reading): Promise<Blob> {
   header(ctx, "주역으로 보는 나의 운세", reading.castAt ? formatCastAt(reading.castAt) : new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
 
   let y = SAFE_TOP + 130;
-  drawHexagram(ctx, primary.lines, changingLines, SW / 2, y, 300, 28, 18, D.gold);
-  y += 6 * 28 + 5 * 18 + 56;
+  const flowH = drawFlow(ctx, reading, SW / 2, y, resulting ? 230 : 300, resulting ? 22 : 28, resulting ? 16 : 18, { primary: D.gold, resulting: D.jade, text: D.ink, muted: D.muted, changing: D.vermilion }, 1.05);
+  y += flowH + 56;
   y = nameBlock(ctx, primary, y);
 
   // 운세 분류 한 줄과 한마디
@@ -156,25 +156,13 @@ export async function renderStoryCard(reading: Reading): Promise<Blob> {
     ltLines.forEach((l, i) => ctx.fillText(l, SW / 2, y + 128 + i * 40));
     y += boxH + 36;
 
-    // 지괘. 자리가 모자라면 그림 없이 한 줄로
-    if (y + 116 <= SAFE_BOTTOM - 110) {
-      drawHexagram(ctx, resulting.lines, [], 230, y - 4, 120, 12, 9, D.jade);
-      ctx.textAlign = "left";
-      ctx.fillStyle = D.jade;
-      ctx.font = font(700, 26);
-      ctx.fillText("앞으로의 흐름, 지괘", 330, y + 20);
-      ctx.fillStyle = D.ink;
-      ctx.font = font(700, 38);
-      ctx.fillText(`${resulting.name}  ${resulting.hanja}`, 330, y + 68);
-      ctx.fillStyle = D.gold;
-      ctx.font = font(500, 28);
-      ctx.fillText(resulting.keyword, 330, y + 108);
-      ctx.textAlign = "center";
-    } else {
-      ctx.fillStyle = D.jade;
-      ctx.font = font(700, 30);
-      ctx.fillText(`앞으로의 흐름, 지괘  ${resulting.name} ${resulting.hanja}`, SW / 2, y + 16);
-    }
+    // 지괘는 위 흐름 그림에 있으니 여기서는 한 줄
+    ctx.fillStyle = D.jade;
+    ctx.font = font(700, 30);
+    ctx.fillText(`앞으로의 흐름, 지괘  ${resulting.name} ${resulting.hanja}`, SW / 2, y + 16);
+    ctx.fillStyle = D.gold;
+    ctx.font = font(500, 28);
+    ctx.fillText(resulting.keyword, SW / 2, y + 58);
   } else {
     ctx.fillStyle = D.muted;
     ctx.font = font(400, 28);
