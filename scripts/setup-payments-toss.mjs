@@ -61,7 +61,7 @@ function runWithInput(cmd, args, input) {
 }
 
 async function main() {
-  console.log("주역으로 보는 나의 운세 토스페이먼츠 정기결제 자동 설정을 시작합니다.");
+  console.log("나만의 정통주역운세 토스페이먼츠 정기결제 자동 설정을 시작합니다.");
   console.log("가입 전이라면 토스페이먼츠 개발자센터(https://developers.tosspayments.com)의 문서용 테스트 키로도 시험할 수 있습니다.");
   const token = (await getSupabaseToken());
   if (!token) fail("토큰이 비어 있습니다.");

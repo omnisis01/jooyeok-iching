@@ -107,7 +107,7 @@ export async function renderStoryCard(reading: Reading): Promise<Blob> {
   const { primary, resulting, changingLines, period, periodDate } = reading;
   const [canvas, ctx] = makeCanvas();
   background(ctx);
-  header(ctx, "주역으로 보는 나의 운세", reading.castAt ? formatCastAt(reading.castAt) : new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
+  header(ctx, "나만의 정통주역운세", reading.castAt ? formatCastAt(reading.castAt) : new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
 
   let y = SAFE_TOP + 130;
   const flowH = drawFlow(ctx, reading, SW / 2, y, resulting ? 230 : 300, resulting ? 22 : 28, resulting ? 16 : 18, { primary: D.gold, resulting: D.jade, text: D.ink, muted: D.muted, changing: D.vermilion }, 1.05);

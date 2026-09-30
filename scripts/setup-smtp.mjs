@@ -44,7 +44,7 @@ async function api(token, method, path, body) {
 }
 
 async function main() {
-  console.log("주역으로 보는 나의 운세 로그인 메일 발송 서버(SMTP) 설정을 시작합니다.");
+  console.log("나만의 정통주역운세 로그인 메일 발송 서버(SMTP) 설정을 시작합니다.");
   console.log("Gmail을 쓰려면: Google 계정 > 보안 > 2단계 인증 켜기 > 앱 비밀번호 만들기(16자리). 그 비밀번호를 아래에 넣습니다.\n");
   const token = (await getSupabaseToken());
   if (!token) fail("토큰이 비어 있습니다.");
@@ -55,7 +55,7 @@ async function main() {
   const pass = await ask("SMTP 비밀번호 또는 앱 비밀번호 (화면에 안 보임): ", true);
   if (!pass) fail("비밀번호가 비어 있습니다.");
   const sender = (await ask(`보내는 사람 주소 [${user}]: `)) || user;
-  const senderName = (await ask("보내는 사람 이름 [주역으로 보는 나의 운세]: ")) || "주역으로 보는 나의 운세";
+  const senderName = (await ask("보내는 사람 이름 [나만의 정통주역운세]: ")) || "나만의 정통주역운세";
 
   const projects = await api(token, "GET", "/v1/projects");
   const project = projects.find((p) => p.name === PROJECT_NAME);
@@ -71,7 +71,7 @@ async function main() {
     smtp_sender_name: senderName,
     smtp_max_frequency: 30,
     rate_limit_email_sent: 60,
-    mailer_subjects_magic_link: "주역으로 보는 나의 운세 로그인 링크예요",
+    mailer_subjects_magic_link: "나만의 정통주역운세 로그인 링크예요",
   });
   console.log("\n완료. 이제 로그인 링크가 이 발송 서버로 나갑니다(시간당 최대 60통).");
   console.log("확인: 앱 홈의 계정 카드에 다른 이메일 주소를 넣고 링크가 오는지 보세요. 스팸함도 확인하세요.");

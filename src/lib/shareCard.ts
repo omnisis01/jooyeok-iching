@@ -185,7 +185,7 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   ctx.textAlign = "center";
   ctx.fillStyle = C.goldSoft;
   ctx.font = font(500, 26);
-  ctx.fillText("주역으로 보는 나의 운세", W / 2, 110);
+  ctx.fillText("나만의 정통주역운세", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
   const when = reading.castAt ? formatCastAt(reading.castAt) : new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
@@ -305,7 +305,7 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   const H = Math.min(H_MAX, Math.max(H_MIN, y + 150));
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 22);
-  ctx.fillText("세상에서 가장 정확한 점사풀이, 주역으로 보는 나의 운세", W / 2, H - 96);
+  ctx.fillText("세상에서 가장 정확한 점사풀이, 나만의 정통주역운세", W / 2, H - 96);
   if (!opts.premium) {
     ctx.fillStyle = C.gold;
     ctx.font = font(600, 24);

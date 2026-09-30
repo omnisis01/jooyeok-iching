@@ -1,6 +1,6 @@
 {
-  "name": "주역으로 보는 나의 운세",
-  "short_name": "나의 운세",
+  "name": "나만의 정통주역운세",
+  "short_name": "주역운세",
   "description": "세상에서 가장 정확한 점사풀이",
   "start_url": "./",
   "scope": "./",

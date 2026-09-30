@@ -1,6 +1,6 @@
 // 푸시 알림을 받아 표시하고, 누르면 앱을 여는 서비스 워커
 self.addEventListener("push", (event) => {
-  let data = { title: "주역으로 보는 나의 운세", body: "오늘의 괘가 도착했어요.", url: "./", tag: "daily-hexagram" };
+  let data = { title: "나만의 정통주역운세", body: "오늘의 괘가 도착했어요.", url: "./", tag: "daily-hexagram" };
   try {
     if (event.data) data = { ...data, ...event.data.json() };
   } catch {

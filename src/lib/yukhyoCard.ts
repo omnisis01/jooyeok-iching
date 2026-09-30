@@ -26,7 +26,7 @@ export async function renderYukhyoCard(r: YukhyoResult): Promise<Blob> {
   ctx.textAlign = "center";
   ctx.fillStyle = C.goldSoft;
   ctx.font = font(500, 26);
-  ctx.fillText("주역으로 보는 나의 운세  육효점", W / 2, 110);
+  ctx.fillText("나만의 정통주역운세  육효점", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
   const [y0, m0, d0] = r.day.date.split("-").map(Number);
@@ -135,7 +135,7 @@ export async function renderYukhyoCard(r: YukhyoResult): Promise<Blob> {
   const H = Math.min(H_MAX, Math.max(1350, y + 150));
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 22);
-  ctx.fillText("세상에서 가장 정확한 점사풀이, 주역으로 보는 나의 운세", W / 2, H - 96);
+  ctx.fillText("세상에서 가장 정확한 점사풀이, 나만의 정통주역운세", W / 2, H - 96);
   ctx.fillStyle = C.gold;
   ctx.font = font(600, 24);
   ctx.fillText(SITE_LABEL, W / 2, H - 58);

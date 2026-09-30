@@ -1,12 +1,12 @@
 // 개인정보처리방침 페이지 (스토어 등록과 결제에 필요)
 import LegalPage from "@/components/LegalPage";
 
-export const metadata = { title: "개인정보처리방침, 주역으로 보는 나의 운세" };
+export const metadata = { title: "개인정보처리방침, 나만의 정통주역운세" };
 
 export default function PrivacyPage() {
   return (
     <LegalPage title="개인정보처리방침" updated="2026년 9월 29일">
-      <p>주역으로 보는 나의 운세(이하 “서비스”)는 이용자의 개인정보를 소중히 다루며, 개인정보 보호법 등 관련 법령을 지킵니다. 이 방침은 서비스가 어떤 정보를 왜 모으고 어떻게 다루는지 설명합니다.</p>
+      <p>나만의 정통주역운세(이하 “서비스”)는 이용자의 개인정보를 소중히 다루며, 개인정보 보호법 등 관련 법령을 지킵니다. 이 방침은 서비스가 어떤 정보를 왜 모으고 어떻게 다루는지 설명합니다.</p>
 
       <h2>1. 모으는 정보</h2>
       <ul>
