@@ -12,6 +12,7 @@ import DivinationFlow from "./DivinationFlow";
 import YukhyoSection from "./YukhyoSection";
 import HexagramGallery from "./HexagramGallery";
 import AboutScreen from "./AboutScreen";
+import GuaHyoGuide from "./GuaHyoGuide";
 
 export type Tab = "home" | "divine" | "yukhyo" | "hexagrams" | "about";
 
@@ -99,7 +100,7 @@ export default function AppShell() {
           </div>
         </header>
 
-        <main className="px-4 pb-28 pt-2 lg:mx-auto lg:max-w-4xl lg:px-8 lg:pb-12 lg:pt-8">
+        <main className="px-4 pb-40 pt-2 lg:mx-auto lg:max-w-4xl lg:px-8 lg:pb-12 lg:pt-8">
           <h1 className="mb-4 hidden text-2xl font-extrabold lg:block">{TITLES[tab]}</h1>
           {/* 탭 전환은 퇴장 애니메이션 없이 바로 바꾼다. 화면이 가려진 상태에서도 멈추지 않도록 */}
           <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>
@@ -144,6 +145,7 @@ export default function AppShell() {
           </ul>
         </nav>
       </div>
+      <GuaHyoGuide />
     </div>
   );
 }

@@ -148,7 +148,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
             ) : null}
             <div className="mt-4 space-y-1.5 border-t border-border pt-3 text-xs leading-relaxed text-muted">
               <p>
-                <b className="text-foreground/80">변효(움직이는 효)</b>는 괘 그림에서 빨갛게 표시된 줄입니다. 동전 세 개가 모두 앞면(합 9)이거나 모두 뒷면(합 6)이면 그 줄은 곧 반대로 뒤집히는 늙은 양이나 음이라 움직인다고 봅니다. 나머지 줄은 그대로 머뭅니다.
+                <b className="text-foreground/80">변효(움직이는 효)</b>는 괘 그림에서 빨갛게 표시된 줄입니다. 동전 세 개가 모두 앞면(합 9)이거나 모두 뒷면(합 6)이면 그 줄은 힘이 끝까지 차서 곧 반대로 바뀝니다. 이어진 줄은 끊어지고, 끊어진 줄은 이어져요. 그래서 움직이는 효라고 부릅니다. 나머지 줄은 그대로 머뭅니다.
               </p>
               <p>
                 <b className="text-foreground/80">효사</b>는 주역 원문에서 여섯 줄 하나하나에 붙은 짧은 글입니다. 64괘에 여섯 개씩, 모두 384개가 있습니다. 주역 점에서는 괘 전체의 뜻보다 지금 움직이는 줄에 붙은 글이 나에게 하는 말이라고 봅니다. 아래 줄부터 일의 시작, 위 줄로 갈수록 마무리 단계라 같은 괘라도 어느 줄이 움직이느냐에 따라 답이 달라집니다.
@@ -187,7 +187,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
 
       {/* 읽는 법과 용어 설명은 결과를 다 본 뒤에 */}
       <p className="rounded-2xl bg-card/60 px-4 py-3 text-center text-sm leading-relaxed text-muted">
-        주역은 두 겹으로 읽어요. <b className="text-foreground/80">괘사</b>는 지도, <b className="text-foreground/80">효사</b>는 지금 내 위치. 둘을 합쳐 한마디로 정리합니다.
+        주역은 두 겹으로 읽어요. <b className="text-foreground/80">괘사</b>는 큰 판세, <b className="text-foreground/80">효사</b>는 지금 내 위치. 둘을 합쳐 한마디로 정리합니다.
       </p>
       <GuaHyoExplainer />
 

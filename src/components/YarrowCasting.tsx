@@ -184,7 +184,7 @@ export default function YarrowCasting({ question, onComplete }: Props) {
           })}
         </ol>
         <p className="mt-4 text-xs leading-relaxed text-muted">
-          남은 개수를 4로 나누면 효값입니다. 36은 9 노양(변), 32는 8 소음, 28은 7 소양, 24는 6 노음(변)
+          남은 개수를 4로 나누면 효값입니다. 36은 9(바뀌는 양), 32는 8(그대로인 음), 28은 7(그대로인 양), 24는 6(바뀌는 음)
         </p>
       </div>
     </div>

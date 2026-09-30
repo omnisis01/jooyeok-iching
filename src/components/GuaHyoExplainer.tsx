@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { openGuaHyoGuide } from "./GuaHyoGuide";
 import { ChevronDown } from "lucide-react";
 
 const LINE_LABELS = ["상효", "오효", "사효", "삼효", "이효", "초효"];
@@ -70,7 +71,7 @@ export function GuaHyoBody() {
         <b className="text-foreground">괘(卦)</b>는 그 줄 여섯 개를 쌓은 그림 하나예요. 위 세 줄과 아래 세 줄의 조합으로 64가지가 있고, 하나하나가 하나의 상황을 뜻합니다.
       </p>
       <p>
-        그래서 <b className="text-foreground">괘사</b>는 괘 전체에 붙은 글, 곧 큰 흐름이고, <b className="text-foreground">효사</b>는 줄 하나하나에 붙은 글, 곧 그 단계에서의 조언입니다. 점을 치면 괘로 지금 상황을 보고, 그중 움직이는 효(빨간 줄)로 지금 내 자리를 봅니다.
+        그래서 <b className="text-foreground">괘사</b>는 괘 전체에 붙은 글, 곧 큰 판세이고, <b className="text-foreground">효사</b>는 줄 하나하나에 붙은 글, 곧 그 단계에서의 조언입니다. 점을 치면 괘로 지금 상황을 보고, 그중 움직이는 효(빨간 줄)로 지금 내 자리를 봅니다.
       </p>
     </div>
   );
@@ -88,6 +89,9 @@ export default function GuaHyoExplainer({ defaultOpen = false }: { defaultOpen?:
       {open ? (
         <div className="px-5 pb-5">
           <GuaHyoBody />
+          <button onClick={openGuaHyoGuide} className="mt-4 w-full rounded-full bg-background py-3 text-sm font-bold">
+            그림으로 차근차근 보기
+          </button>
         </div>
       ) : null}
     </section>

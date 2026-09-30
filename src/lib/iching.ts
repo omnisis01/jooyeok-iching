@@ -49,14 +49,14 @@ export function trigramsOf(hex: Hexagram): { lower: Trigram; upper: Trigram } {
   };
 }
 
-/** 척전법 효값: 6 노음(변), 7 소양, 8 소음, 9 노양(변) */
+/** 척전법 효값: 6 바뀌는 음, 7 그대로인 양, 8 그대로인 음, 9 바뀌는 양 (전통 이름은 노음, 소양, 소음, 노양) */
 export type LineValue = 6 | 7 | 8 | 9;
 
 export const LINE_VALUE_LABEL: Record<LineValue, string> = {
-  6: "노음(변하는 음)",
-  7: "소양(양)",
-  8: "소음(음)",
-  9: "노양(변하는 양)",
+  6: "곧 양으로 바뀌는 음(변효)",
+  7: "그대로인 양",
+  8: "그대로인 음",
+  9: "곧 음으로 바뀌는 양(변효)",
 };
 
 export type CoinToss = {
