@@ -168,7 +168,8 @@ async function main() {
   log(3, "API 키를 가져옵니다");
   const keys = await api(token, "GET", `/v1/projects/${ref}/api-keys?reveal=true`);
   const anon = keys.find((k) => k.name === "anon")?.api_key;
-  const service = keys.find((k) => k.name === "service_role")?.api_key;
+  // 새 형식 비밀 키(sb_secret_)를 우선하고, 없으면 예전 service_role 키. 예전 키는 새 프로젝트에서 꺼져 있을 수 있다
+  const service = keys.find((k) => k.type === "secret")?.api_key ?? keys.find((k) => k.name === "service_role")?.api_key;
   if (!anon || !service) fail("anon 또는 service_role 키를 찾지 못했습니다.");
   const supabaseUrl = `https://${ref}.supabase.co`;
   console.log("NEXT_PUBLIC_SUPABASE_URL 준비됨, NEXT_PUBLIC_SUPABASE_ANON_KEY 준비됨, service_role 준비됨(출력하지 않음)");
@@ -218,7 +219,9 @@ async function main() {
     create extension if not exists pg_net;
     do $$
     begin
-      if not exists (select 1 from vault.secrets where name = 'service_role_key') then
+      if exists (select 1 from vault.secrets where name = 'service_role_key') then
+        perform vault.update_secret((select id from vault.secrets where name = 'service_role_key'), '${service}');
+      else
         perform vault.create_secret('${service}', 'service_role_key');
       end if;
     end $$;

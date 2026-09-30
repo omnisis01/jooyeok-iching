@@ -147,7 +147,7 @@
 - [x] `daily-push` 함수가 `{slot}`을 받고 문구를 고른다. 일요일이 아닌 밤은 보내지 않음. 서비스 워커는 태그를 payload에서 받아 아침·밤 알림이 서로 덮어쓰지 않게
 - [x] 예약 두 개: `push-morning` 매일 07:30 KST, `push-sunday-night` 일요일 21:30 KST (`pushCronSql`, 초기 설정 스크립트와 `scripts/setup-push-schedule.mjs` 공용)
 - [x] "한 번만 뽑기" 문구를 효용 중심으로("처음 뽑은 답이 가장 정확하고, 다시 뽑으면 효과가 없어요")
-- [ ] 사용자: `node scripts/setup-push-schedule.mjs` 실행(함수 재배포 + 예약 등록 + 시험 발송)
+- [x] `setup-push-schedule.mjs` 실행 완료(토큰은 키체인에 저장). 함수 배포, 예약 2개 등록 확인. 시험 발송은 예전 service_role 키로 401이 나서 함수가 새 형식 비밀 키(sb_secret_)도 받게 고치고, 예약 작업의 금고 키를 새 키로 바꾼 뒤 예약과 같은 호출로 200 확인(구독자 0명이라 sent 0)
 - [x] `PLAN-growth.md` 작성(수익 모델 순서, 채널 순서, 홍보 순서, 측정 항목, 바로 할 개발). 설정 스크립트가 macOS 키체인에서 토큰을 읽도록(`scripts/token.mjs`)
 - [ ] 설날·추석 표는 2028년까지. 이후 해마다 messages.ts HOLIDAYS에 추가
 

@@ -169,3 +169,5 @@
 - 양력·음력: 절기, 일진, 월건은 모두 태양 위치 기준이라 양력 계산이 맞다. 음력이 필요한 것은 설날·추석뿐이고 표로 처리한다. 사용자 설정은 두지 않는다.
 - Deno Edge Function의 문구 로직은 외부 의존 없이 써서 tsx로도 시험할 수 있게 했다(scratchpad에 복사해서 실행).
 - setup-supabase.mjs는 pushCronSql을 export 하므로 import 될 때 main이 돌지 않게 argv 가드를 넣었다.
+- Supabase 새 프로젝트는 예전 service_role JWT가 Edge Function 안의 SUPABASE_SERVICE_ROLE_KEY와 일치하지 않을 수 있다(새 형식 sb_secret_ 키로 넘어가는 중). 함수는 SUPABASE_SERVICE_ROLE_KEY와 SUPABASE_SECRET_KEYS 둘 다 허용하고, cron이 쓰는 vault 값은 sb_secret_ 키로 둔다. 설정 스크립트는 secret 형식을 우선 고른다.
+- 설정 스크립트 토큰은 macOS 키체인 항목 jooyeok-supabase-token 에서 읽는다(scripts/token.mjs). 이제 Bash에서 프롬프트 없이 실행할 수 있다.

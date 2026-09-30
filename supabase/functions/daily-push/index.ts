@@ -24,9 +24,12 @@ function kstDateString(): string {
 
 Deno.serve(async (req) => {
   // 서비스 키로 호출된 요청만 허용한다 (cron이 Authorization 헤더로 보낸다)
-  const auth = req.headers.get("Authorization") ?? "";
+  // 예전 형식(service_role JWT)과 새 형식(sb_secret_...) 비밀 키 둘 다 받는다
+  const auth = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "").trim();
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  if (!serviceKey || auth !== `Bearer ${serviceKey}`) {
+  const secretKeys = (Deno.env.get("SUPABASE_SECRET_KEYS") ?? "").split(/[,\s\[\]"]+/).filter(Boolean);
+  const allowed = [serviceKey, ...secretKeys].filter(Boolean);
+  if (!auth || !allowed.includes(auth)) {
     return new Response("unauthorized", { status: 401 });
   }
 

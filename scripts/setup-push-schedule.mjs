@@ -69,7 +69,15 @@ async function main() {
 
   console.log("\n[3] 시험 발송 (아침 문구)");
   const test = await api(token, "GET", `/v1/projects/${ref}/api-keys?reveal=true`).catch(() => null);
-  const service = Array.isArray(test) ? test.find((k) => k.name === "service_role")?.api_key : null;
+  const service = Array.isArray(test) ? (test.find((k) => k.type === "secret")?.api_key ?? test.find((k) => k.name === "service_role")?.api_key) : null;
+  if (service) {
+    // 예약 작업이 쓰는 금고(vault) 키도 같은 값으로 맞춘다
+    await api(token, "POST", `/v1/projects/${ref}/database/query`, {
+      query: `do $$ begin
+        if exists (select 1 from vault.secrets where name = 'service_role_key') then perform vault.update_secret((select id from vault.secrets where name = 'service_role_key'), '${service}');
+        else perform vault.create_secret('${service}', 'service_role_key'); end if; end $$;`,
+    });
+  }
   if (service) {
     const res = await fetch(`${supabaseUrl}/functions/v1/daily-push`, { method: "POST", headers: { Authorization: `Bearer ${service}`, "Content-Type": "application/json" }, body: JSON.stringify({ slot: "morning" }) });
     console.log("응답:", (await res.text()).slice(0, 300));
