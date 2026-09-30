@@ -1,0 +1,32 @@
+name: Daily hexagram card
+
+# 매일 한국 시간 07:00에 오늘의 괘 세로 카드(1080×1920 PNG)를 만들어 아티팩트로 올린다.
+# 인스타그램, 스레드, 쇼츠에 올릴 때 Actions 탭에서 내려받는다. 자동 게시는 PLAN-growth.md 참고.
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "YYYY-MM-DD (비우면 오늘)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/capture-today-card.mjs daily-cards "${{ github.event.inputs.date }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: today-card-${{ github.run_id }}
+          path: daily-cards/*.png
+          retention-days: 14

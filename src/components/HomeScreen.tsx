@@ -3,7 +3,10 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ChevronRight, Trash2 } from "lucide-react";
+import { ArrowLeft, ChevronRight, ImageDown, Trash2 } from "lucide-react";
+import ShareCardModal from "./ShareCardModal";
+import { renderDailyStoryCard, storyFileName } from "@/lib/storyCard";
+import { SITE_URL } from "@/lib/shareCard";
 import type { Hexagram } from "@/data/hexagrams";
 import type { Tab } from "./AppShell";
 import HexagramFigure from "./HexagramFigure";
@@ -32,6 +35,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [premium, setPremium] = useState(false);
+  const [dailyShare, setDailyShare] = useState(false);
 
   const { today, hour } = useToday();
   const day = today ? dayInfo(today) : null;
@@ -142,6 +146,25 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           <p className="text-xs font-bold text-vermilion">오늘의 괘 한마디</p>
         )}
       </motion.button>
+      {daily && today ? (
+        <div className="-mt-2 flex justify-end">
+          <button onClick={() => setDailyShare(true)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-muted hover:text-foreground">
+            <ImageDown size={14} /> 오늘의 괘를 이미지로
+          </button>
+          <ShareCardModal
+            job={
+              dailyShare
+                ? {
+                    render: () => renderDailyStoryCard(daily, today),
+                    fileName: storyFileName("오늘의괘", daily),
+                    text: `오늘의 괘 ${daily.name}(${daily.hanja}), ${daily.keyword}\n${daily.advice}\n${SITE_URL}`,
+                  }
+                : null
+            }
+            onClose={() => setDailyShare(false)}
+          />
+        </div>
+      ) : null}
 
       {/* 점치기 입구 */}
       <motion.button

@@ -10,6 +10,7 @@ import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
 import ShareCardModal from "./ShareCardModal";
 import { renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
+import { renderStoryCard, storyFileName } from "@/lib/storyCard";
 import { adaptAdvice, adviceHeading, periodLabel } from "@/lib/period";
 import ShareForCoupon from "./ShareForCoupon";
 import SummaryCard from "./SummaryCard";
@@ -215,7 +216,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
         </button>
       </div>
       <ShareCardModal
-        job={shareOpen ? { render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading) } : null}
+        job={shareOpen ? { render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading), renderStory: () => renderStoryCard(reading), storyFileName: storyFileName("나의괘", reading.primary) } : null}
         onClose={() => setShareOpen(false)}
       />
 

@@ -6,9 +6,18 @@ import { AnimatePresence, motion } from "motion/react";
 import { Check, Download, ImageDown, Link2, X } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
 
+export type ShareJob = {
+  render: () => Promise<Blob>;
+  fileName: string;
+  text: string;
+  /** 있으면 세로(9:16, 스토리용) 형식을 고를 수 있다 */
+  renderStory?: () => Promise<Blob>;
+  storyFileName?: string;
+};
+
 type Props = {
   /** 열려 있을 때만 값이 있다 */
-  job: { render: () => Promise<Blob>; fileName: string; text: string } | null;
+  job: ShareJob | null;
   onClose: () => void;
 };
 
@@ -21,13 +30,23 @@ export default function ShareCardModal({ job, onClose }: Props) {
   const [canShareFiles, setCanShareFiles] = useState(false);
   // 손가락으로 쓰는 기기(휴대폰, 태블릿)인지: 길게 눌러 저장 안내를 보여 준다
   const [touch, setTouch] = useState(false);
+  const [format, setFormatState] = useState<"card" | "story">("card");
+  const setFormat = (f: "card" | "story") => {
+    if (f === format) return;
+    setBlob(null);
+    setUrl(null);
+    setStatus(null);
+    setFormatState(f);
+  };
+  const fileName = format === "story" && reading?.storyFileName ? reading.storyFileName : reading?.fileName ?? "";
 
   useEffect(() => {
     if (!reading) return;
     let objectUrl: string | null = null;
     let cancelled = false;
-    // 모달은 닫힐 때 언마운트되므로 열 때마다 상태가 초기값에서 시작한다
-    reading.render()
+    // 모달은 닫힐 때 언마운트되므로 열 때마다 상태가 초기값에서 시작한다. 형식을 바꿀 때는 이전 이미지를 지운다
+    const render = format === "story" && reading.renderStory ? reading.renderStory : reading.render;
+    render()
       .then((b) => {
         if (cancelled) return;
         objectUrl = URL.createObjectURL(b);
@@ -49,20 +68,20 @@ export default function ShareCardModal({ job, onClose }: Props) {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [reading, onClose]);
+  }, [reading, onClose, format]);
 
   const download = () => {
     if (!url || !reading) return;
     const a = document.createElement("a");
     a.href = url;
-    a.download = reading.fileName;
+    a.download = fileName;
     a.click();
     setStatus(touch ? "다운로드 폴더에 파일로 저장했어요. 사진첩에 넣으려면 이미지를 길게 누르세요" : "이미지를 저장했어요");
   };
 
   const share = async () => {
     if (!blob || !reading) return;
-    const file = new File([blob], reading.fileName, { type: "image/png" });
+    const file = new File([blob], fileName, { type: "image/png" });
     try {
       await navigator.share({ files: [file], title: "주역으로 보는 나의 운세", text: reading.text });
       setStatus("보냈어요. 사진첩에 넣었다면 앨범에서 확인해 보세요");
@@ -110,6 +129,20 @@ export default function ShareCardModal({ job, onClose }: Props) {
               </button>
             </div>
 
+            {reading.renderStory ? (
+              <div className="mt-3 grid grid-cols-2 gap-1 rounded-full bg-background p-1 text-sm font-bold">
+                {(["card", "story"] as const).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFormat(f)}
+                    className={`rounded-full py-2 transition ${format === f ? "bg-foreground text-card" : "text-muted"}`}
+                    aria-pressed={format === f}
+                  >
+                    {f === "card" ? "기본 카드" : "세로 (스토리용)"}
+                  </button>
+                ))}
+              </div>
+            ) : null}
             <div className="mt-4 flex min-h-[240px] flex-1 items-center justify-center overflow-hidden rounded-2xl bg-background">
               {url ? (
                 // 캔버스로 만든 blob URL이라 next/image 최적화 대상이 아니다

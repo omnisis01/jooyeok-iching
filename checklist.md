@@ -159,6 +159,14 @@
 - [x] 계정 카드: 아이폰 사파리 탭이면 "홈 화면에 추가" 안내, 알림 버튼 문구 "아침 알림 받기"
 - [ ] 사용자: Google Search Console에 https://omnisis01.github.io/jooyeok-iching/ 등록 후 sitemap.xml 제출
 
+## 2026-09-30 29차: 세로 공유 카드, 오늘의 괘 이미지 자동 생성
+- [x] `src/lib/storyCard.ts`: 1080×1920 어두운 세로 카드. 결과용(본괘 그림, 이름, 분류 한 줄, 한마디, 변효 상자, 지괘)과 오늘의 괘용(그림, 이름, 세 줄 요약). 인스타그램 UI가 덮는 위아래 260px은 비움. 자리가 모자라면 지괘를 한 줄로
+- [x] 결과 이미지 모달에 "기본 카드 / 세로 (스토리용)" 전환. 파일 이름도 형식별로
+- [x] 홈 오늘의 괘 카드 아래 "오늘의 괘를 이미지로" 버튼(같은 모달)
+- [x] `/today-card/?date=YYYY-MM-DD` 페이지: 그 날짜의 오늘의 괘 세로 카드를 그려 보여 주고 내려받기. 검색 제외
+- [x] `scripts/capture-today-card.mjs` + `.github/workflows/daily-card.yml`: 매일 07:00 KST에 Playwright로 카드 PNG를 만들어 아티팩트(14일 보관)로 올림. 수동 실행 시 날짜 지정 가능
+- [x] Playwright로 실제 PNG 세 장을 뽑아 눈으로 확인(겹침 수정 뒤 정상)
+
 ## 다음에 할 만한 것
 - [ ] 배포 채널 계획 `PLAN-distribution.md` 검토 후 순서 확정(권장: 토스페이먼츠 → 앱인토스 → 구글 플레이 → 애플)
 - [ ] 결제(프리미엄): 토스페이먼츠 또는 Stripe + Edge Function 검증, `profiles.premium_until` (SETUP.md 4절)
