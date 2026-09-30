@@ -45,7 +45,7 @@ async function api(token, method, path, body) {
 
 async function main() {
   console.log("푸시 알림 문구와 예약을 새로 올립니다.");
-  const token = process.env.SUPABASE_ACCESS_TOKEN || (await askHidden("Supabase 액세스 토큰 (화면에 안 보임): "));
+  const token = (await getSupabaseToken());
   if (!token) fail("토큰이 비어 있습니다.");
   const projects = await api(token, "GET", "/v1/projects");
   const project = projects.find((p) => p.name === PROJECT_NAME);

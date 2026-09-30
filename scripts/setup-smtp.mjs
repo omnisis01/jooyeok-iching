@@ -46,7 +46,7 @@ async function api(token, method, path, body) {
 async function main() {
   console.log("주역으로 보는 나의 운세 로그인 메일 발송 서버(SMTP) 설정을 시작합니다.");
   console.log("Gmail을 쓰려면: Google 계정 > 보안 > 2단계 인증 켜기 > 앱 비밀번호 만들기(16자리). 그 비밀번호를 아래에 넣습니다.\n");
-  const token = process.env.SUPABASE_ACCESS_TOKEN || (await ask("Supabase 액세스 토큰 (화면에 안 보임): ", true));
+  const token = (await getSupabaseToken());
   if (!token) fail("토큰이 비어 있습니다.");
   const host = (await ask("SMTP 서버 주소 [smtp.gmail.com]: ")) || "smtp.gmail.com";
   const port = Number((await ask("포트 [465]: ")) || 465);
