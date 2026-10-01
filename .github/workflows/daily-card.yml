@@ -1,10 +1,12 @@
 name: Daily hexagram card
 
-# 매일 한국 시간 07:00에 오늘의 괘 세로 카드(1080×1920 PNG)를 만들어 아티팩트로 올린다.
-# 인스타그램, 스레드, 쇼츠에 올릴 때 Actions 탭에서 내려받는다. 자동 게시는 PLAN-growth.md 참고.
+# 매일 아침 오늘의 괘 세로 카드(1080×1920 PNG)를 만들어 아티팩트로 올린다.
+# GitHub 예약 실행은 정각에 몰려 자주 늦거나 빠지므로 덜 붐비는 시각에 두 번 걸고, 오늘 이미 만들었으면 두 번째는 건너뛴다.
+# 한국 시간 06:43, 08:13
 on:
   schedule:
-    - cron: "0 22 * * *"
+    - cron: "43 21 * * *"
+    - cron: "13 23 * * *"
   workflow_dispatch:
     inputs:
       date:
@@ -13,19 +15,35 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   card:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: 오늘 이미 만들었는지 확인
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          today=$(TZ=Asia/Seoul date +%F)
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            done=$(gh api "repos/${{ github.repository }}/actions/workflows/daily-card.yml/runs?status=success&per_page=10" \
+              -q "[.workflow_runs[] | select(.created_at >= \"$(TZ=Asia/Seoul date -d "$today 00:00" -u +%FT%TZ)\")] | length")
+            if [ "$done" -gt 0 ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; echo "오늘 카드가 이미 있어 건너뜁니다"; fi
+          fi
+      - if: steps.check.outputs.skip != 'true'
+        uses: actions/checkout@v4
+      - if: steps.check.outputs.skip != 'true'
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm i --no-save playwright
-      - run: npx playwright install --with-deps chromium
-      - run: node scripts/capture-today-card.mjs daily-cards "${{ github.event.inputs.date }}"
-      - uses: actions/upload-artifact@v4
+      - if: steps.check.outputs.skip != 'true'
+        run: npm i --no-save playwright && npx playwright install --with-deps chromium
+      - if: steps.check.outputs.skip != 'true'
+        run: node scripts/capture-today-card.mjs daily-cards "${{ github.event.inputs.date }}"
+      - if: steps.check.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
         with:
           name: today-card-${{ github.run_id }}
           path: daily-cards/*.png
