@@ -4,12 +4,12 @@
 // Supabase 기본 발송은 프로젝트 팀원 주소로만, 시간당 몇 통만 보내므로 실제 사용자에게 보내려면 이 설정이 필요합니다.
 // 가장 간단한 방법은 Gmail 앱 비밀번호(하루 500통)이고, 규모가 커지면 Resend, SendGrid 같은 서비스로 바꾸면 됩니다.
 import { join, dirname } from "node:path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createInterface } from "node:readline";
 import { getSupabaseToken } from "./token.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-void ROOT;
 const API = "https://api.supabase.com";
 const PROJECT_NAME = process.env.SUPABASE_PROJECT_NAME || "jooyeok-master";
 
@@ -87,6 +87,10 @@ async function main() {
     smtp_max_frequency: 30,
     rate_limit_email_sent: 60,
     mailer_subjects_magic_link: "나만의 정통주역운세 로그인 링크예요",
+    mailer_subjects_confirmation: "나만의 정통주역운세 로그인 링크예요",
+    // 처음 가입하는 사람과 다시 로그인하는 사람 모두 같은 한국어 메일을 받는다
+    mailer_templates_magic_link_content: readFileSync(join(ROOT, "supabase/templates/login-mail.html"), "utf8"),
+    mailer_templates_confirmation_content: readFileSync(join(ROOT, "supabase/templates/login-mail.html"), "utf8"),
   });
   console.log("\n완료. 이제 로그인 링크가 이 발송 서버로 나갑니다(시간당 최대 60통).");
   console.log("확인: 앱 홈의 계정 카드에 다른 이메일 주소를 넣고 링크가 오는지 보세요. 스팸함도 확인하세요.");
