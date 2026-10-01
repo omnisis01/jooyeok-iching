@@ -1,7 +1,7 @@
 {
   "name": "나만의 정통주역운세",
   "short_name": "주역운세",
-  "description": "세상에서 가장 정확한 점사풀이",
+  "description": "주역 원전 그대로, 쉬운 말로 풀어 주는 운세",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

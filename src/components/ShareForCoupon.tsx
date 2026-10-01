@@ -6,7 +6,7 @@ import { Check, Share2 } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
 import { grantShareCoupon, quotaState } from "@/lib/quota";
 
-const SHARE_TEXT = "나만의 정통주역운세에서 오늘 나만의 괘를 뽑아 봤어요. 세상에서 가장 정확한 점사풀이, 같이 해 봐요.";
+const SHARE_TEXT = "나만의 정통주역운세에서 내 괘를 뽑아 봤어요. 주역 원전 그대로 쉬운 말로 풀어 줘요. 같이 하나 뽑아 봐요.";
 
 type Props = {
   /** 쿠폰을 받은 뒤 할 일 (예: 바로 다시 뽑기) */

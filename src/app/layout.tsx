@@ -7,7 +7,7 @@ import "./globals.css";
 const BASE = process.env.GITHUB_PAGES === "true" ? "/jooyeok-iching" : "";
 
 export const metadata: Metadata = {
-  title: "나만의 정통주역운세, 세상에서 가장 정확한 점사풀이",
+  title: "나만의 정통주역운세, 원전 그대로 쉬운 말로",
   description: "주역 64괘와 육효로 오늘의 운을 묻습니다. 동전, 산통, 산가지로 괘를 뽑고 쉬운 말로 풀어낸 조언을 받아 보세요.",
   applicationName: "나만의 정통주역운세",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "주역운세" },
