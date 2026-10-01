@@ -10,7 +10,7 @@ import { HexagramLines } from "./HexagramFigure";
 type Props = {
   size?: number;
   /** 있으면 괘를 누를 때 그 괘를 알려 준다 */
-  onSelect?: (hex: Hexagram) => void;
+  onSelect?: (hex: Hexagram, how: "tap" | "random") => void;
   /** 바깥의 "무작위로 하나 뽑기" 버튼이 부를 함수를 받아 간다 */
   randomRef?: React.MutableRefObject<(() => void) | null>;
   className?: string;
@@ -50,20 +50,20 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
   const busyRef = useRef(false);
 
   /** 고른 괘를 잠깐 빛내고 바로 연다. 회전은 팝업이 떠 있는 동안 멈춘다 */
-  const open = (index: number) => {
+  const open = (index: number, how: "tap" | "random" = "tap") => {
     if (!onSelect || busyRef.current) return;
     busyRef.current = true;
     for (const el of [outerRef.current, innerRef.current]) if (el) el.style.animationPlayState = "paused";
     setPicked(index);
     setPickedAtKey(resetKey);
     window.setTimeout(() => {
-      onSelect(FUXI_ORDER[index]);
+      onSelect(FUXI_ORDER[index], how);
       busyRef.current = false;
     }, 260);
   };
   useEffect(() => {
     if (!randomRef) return;
-    randomRef.current = () => open(randomIndex());
+    randomRef.current = () => open(randomIndex(), "random");
     return () => {
       randomRef.current = null;
     };

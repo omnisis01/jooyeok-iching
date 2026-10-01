@@ -147,10 +147,10 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </div>
         <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘의 뜻과 효사가 바로 열려요.</p>
         <div className="mt-3 flex justify-center">
-          <HexagramWheel size={340} onSelect={(h) => { track("wheel_open", { how: "tap" }); setSelected(h); }} resetKey={wheelReset} randomRef={wheelRandom} className="h-auto w-full max-w-[340px]" />
+          <HexagramWheel size={340} onSelect={(h, how) => { track("wheel_open", { how }); setSelected(h); }} resetKey={wheelReset} randomRef={wheelRandom} className="h-auto w-full max-w-[340px]" />
         </div>
         <div className="mt-2 flex justify-center">
-          <button onClick={() => { track("wheel_open", { how: "random" }); wheelRandom.current?.(); }} className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
+          <button onClick={() => wheelRandom.current?.()} className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
             <Shuffle size={15} /> 무작위로 하나 뽑기
           </button>
         </div>
