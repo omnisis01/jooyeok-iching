@@ -5,7 +5,10 @@ import { todayString } from "./yukhyo";
 import { now } from "./clock";
 import { cloudEnabled, supabase } from "./supabase";
 
+/** 로그인 사용자의 하루 무료 횟수 */
 export const FREE_PER_DAY = 3;
+/** 로그인하지 않은 사용자의 하루 무료 횟수. 로그인 기능이 없는 환경(로컬 개발)에서는 3회 */
+export const FREE_PER_DAY_GUEST = cloudEnabled ? 1 : FREE_PER_DAY;
 /** 공유 쿠폰 하루 한도. 공유가 곧 홍보라 넉넉히 둔다 */
 export const SHARE_COUPONS_PER_DAY = 10;
 
@@ -108,6 +111,10 @@ function serverToday(): ServerQuota | null {
 
 export type QuotaState = {
   premium: boolean;
+  /** 로그인하지 않은 사용자 */
+  guest: boolean;
+  /** 오늘 무료 횟수(쿠폰 제외) */
+  free: number;
   used: number;
   coupons: number;
   shares: number;
@@ -121,12 +128,15 @@ export function quotaState(): QuotaState {
   if (sv) {
     const premium = sv.premium || isPremiumNow();
     const remaining = premium ? Infinity : Math.max(0, FREE_PER_DAY + sv.shares - sv.used);
-    return { premium, used: sv.used, coupons: sv.shares, shares: sv.shares, remaining, canShareForCoupon: sv.shares < SHARE_COUPONS_PER_DAY };
+    return { premium, guest: false, free: FREE_PER_DAY, used: sv.used, coupons: sv.shares, shares: sv.shares, remaining, canShareForCoupon: sv.shares < SHARE_COUPONS_PER_DAY };
   }
+  // 서버 값을 아직 못 받았어도 로그인했으면 회원 기준(3회)으로 센다
+  const guest = !serverUser;
+  const free = guest ? FREE_PER_DAY_GUEST : FREE_PER_DAY;
   const q = read();
   const premium = isPremiumNow();
-  const remaining = premium ? Infinity : Math.max(0, FREE_PER_DAY + q.coupons - q.used);
-  return { premium, used: q.used, coupons: q.coupons, shares: q.shares, remaining, canShareForCoupon: q.shares < SHARE_COUPONS_PER_DAY };
+  const remaining = premium ? Infinity : Math.max(0, free + q.coupons - q.used);
+  return { premium, guest, free, used: q.used, coupons: q.coupons, shares: q.shares, remaining, canShareForCoupon: q.shares < SHARE_COUPONS_PER_DAY };
 }
 
 export function canCast(): boolean {

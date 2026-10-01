@@ -129,7 +129,7 @@ export default async function HexagramPage({ params }: PageProps<"/hexagram/[n]"
 
         <section className="mt-8 rounded-3xl bg-foreground p-6 text-center text-card">
           <p className="text-lg font-bold">내 질문에는 어떤 괘가 나올까요</p>
-          <p className="mt-1 text-sm text-card/75">동전, 산통, 산가지로 직접 뽑고 변효까지 풀어 드려요. 하루 3번 무료.</p>
+          <p className="mt-1 text-sm text-card/75">동전, 산통, 산가지로 직접 뽑고 변효까지 풀어 드려요. 로그인하면 하루 3번 무료.</p>
           <a href="../../#divine" className="mt-4 inline-block rounded-full bg-vermilion px-6 py-3 font-bold text-card">나만의 괘와 효 뽑기</a>
         </section>
 
