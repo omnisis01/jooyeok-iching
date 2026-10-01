@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, Download, ImageDown, Link2, X } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
+import { track } from "@/lib/track";
 
 export type ShareJob = {
   render: () => Promise<Blob>;
@@ -71,6 +72,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
   }, [reading, onClose, format]);
 
   const download = () => {
+    track("share_image", { via: "download", format });
     if (!url || !reading) return;
     const a = document.createElement("a");
     a.href = url;
@@ -81,6 +83,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
 
   const share = async () => {
     if (!blob || !reading) return;
+    track("share_image", { via: "share_sheet", format });
     const file = new File([blob], fileName, { type: "image/png" });
     try {
       await navigator.share({ files: [file], title: "나만의 정통주역운세", text: reading.text });

@@ -11,6 +11,7 @@ import { analyzeYukhyo } from "@/lib/yukhyo";
 import { UNLOCK_PRICE_KRW, isUnlockedLocal, isUnlockedRemote, readingKey, startUnlock, unlockEnabled } from "@/lib/unlock";
 import { getSession } from "@/lib/cloudSync";
 import YukhyoResult from "./YukhyoResult";
+import { track } from "@/lib/track";
 
 export default function DeepReading({ reading }: { reading: Reading }) {
   const key = readingKey(reading);
@@ -22,7 +23,12 @@ export default function DeepReading({ reading }: { reading: Reading }) {
   useEffect(() => {
     if (!unlockEnabled) return;
     let cancelled = false;
-    isUnlockedRemote(key).then((v) => !cancelled && setUnlocked(v));
+    isUnlockedRemote(key).then((v) => {
+      if (cancelled) return;
+      setUnlocked(v);
+      // 잠긴 깊이 읽기 카드를 본 횟수(구매 전환율의 분모)
+      if (!v) track("deep_view", {}, { oncePerSession: true });
+    });
     return () => {
       cancelled = true;
     };
@@ -40,6 +46,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
         setMessage("홈의 계정 카드에서 먼저 로그인해 주세요. 결제 내역이 계정에 남아요");
         return;
       }
+      track("deep_buy_click", {});
       await startUnlock(reading, `${reading.primary.name} ${cat.label}`);
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "결제를 시작하지 못했어요");

@@ -16,6 +16,7 @@ import { todayString } from "@/lib/yukhyo";
 import { CATEGORIES, categoryOf, type Category } from "@/lib/categories";
 import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
 import { consumeCast, quotaState, refreshServerQuota } from "@/lib/quota";
+import { track } from "@/lib/track";
 
 type Stage = "setup" | "focus" | Method | "result";
 
@@ -42,6 +43,7 @@ export default function DivinationFlow() {
   const start = (method: Method) => {
     setPending(method);
     setStage("focus");
+    track("cast_start", { kind: "iching", method, category });
     // 다른 기기에서 쓴 횟수까지 반영해 집중 화면 동안 새로 확인한다
     refreshServerQuota();
   };
@@ -58,6 +60,7 @@ export default function DivinationFlow() {
 
   const complete = (r: Reading) => {
     consumeCast();
+    track("cast_done", { kind: "iching", method: r.method, category, changing: r.changingLines.length });
     setReading({ ...r, category, period, periodDate: period === "date" ? periodDate : undefined });
     setStage("result");
   };

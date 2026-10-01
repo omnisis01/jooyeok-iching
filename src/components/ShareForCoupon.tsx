@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Check, Share2 } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
 import { grantShareCoupon, quotaState, SHARE_COUPONS_PER_DAY } from "@/lib/quota";
+import { track } from "@/lib/track";
 
 const SHARE_TEXT = "나만의 정통주역운세에서 내 괘를 뽑아 봤어요. 주역 원전 그대로 쉬운 말로 풀어 줘요. 같이 하나 뽑아 봐요.";
 
@@ -63,6 +64,7 @@ export default function ShareForCoupon({ onGranted, className, label = "친구�
         setStatus(copied ? "초대 글과 링크를 복사했어요. 친구에게 붙여 넣어 보내 주세요" : "초대 글을 확인했어요");
       }
       if (shared) {
+        track("share_coupon", {});
         if (await grantShareCoupon()) {
           setStatus((s) => (s ? s + ". 쿠폰 1회를 받았어요" : "고마워요. 점 쿠폰 1회를 받았어요"));
           onGranted?.();

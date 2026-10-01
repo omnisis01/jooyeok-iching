@@ -8,6 +8,7 @@ import { cloudEnabled } from "@/lib/supabase";
 import { getSession, onAuthChange, pushOne, sendMagicLink, signOut, syncAll } from "@/lib/cloudSync";
 import { currentSubscription, pushEnabled, pushSupported, subscribePush, unsubscribePush } from "@/lib/push";
 import { loadHistory } from "@/lib/history";
+import { track } from "@/lib/track";
 
 /** 아이폰 사파리에서 홈 화면 앱이 아닌 탭으로 열었는지 */
 function iosSafariTab(): boolean {
@@ -99,6 +100,7 @@ export default function AccountCard() {
                   onClick={() =>
                     run(async () => {
                       await unsubscribePush();
+                      track("push_off", {});
                       setSubscribed(false);
                       return "알림을 껐어요";
                     })
@@ -113,6 +115,7 @@ export default function AccountCard() {
                   onClick={() =>
                     run(async () => {
                       await subscribePush(session.user.id);
+                      track("push_on", {});
                       setSubscribed(true);
                       return "매일 아침 7시 30분에 뽑을 이유를 담아 보내 드릴게요";
                     })
@@ -150,6 +153,7 @@ export default function AccountCard() {
               }
               run(async () => {
                 await sendMagicLink(email.trim());
+                track("login_link_sent", {});
                 return "로그인 링크를 보냈어요. 메일함을 확인해 주세요";
               });
             }}

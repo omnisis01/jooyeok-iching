@@ -30,6 +30,7 @@ import { dailyHexagram } from "@/lib/daily";
 import { clearHistory, formatAt, loadHistory, readingFromRecord, removeRecord, type HistoryRecord } from "@/lib/history";
 import { cloudEnabled } from "@/lib/supabase";
 import { deleteRemote } from "@/lib/cloudSync";
+import { track } from "@/lib/track";
 
 export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [selected, setSelected] = useState<Hexagram | null>(null);
@@ -146,10 +147,10 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </div>
         <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘의 뜻과 효사가 바로 열려요.</p>
         <div className="mt-3 flex justify-center">
-          <HexagramWheel size={340} onSelect={setSelected} resetKey={wheelReset} randomRef={wheelRandom} className="h-auto w-full max-w-[340px]" />
+          <HexagramWheel size={340} onSelect={(h) => { track("wheel_open", { how: "tap" }); setSelected(h); }} resetKey={wheelReset} randomRef={wheelRandom} className="h-auto w-full max-w-[340px]" />
         </div>
         <div className="mt-2 flex justify-center">
-          <button onClick={() => wheelRandom.current?.()} className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
+          <button onClick={() => { track("wheel_open", { how: "random" }); wheelRandom.current?.(); }} className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
             <Shuffle size={15} /> 무작위로 하나 뽑기
           </button>
         </div>
@@ -183,7 +184,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       </motion.button>
       {daily && today ? (
         <div className="-mt-2 flex justify-end">
-          <button onClick={() => setDailyShare(true)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-muted hover:text-foreground">
+          <button onClick={() => { track("daily_card", {}); setDailyShare(true); }} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-muted hover:text-foreground">
             <ImageDown size={14} /> 오늘의 괘를 이미지로
           </button>
           <ShareCardModal

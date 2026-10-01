@@ -16,6 +16,7 @@ import YukhyoSection from "./YukhyoSection";
 import HexagramGallery from "./HexagramGallery";
 import AboutScreen from "./AboutScreen";
 import GuaHyoGuide from "./GuaHyoGuide";
+import { setTrackUser, track } from "@/lib/track";
 
 export type Tab = "home" | "divine" | "yukhyo" | "hexagrams" | "about";
 
@@ -53,9 +54,18 @@ export default function AppShell() {
   useEffect(() => {
     let alive = true;
     getSession().then((s) => {
-      if (alive) attachServerQuota(s?.user.id ?? null);
+      if (!alive) return;
+      attachServerQuota(s?.user.id ?? null);
+      setTrackUser(s?.user.id ?? null);
+      const from = new URLSearchParams(window.location.search).get("from");
+      track("app_open", { from: from ?? "direct", logged_in: Boolean(s) }, { oncePerSession: true });
     });
-    const off = onAuthChange((s) => attachServerQuota(s?.user.id ?? null));
+    const off = onAuthChange((s) => {
+      const was = Boolean(s);
+      attachServerQuota(s?.user.id ?? null);
+      setTrackUser(s?.user.id ?? null);
+      if (was) track("login_done", {}, { oncePerSession: true });
+    });
     const onVisible = () => document.visibilityState === "visible" && refreshServerQuota();
     document.addEventListener("visibilitychange", onVisible);
     return () => {

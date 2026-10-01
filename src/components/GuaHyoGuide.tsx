@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, RefreshCw, X } from "lucide-react";
 import { HEXAGRAMS, findHexagramByLines } from "@/data/hexagrams";
 import { getLineText, lineTitle } from "@/data/lineTexts";
 import { LINE_NAMES } from "@/lib/iching";
+import { track } from "@/lib/track";
 
 /** 다른 화면에서 이 설명을 열고 싶을 때 보내는 이벤트 이름 */
 export const OPEN_GUIDE_EVENT = "open-guahyo-guide";
@@ -352,6 +353,7 @@ export default function GuaHyoGuide() {
             setStep(0);
             setOpen(true);
             setHint(false);
+            track("guide_open", { from: "fab" });
           }}
           onMouseEnter={() => setHint(true)}
           onMouseLeave={() => setHint(false)}

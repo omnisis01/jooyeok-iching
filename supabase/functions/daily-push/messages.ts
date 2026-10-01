@@ -177,7 +177,7 @@ export function buildMessage(dateStr: string, slot: Slot, hex: { name: string; k
   return {
     title: t.title(ctx),
     body: t.body(ctx),
-    url: "./#divine",
+    url: "./?from=push#divine",
     tag: slot === "morning" ? "morning-cast" : "evening-cast",
     reason,
   };

@@ -12,6 +12,7 @@ import YukhyoResult from "./YukhyoResult";
 import FocusGate from "./FocusGate";
 import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
 import { consumeCast, quotaState, refreshServerQuota } from "@/lib/quota";
+import { track } from "@/lib/track";
 
 type Stage = "setup" | "focus" | "cast" | "result";
 
@@ -27,6 +28,7 @@ export default function YukhyoSection() {
 
   const complete = (reading: Reading) => {
     consumeCast();
+    track("cast_done", { kind: "yukhyo", category, changing: reading.changingLines.length });
     setResult(
       analyzeYukhyo({
         lines: reading.primary.lines,
@@ -114,6 +116,7 @@ export default function YukhyoSection() {
             ) : (
               <button
                 onClick={() => {
+                  track("cast_start", { kind: "yukhyo", category });
                   setStage("focus");
                   refreshServerQuota();
                 }}
