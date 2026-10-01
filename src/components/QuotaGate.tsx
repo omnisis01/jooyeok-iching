@@ -40,7 +40,7 @@ export function QuotaBadge() {
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-background px-3 py-1 text-xs font-bold text-foreground">
       <Ticket size={12} /> 오늘 남은 무료 점 {q.remaining}회
-      {q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY ? <span className="font-normal text-muted">, 로그인하면 하루 {FREE_PER_DAY}회</span> : null}
+      {q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY ? <span className="font-normal text-muted">(로그인하면 하루 {FREE_PER_DAY}회)</span> : null}
     </span>
   );
 }
