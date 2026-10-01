@@ -52,7 +52,7 @@ export default function PremiumCard() {
           } else if (back.kind === "toss") {
             setMessage(back.message);
           } else {
-            setMessage(back.result === "success" ? "결제가 접수되었어요. 잠시 뒤 Pro가 켜집니다" : "결제를 취소했어요");
+            setMessage(back.result === "success" ? "결제를 받았어요. 잠시 뒤 Pro가 켜집니다" : "결제를 취소했어요");
             if (back.result === "success") timers.push(window.setTimeout(refresh, 4000));
           }
         }, 0),
@@ -147,7 +147,7 @@ export default function PremiumCard() {
             월 {PREMIUM_PRICE_KRW.toLocaleString("ko-KR")}원으로 시작하기
           </button>
           <p className="mt-2 text-center text-[11px] text-card/60">
-            {provider === "toss" ? "카드를 한 번 등록하면 매달 자동 결제되고, 언제든 해지할 수 있어요. 결제는 토스페이먼츠가 안전하게 처리합니다." : "언제든 해지할 수 있어요. 결제는 Stripe에서 안전하게 처리됩니다."}
+            {provider === "toss" ? "카드를 한 번 등록하면 매달 자동으로 결제하고, 언제든 해지할 수 있어요. 결제는 토스페이먼츠가 안전하게 처리합니다." : "언제든 해지할 수 있어요. 결제는 Stripe에서 안전하게 처리됩니다."}
             {" "}
             <a href="terms/" className="underline">이용약관</a>과 <a href="privacy/" className="underline">개인정보처리방침</a>
           </p>

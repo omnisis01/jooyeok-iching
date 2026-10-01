@@ -48,7 +48,7 @@ export default function FocusGate({ action, topic, question, onReady }: Props) {
         ) : topic ? (
           <>
             <br />
-            {topic}에 대해 궁금한 것을 마음속으로 또렷이 떠올리세요.
+            {topic}에서 궁금한 것을 마음속으로 또렷이 떠올리세요.
           </>
         ) : (
           <>

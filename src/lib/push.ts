@@ -30,7 +30,7 @@ export async function currentSubscription(): Promise<PushSubscription | null> {
 export async function subscribePush(userId: string | null): Promise<void> {
   if (!pushEnabled || !pushSupported()) throw new Error("이 기기는 알림을 지원하지 않습니다");
   const permission = await Notification.requestPermission();
-  if (permission !== "granted") throw new Error("알림 권한이 거부되었습니다");
+  if (permission !== "granted") throw new Error("알림을 허용하지 않으셨어요. 브라우저 설정에서 이 사이트의 알림을 허용해 주세요");
   const reg = await registration();
   const sub = await reg.pushManager.subscribe({
     userVisibleOnly: true,

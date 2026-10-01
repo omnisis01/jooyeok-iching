@@ -199,7 +199,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
               ) : canShareFiles ? (
                 "위 버튼을 누르면 사진 앱에 저장하거나 카카오톡, 인스타그램으로 보낼 수 있어요."
               ) : (
-                "이 브라우저는 사진 앱 저장을 지원하지 않아 파일로 내려받습니다."
+                "이 브라우저에서는 사진 앱에 바로 넣을 수 없어 파일로 내려받아요."
               )}
             </p>
           </motion.div>

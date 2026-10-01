@@ -48,14 +48,29 @@ async function main() {
   console.log("Gmail을 쓰려면: Google 계정 > 보안 > 2단계 인증 켜기 > 앱 비밀번호 만들기(16자리). 그 비밀번호를 아래에 넣습니다.\n");
   const token = (await getSupabaseToken());
   if (!token) fail("토큰이 비어 있습니다.");
-  const host = (await ask("SMTP 서버 주소 [smtp.gmail.com]: ")) || "smtp.gmail.com";
-  const port = Number((await ask("포트 [465]: ")) || 465);
-  const user = await ask("SMTP 사용자(Gmail이면 이메일 주소 전체): ");
-  if (!user) fail("사용자가 비어 있습니다.");
-  const pass = await ask("SMTP 비밀번호 또는 앱 비밀번호 (화면에 안 보임): ", true);
+  console.log("Gmail이면 아래 1, 2번은 아무것도 넣지 말고 Enter만 누르세요. 앱 비밀번호는 4번에서만 넣습니다.\n");
+  let host = "";
+  for (;;) {
+    host = (await ask("1) 메일 서버 주소 (Gmail이면 그냥 Enter) [smtp.gmail.com]: ")) || "smtp.gmail.com";
+    if (/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(host)) break;
+    console.log("   서버 주소 형식이 아니에요. 비밀번호라면 여기가 아니라 4번에 넣어 주세요. 다시 입력하거나 Enter를 누르세요.");
+  }
+  let port = 465;
+  for (;;) {
+    const v = (await ask("2) 포트 (Gmail이면 그냥 Enter) [465]: ")) || "465";
+    if (/^\d{2,5}$/.test(v)) { port = Number(v); break; }
+    console.log("   숫자만 넣어 주세요. Gmail이면 Enter를 누르세요.");
+  }
+  let user = "";
+  for (;;) {
+    user = await ask("3) Gmail 주소 전체 (예: name@gmail.com): ");
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user)) break;
+    console.log("   이메일 주소 형식이 아니에요. 다시 넣어 주세요.");
+  }
+  const pass = await ask("4) 앱 비밀번호 16자리 (화면에 안 보임, 띄어쓰기 있어도 됨): ", true);
   if (!pass) fail("비밀번호가 비어 있습니다.");
-  const sender = (await ask(`보내는 사람 주소 [${user}]: `)) || user;
-  const senderName = (await ask("보내는 사람 이름 [나만의 정통주역운세]: ")) || "나만의 정통주역운세";
+  const sender = (await ask(`5) 보내는 사람 주소 (그냥 Enter) [${user}]: `)) || user;
+  const senderName = (await ask("6) 보내는 사람 이름 (그냥 Enter) [나만의 정통주역운세]: ")) || "나만의 정통주역운세";
 
   const projects = await api(token, "GET", "/v1/projects");
   const project = projects.find((p) => p.name === PROJECT_NAME);

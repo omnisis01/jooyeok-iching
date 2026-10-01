@@ -151,7 +151,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
             ) : null}
             <div className="mt-4 space-y-1.5 border-t border-border pt-3 text-xs leading-relaxed text-muted">
               <p>
-                <b className="text-foreground/80">변효(움직이는 효)</b>는 여섯 줄 가운데 빨갛게 표시된 줄입니다. 지금 모습과 곧 될 모습이 다른 줄이에요. 동전 세 개가 모두 앞면(합 9)이거나 모두 뒷면(합 6)이면 그 줄은 힘이 끝까지 차서 곧 반대로 바뀝니다. 이어진 줄은 끊어지고, 끊어진 줄은 이어져요. 그래서 움직이는 효라고 부릅니다. 나머지 줄은 그대로 머뭅니다.
+                <b className="text-foreground/80">변효(움직이는 효)</b>는 여섯 줄 가운데 빨갛게 칠한 줄입니다. 지금 모습과 곧 될 모습이 다른 줄이에요. 동전 세 개가 모두 앞면(합 9)이거나 모두 뒷면(합 6)이면 그 줄은 힘이 끝까지 차서 곧 반대로 바뀝니다. 이어진 줄은 끊어지고, 끊어진 줄은 이어져요. 그래서 움직이는 효라고 부릅니다. 나머지 줄은 그대로 머뭅니다.
               </p>
               <p>
                 <b className="text-foreground/80">효사</b>는 주역 원문에서 여섯 줄 하나하나에 붙은 짧은 글입니다. 64괘에 여섯 개씩, 모두 384개가 있습니다. 주역 점에서는 괘 전체의 뜻보다 지금 움직이는 줄에 붙은 글이 나에게 하는 말이라고 봅니다. 아래 줄부터 일의 시작, 위 줄로 갈수록 마무리 단계라 같은 괘라도 어느 줄이 움직이느냐에 따라 답이 달라집니다.
@@ -216,7 +216,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
           onClick={copy}
           className="inline-flex items-center gap-2 rounded-full bg-card px-5 py-3 text-sm font-semibold text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.08)] transition hover:bg-background"
         >
-          {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "복사되었습니다" : "글로 복사"}
+          {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? "복사했어요" : "글로 복사"}
         </button>
       </div>
       <AdSlot className="mt-2" />

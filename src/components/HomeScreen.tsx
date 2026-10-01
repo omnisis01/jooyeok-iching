@@ -240,7 +240,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           ) : null}
         </div>
         {history.length === 0 ? (
-          <p className="mt-2 text-sm text-muted">아직 기록이 없어요. 점을 치면 이 기기에 자동으로 저장됩니다.</p>
+          <p className="mt-2 text-sm text-muted">아직 기록이 없어요. 점을 치면 이 기기에 알아서 저장해 둬요.</p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
             {shown.map((r) => (
@@ -281,7 +281,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           </button>
         ) : null}
         {paymentsEnabled && !premium && history.length > FREE_HISTORY_LIMIT ? (
-          <p className="mt-2 text-xs text-muted">무료 회원은 최근 {FREE_HISTORY_LIMIT}개까지 볼 수 있어요. Pro에서는 전부 보관됩니다.</p>
+          <p className="mt-2 text-xs text-muted">무료 회원은 최근 {FREE_HISTORY_LIMIT}개까지 볼 수 있어요. Pro는 전부 보관해요.</p>
         ) : null}
       </section>
 

@@ -89,7 +89,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
               </p>
             ) : (
               <p key="d" className="text-sm text-gold-soft">
-                괘가 완성되었습니다
+                괘가 나왔어요
               </p>
             )}
           </AnimatePresence>
