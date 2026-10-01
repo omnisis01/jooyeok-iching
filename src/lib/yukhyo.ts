@@ -1,4 +1,5 @@
 // 육효점(납갑서법) 엔진: 납갑·팔궁·세응·육친·육수·일진·월건·공망·용신·왕쇠·응기 계산
+import { kstDateString } from "./clock";
 import { HEXAGRAMS, findHexagramByLines, type Hexagram } from "@/data/hexagrams";
 import { CATEGORIES, normalizeCategory, type Category } from "./categories";
 export { CATEGORIES };
@@ -509,9 +510,9 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
 }
 
 /** 오늘 날짜(로컬) YYYY-MM-DD */
+/** 오늘 날짜(한국 시간). 오늘의 괘, 무료 횟수, 육효 일진이 모두 이 날짜를 쓴다 */
 export function todayString(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return kstDateString();
 }
 
 export const ALL_HEXAGRAM_COUNT = HEXAGRAMS.length;

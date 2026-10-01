@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { Check, Share2 } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
-import { grantShareCoupon, quotaState } from "@/lib/quota";
+import { grantShareCoupon, quotaState, SHARE_COUPONS_PER_DAY } from "@/lib/quota";
 
 const SHARE_TEXT = "나만의 정통주역운세에서 내 괘를 뽑아 봤어요. 주역 원전 그대로 쉬운 말로 풀어 줘요. 같이 하나 뽑아 봐요.";
 
@@ -92,7 +92,7 @@ export default function ShareForCoupon({ onGranted, className, label = "친구�
             <Check size={12} /> {status}
           </span>
         ) : canShareForCoupon ? (
-          "공유할 때마다 오늘 쓸 수 있는 쿠폰 1회를 드려요 (하루 3회까지)"
+          `공유할 때마다 오늘 쓸 수 있는 쿠폰 1회를 드려요 (하루 ${SHARE_COUPONS_PER_DAY}회까지)`
         ) : (
           "오늘의 공유 쿠폰은 모두 받았어요"
         )}

@@ -1,8 +1,10 @@
-// 하루 무료 점 횟수와 공유 쿠폰 관리 (이 기기의 localStorage 기준)
+// 하루 무료 점 횟수와 공유 쿠폰 관리 (이 기기의 localStorage 기준, 날짜는 한국 시간 자정에 바뀐다)
 import { todayString } from "./yukhyo";
+import { now } from "./clock";
 
 export const FREE_PER_DAY = 3;
-export const SHARE_COUPONS_PER_DAY = 3;
+/** 공유 쿠폰 하루 한도. 공유가 곧 홍보라 넉넉히 둔다 */
+export const SHARE_COUPONS_PER_DAY = 10;
 
 const KEY = "jooyeok-master-quota-v1";
 const PREMIUM_KEY = "jooyeok-master-premium-until";
@@ -46,7 +48,7 @@ export function cachePremiumUntil(until: Date | null) {
 export function isPremiumNow(): boolean {
   try {
     const v = localStorage.getItem(PREMIUM_KEY);
-    return Boolean(v && new Date(v).getTime() > Date.now());
+    return Boolean(v && new Date(v).getTime() > now());
   } catch {
     return false;
   }

@@ -3,19 +3,31 @@
 
 import { useEffect, useState } from "react";
 import { Ticket } from "lucide-react";
-import { FREE_PER_DAY, quotaState, type QuotaState } from "@/lib/quota";
+import { FREE_PER_DAY, SHARE_COUPONS_PER_DAY, quotaState, type QuotaState } from "@/lib/quota";
+import { msUntilKstMidnight } from "@/lib/clock";
 import { paymentsEnabled } from "@/lib/premium";
 import ShareForCoupon from "./ShareForCoupon";
 
 export function useQuota(): QuotaState {
   const [state, setState] = useState<QuotaState>({ premium: false, used: 0, coupons: 0, shares: 0, remaining: FREE_PER_DAY, canShareForCoupon: true });
   useEffect(() => {
-    const sync = () => setState(quotaState());
+    let midnight: number | undefined;
+    const sync = () => {
+      setState(quotaState());
+      // 앱을 켜 둔 채 한국 자정을 넘기면 바로 다시 채운다
+      window.clearTimeout(midnight);
+      midnight = window.setTimeout(sync, msUntilKstMidnight() + 1000);
+    };
     const t = window.setTimeout(sync, 0);
     window.addEventListener("quota-changed", sync);
+    // 다른 앱에 갔다 돌아왔을 때도 날짜를 다시 본다
+    const onVisible = () => document.visibilityState === "visible" && sync();
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       window.clearTimeout(t);
+      window.clearTimeout(midnight);
       window.removeEventListener("quota-changed", sync);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
   return state;
@@ -47,7 +59,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
           Pro로 횟수 제한 없이 보기
         </button>
       ) : null}
-      <p className="mt-4 text-xs text-muted">무료 횟수는 매일 자정에 다시 채워져요.</p>
+      <p className="mt-4 text-xs text-muted">무료 횟수는 매일 밤 12시(한국 시간)에 다시 채워져요. 친구에게 공유하면 하루 {SHARE_COUPONS_PER_DAY}번까지 한 번씩 더 뽑을 수 있어요.</p>
     </section>
   );
 }

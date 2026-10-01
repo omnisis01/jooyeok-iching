@@ -3,12 +3,25 @@
 
 import { useEffect, useState } from "react";
 import { todayString } from "./yukhyo";
+import { kstHour, msUntilKstMidnight } from "./clock";
 
 export function useToday(): { today: string | null; hour: number | null } {
   const [state, setState] = useState<{ today: string | null; hour: number | null }>({ today: null, hour: null });
   useEffect(() => {
-    const t = window.setTimeout(() => setState({ today: todayString(), hour: new Date().getHours() }), 0);
-    return () => window.clearTimeout(t);
+    let midnight: number | undefined;
+    const update = () => {
+      setState({ today: todayString(), hour: kstHour() });
+      // 앱을 켜 둔 채 자정을 넘기면 오늘의 괘와 인사말도 바뀐다
+      window.clearTimeout(midnight);
+      midnight = window.setTimeout(update, msUntilKstMidnight() + 1000);
+    };
+    const t = window.setTimeout(update, 0);
+    window.addEventListener("quota-changed", update);
+    return () => {
+      window.clearTimeout(t);
+      window.clearTimeout(midnight);
+      window.removeEventListener("quota-changed", update);
+    };
   }, []);
   return state;
 }

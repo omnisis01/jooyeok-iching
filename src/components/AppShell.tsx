@@ -7,6 +7,7 @@ import { BookOpen, Compass, Grid3x3, Home, Sparkles } from "lucide-react";
 import Taegeuk from "./Taegeuk";
 import ThemeToggle from "./ThemeToggle";
 import { useToday } from "@/lib/useToday";
+import { syncClock } from "@/lib/clock";
 import HomeScreen from "./HomeScreen";
 import DivinationFlow from "./DivinationFlow";
 import YukhyoSection from "./YukhyoSection";
@@ -40,6 +41,11 @@ function tabFromHash(): Tab {
 
 export default function AppShell() {
   const [tab, setTab] = useState<Tab>("home");
+
+  // 기기 시계가 틀려도 "오늘"이 한국 시간으로 맞도록 서버 시각과 한 번 맞춘다
+  useEffect(() => {
+    syncClock();
+  }, []);
 
   useEffect(() => {
     const sync = () => setTab(tabFromHash());
