@@ -131,7 +131,7 @@ export default function YukhyoResult({ result, onRestart, saveToHistory = true, 
             <LineRow key={l.index} line={l} isUse={useLine?.index === l.index} />
           ))}
         </div>
-        <p className="mt-2 text-xs text-muted">붉게 칠한 줄이 이번 질문의 용신이고, 動 표시는 움직이는 효입니다.</p>
+        <p className="mt-2 text-xs text-muted">빨갛게 표시된 줄이 이번 질문의 용신이고, 動 표시는 움직이는 효입니다.</p>
       </section>
 
       {/* 용신 판단 */}
