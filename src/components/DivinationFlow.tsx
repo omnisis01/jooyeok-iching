@@ -15,7 +15,7 @@ import { PERIODS, type Period } from "@/lib/period";
 import { todayString } from "@/lib/yukhyo";
 import { CATEGORIES, categoryOf, type Category } from "@/lib/categories";
 import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
-import { consumeCast } from "@/lib/quota";
+import { consumeCast, quotaState, refreshServerQuota } from "@/lib/quota";
 
 type Stage = "setup" | "focus" | Method | "result";
 
@@ -42,9 +42,16 @@ export default function DivinationFlow() {
   const start = (method: Method) => {
     setPending(method);
     setStage("focus");
+    // 다른 기기에서 쓴 횟수까지 반영해 집중 화면 동안 새로 확인한다
+    refreshServerQuota();
   };
 
   const beginCast = () => {
+    // 그사이 다른 기기에서 횟수를 다 썼으면 처음 화면으로 돌아가 안내한다
+    if (quotaState().remaining <= 0) {
+      setStage("setup");
+      return;
+    }
     setCastKey((k) => k + 1);
     setStage(pending);
   };

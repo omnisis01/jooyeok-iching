@@ -8,6 +8,8 @@ import Taegeuk from "./Taegeuk";
 import ThemeToggle from "./ThemeToggle";
 import { useToday } from "@/lib/useToday";
 import { syncClock } from "@/lib/clock";
+import { attachServerQuota, refreshServerQuota } from "@/lib/quota";
+import { getSession, onAuthChange } from "@/lib/cloudSync";
 import HomeScreen from "./HomeScreen";
 import DivinationFlow from "./DivinationFlow";
 import YukhyoSection from "./YukhyoSection";
@@ -45,6 +47,22 @@ export default function AppShell() {
   // 기기 시계가 틀려도 "오늘"이 한국 시간으로 맞도록 서버 시각과 한 번 맞춘다
   useEffect(() => {
     syncClock();
+  }, []);
+
+  // 로그인했으면 무료 횟수를 서버에서 센다. 다른 기기에서 쓴 횟수도 반영된다
+  useEffect(() => {
+    let alive = true;
+    getSession().then((s) => {
+      if (alive) attachServerQuota(s?.user.id ?? null);
+    });
+    const off = onAuthChange((s) => attachServerQuota(s?.user.id ?? null));
+    const onVisible = () => document.visibilityState === "visible" && refreshServerQuota();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      alive = false;
+      off();
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, []);
 
   useEffect(() => {

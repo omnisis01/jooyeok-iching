@@ -11,7 +11,7 @@ import CoinCasting from "./CoinCasting";
 import YukhyoResult from "./YukhyoResult";
 import FocusGate from "./FocusGate";
 import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
-import { consumeCast } from "@/lib/quota";
+import { consumeCast, quotaState, refreshServerQuota } from "@/lib/quota";
 
 type Stage = "setup" | "focus" | "cast" | "result";
 
@@ -113,7 +113,10 @@ export default function YukhyoSection() {
               <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
             ) : (
               <button
-                onClick={() => setStage("focus")}
+                onClick={() => {
+                  setStage("focus");
+                  refreshServerQuota();
+                }}
                 className="w-full rounded-full bg-vermilion py-4 text-center text-lg font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
               >
                 동전으로 괘 뽑기
@@ -151,7 +154,7 @@ export default function YukhyoSection() {
             <button onClick={restart} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
               <ArrowLeft size={16} /> 질문 다시 고르기
             </button>
-            <FocusGate action="동전을 던져" topic={categoryOf(category).label} question={question || undefined} onReady={() => setStage("cast")} />
+            <FocusGate action="동전을 던져" topic={categoryOf(category).label} question={question || undefined} onReady={() => setStage(quotaState().remaining > 0 ? "cast" : "setup")} />
           </motion.div>
         ) : null}
 

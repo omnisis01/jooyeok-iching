@@ -63,7 +63,7 @@ export default function ShareForCoupon({ onGranted, className, label = "친구�
         setStatus(copied ? "초대 글과 링크를 복사했어요. 친구에게 붙여 넣어 보내 주세요" : "초대 글을 확인했어요");
       }
       if (shared) {
-        if (grantShareCoupon()) {
+        if (await grantShareCoupon()) {
           setStatus((s) => (s ? s + ". 쿠폰 1회를 받았어요" : "고마워요. 점 쿠폰 1회를 받았어요"));
           onGranted?.();
         } else {

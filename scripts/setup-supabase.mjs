@@ -178,6 +178,8 @@ async function main() {
   log(4, "테이블과 보안 정책을 적용합니다");
   const migration = readFileSync(join(ROOT, "supabase/migrations/0001_init.sql"), "utf8");
   await sql(token, ref, migration);
+  // 하루 무료 횟수를 서버에서 세는 표와 함수
+  await sql(token, ref, readFileSync(join(ROOT, "supabase/migrations/0005_quota.sql"), "utf8"));
   console.log("적용 완료");
 
   // 5. 이메일 로그인 설정
