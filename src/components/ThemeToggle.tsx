@@ -60,7 +60,7 @@ export function ThemeSetting() {
   return (
     <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <p className="font-bold">화면 모드</p>
-      <p className="mt-1 text-sm text-muted">기본은 다크 모드예요. 밝은 곳에서는 라이트 모드가 읽기 편해요.</p>
+      <p className="mt-1 text-sm text-muted">기본은 다크 모드예요. 밝은 곳에서는 라이트 모드가 잘 보입니다.</p>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <button
           onClick={() => setTheme("dark")}

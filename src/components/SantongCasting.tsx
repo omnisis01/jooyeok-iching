@@ -120,7 +120,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
       </div>
 
       <div className="flex flex-col items-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6">
-        <p className="text-sm text-muted">뽑은 결과</p>
+        <p className="text-sm text-muted">한 번 뽑을 때마다 하괘, 상괘, 동효가 차례로 결정돼요</p>
         <div className="my-6 text-gold-soft">
           <HexagramFigure
             lines={lines.padEnd(6, "0")}

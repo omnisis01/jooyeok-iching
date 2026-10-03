@@ -166,7 +166,7 @@ export async function renderStoryCard(reading: Reading): Promise<Blob> {
   } else {
     ctx.fillStyle = D.muted;
     ctx.font = font(400, 28);
-    ctx.fillText("움직이는 효가 없어 본괘의 뜻이 그대로 갑니다.", SW / 2, y + 20);
+    ctx.fillText("움직이는 효가 없어 본괘의 뜻이 그대로 이어집니다.", SW / 2, y + 20);
   }
 
   footer(ctx);

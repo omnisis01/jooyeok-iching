@@ -69,12 +69,12 @@ export default function DeepReading({ reading }: { reading: Reading }) {
           <ul className="space-y-1.5 text-sm leading-relaxed text-foreground/85">
             <li>운세 여섯 가지(총운, 재물, 애정, 합격, 계약, 건강)를 이 괘로 한꺼번에 읽어요.</li>
             <li>지괘의 운세별 풀이로 앞으로의 흐름을 분류별로 봐요.</li>
-            <li>같은 괘를 육효로 다시 읽어 언제쯤 이룰 수 있을지까지 봐요.</li>
+            <li>같은 괘를 육효로 다시 읽어 언제쯤 이루어질지까지 봐요.</li>
           </ul>
           <button disabled={busy} onClick={buy} className="mt-4 w-full rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] disabled:opacity-50">
             {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기
           </button>
-          <p className="mt-2 text-center text-[11px] text-muted">한 번 결제한 결과는 기록에서 언제든 다시 볼 수 있어요. Pro는 모든 결과를 볼 수 있어요.</p>
+          <p className="mt-2 text-center text-[11px] text-muted">한 번 결제한 결과는 기록에서 언제든 다시 볼 수 있어요. Pro는 모든 결과가 열려 있어요.</p>
           {message ? <p className="mt-2 text-center text-xs text-vermilion">{message}</p> : null}
         </div>
       ) : open ? (

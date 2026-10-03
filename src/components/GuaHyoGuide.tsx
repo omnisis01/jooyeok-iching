@@ -83,7 +83,7 @@ function GuideHex({ lines, changing, flipped = false, reveal = 6, names = false,
                     transition={{ duration: 1, repeat: flipped ? 0 : Infinity }}
                   >
                     <ChevronLeft size={14} />
-                    {flipped ? "변함" : "변효"}
+                    {flipped ? "뒤집힘" : "변효"}
                   </motion.span>
                 ) : null}
               </span>
@@ -107,7 +107,7 @@ function StepHyo() {
       <div className="rounded-2xl bg-background p-4 text-center">
         <div className="mx-auto h-4 w-24 rounded-sm bg-gold" />
         <p className="mt-3 font-bold">양</p>
-        <p className="text-xs text-muted">꽉 찬 줄</p>
+        <p className="text-xs text-muted">이어진 줄</p>
         <p className="mt-1 text-sm text-foreground/80">밝고 움직이는 힘</p>
       </div>
       <div className="rounded-2xl bg-background p-4 text-center">
@@ -116,7 +116,7 @@ function StepHyo() {
           <span className="h-4 w-10 rounded-sm bg-gold" />
         </div>
         <p className="mt-3 font-bold">음</p>
-        <p className="text-xs text-muted">가운데가 빈 줄</p>
+        <p className="text-xs text-muted">끊어진 줄</p>
         <p className="mt-1 text-sm text-foreground/80">부드럽고 받아들이는 힘</p>
       </div>
     </div>
@@ -204,7 +204,7 @@ function StepResult() {
         <GuideHex lines={flipped ? EX_RESULT.lines : EX_PRIMARY.lines} changing={EX_LINE} flipped={flipped} names marker />
       </div>
       <p className="mt-3 text-center text-sm text-foreground/80">
-        {flipped ? `양이던 ${EX_LINE_TITLE}가 음으로 변해 ${EX_RESULT.name}가 되었어요` : "빨간 줄이 곧 반대로 변해요"}
+        {flipped ? `양이던 ${EX_LINE_TITLE}가 음으로 바뀌어 ${EX_RESULT.name}가 되었어요` : "빨간 줄이 곧 반대로 뒤집혀요"}
       </p>
       <div className="mt-3 text-center">
         <button onClick={() => setFlipped((f) => !f)} className="inline-flex items-center gap-1 rounded-full bg-card px-4 py-2 text-xs font-bold">
@@ -239,7 +239,7 @@ function StepFlow({ onStart }: { onStart: () => void }) {
       </div>
       <div className="rounded-2xl bg-background p-4 text-sm leading-relaxed">
         <p className="text-xs font-bold text-muted">이어서 읽으면</p>
-        <p className="mt-1 font-bold">사람이 모이는 때에 나는 중심에 있어요. 꾸준히 바르게 하면, 준비한 대로 즐겁게 일을 풀어 가요.</p>
+        <p className="mt-1 font-bold">사람이 모이는 때에 나는 중심에 있어요. 꾸준히 바르게 하면, 준비한 대로 즐겁게 풀려 가요.</p>
       </div>
       <ul className="space-y-2 text-sm leading-relaxed text-foreground/85">
         <li className="rounded-2xl bg-background p-3">
@@ -262,18 +262,18 @@ function StepFlow({ onStart }: { onStart: () => void }) {
 const STEPS = [
   {
     title: "효는 줄 하나예요",
-    body: "주역은 세상 모든 일을 두 가지 줄로 그려요. 꽉 찬 줄은 양, 가운데가 빈 줄은 음입니다. 이 줄 하나를 효라고 불러요. 점을 칠 때는 동전이나 산가지로 이 줄을 한 번에 하나씩, 모두 여섯 번 뽑아요.",
+    body: "주역은 세상 모든 일을 두 가지 줄로 그려요. 이어진 줄은 양, 끊어진 줄은 음입니다. 이 줄 하나를 효라고 불러요. 점을 칠 때는 동전이나 산가지로 이 줄을 한 번에 하나씩, 모두 여섯 번 뽑아요.",
   },
   {
-    title: "여섯 번 뽑은 줄을 쌓으면 괘 하나가 돼요",
+    title: "여섯 번 뽑은 줄이 쌓여 괘 하나가 돼요",
     body: "여섯 번 뽑은 줄 여섯 개를 아래에서 위로 쌓으면 괘 하나가 돼요. 첫 번째 뽑은 줄이 맨 아래 초효, 여섯 번째가 맨 위 상효예요. 줄마다 음 아니면 양이니 여섯 줄로 만들 수 있는 그림은 64가지, 이것이 64괘입니다. 괘에 붙은 글인 괘사가 큰 판세를 알려 줘요.",
   },
   {
-    title: "변효는 여섯 줄 중 곧 변하려는 줄이에요",
+    title: "변효는 여섯 줄 중 곧 바뀌려는 줄이에요",
     body: "여섯 번 뽑는 동안 동전 세 개가 모두 앞면이거나 모두 뒷면으로 나오는 때가 있어요. 그 줄은 지금은 양(또는 음)이지만 힘이 끝까지 차서 곧 반대로 넘어가요. 한낮이 지나면 해가 기울듯이요. 지금 모습과 곧 될 모습이 다른 이 줄을 변효, 곧 움직이는 효라고 해요. 여섯 줄 가운데 실제로 변화가 일어나는 자리라서 그 효사를 가장 먼저 읽어요.",
   },
   {
-    title: "지괘는 변효를 뒤집은 뒤의 괘예요",
+    title: "지괘는 변효가 뒤집힌 뒤의 괘예요",
     body: "양이던 변효는 음이, 음이던 변효는 양이 돼요. 그러면 다른 괘가 되는데 이것이 지괘입니다. 지금 상황이 어디로 흘러가는지 보여 줘요.",
   },
   {

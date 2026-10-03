@@ -96,7 +96,7 @@ export function unlockReturn(): UnlockReturn {
 /** 결제창에서 돌아온 뒤 서버에 승인을 맡긴다. 성공하면 열쇠를 기기에도 저장한다 */
 export async function confirmUnlock(r: Extract<UnlockReturn, { result: "success" }>): Promise<void> {
   const { data: session } = await supabase().auth.getSession();
-  if (!session.session) throw new Error("로그인 상태가 아니에요. 다시 로그인하면 결제 내역을 그대로 볼 수 있어요");
+  if (!session.session) throw new Error("로그인이 풀렸어요. 다시 로그인하면 결제 내역이 이어집니다");
   const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/toss-payment-confirm`, {
     method: "POST",
     headers: { Authorization: `Bearer ${session.session.access_token}`, apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "", "Content-Type": "application/json" },

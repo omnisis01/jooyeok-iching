@@ -44,7 +44,7 @@ export default function FlowOverview({ primary, changingLines, resulting }: Prop
           </div>
         </Step>
         <ChevronRight size={18} className="text-muted" />
-        <Step label="앞으로, 지괘" name={resulting ? resulting.name : primary.name} sub={resulting ? resulting.keyword : "지금 흐름 그대로 가요"}>
+        <Step label="앞으로, 지괘" name={resulting ? resulting.name : primary.name} sub={resulting ? resulting.keyword : "흐름이 이어져요"}>
           <div className="text-jade">
             <HexagramFigure lines={(resulting ?? primary).lines} size={56} title={(resulting ?? primary).name} />
           </div>

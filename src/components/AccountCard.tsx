@@ -74,7 +74,7 @@ export default function AccountCard() {
 
       {session ? (
         <>
-          <p className="mt-1 text-sm text-muted">{session.user.email} 로 로그인했어요. 어느 기기에서 열어도 점 기록을 그대로 볼 수 있어요.</p>
+          <p className="mt-1 text-sm text-muted">{session.user.email} 로 로그인했어요. 어느 기기에서 열어도 점 기록이 이어져요.</p>
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               disabled={busy}
@@ -142,7 +142,7 @@ export default function AccountCard() {
         </>
       ) : (
         <>
-          <p className="mt-1 text-sm text-muted">이메일만 넣으면 비밀번호 없이 로그인 링크를 보내 드려요. 로그인하면 무료 점이 하루 1번에서 3번으로 늘고, 여러 기기에서 기록을 함께 볼 수 있어요.</p>
+          <p className="mt-1 text-sm text-muted">이메일만 넣으면 비밀번호 없이 로그인 링크를 보내 드려요. 로그인하면 무료 점이 하루 1번에서 3번으로 늘고, 기록이 여러 기기에서 이어집니다.</p>
           <form
             className="mt-3 flex gap-2"
             onSubmit={(e) => {

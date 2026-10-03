@@ -81,7 +81,7 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
       height={size}
       className={`${className ?? ""} ${onSelect ? "select-none" : ""}`}
       role={onSelect ? "button" : "img"}
-      aria-label={onSelect ? "64괘 원도, 괘를 누르면 그 괘의 풀이를 엽니다" : "선천 64괘 방원도"}
+      aria-label={onSelect ? "64괘 원도, 괘를 누르면 그 괘가 열립니다" : "선천 64괘 방원도"}
     >
       <defs>
         <radialGradient id="wheel-glow" cx="50%" cy="50%" r="50%">

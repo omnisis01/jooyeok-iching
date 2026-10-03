@@ -44,7 +44,7 @@ export default function PremiumCard() {
             setMessage("카드를 확인하고 첫 달을 결제하는 중이에요");
             try {
               const r = await confirmBilling(back.authKey, back.customerKey);
-              setMessage(`결제가 끝났어요. ${r.card ? r.card + " 카드로 " : ""}매달 자동으로 결제해 드려요`);
+              setMessage(`결제가 끝났어요. ${r.card ? r.card + " 카드로 " : ""}매달 자동으로 이어집니다`);
             } catch (e) {
               setMessage(e instanceof Error ? e.message : "결제를 마치지 못했어요");
             }
@@ -52,7 +52,7 @@ export default function PremiumCard() {
           } else if (back.kind === "toss") {
             setMessage(back.message);
           } else {
-            setMessage(back.result === "success" ? "결제를 받았어요. 잠시 뒤 Pro를 켜 드려요" : "결제를 취소했어요");
+            setMessage(back.result === "success" ? "결제를 받았어요. 잠시 뒤 Pro가 켜집니다" : "결제를 취소했어요");
             if (back.result === "success") timers.push(window.setTimeout(refresh, 4000));
           }
         }, 0),
@@ -94,7 +94,7 @@ export default function PremiumCard() {
         <>
           <p className="mt-1 text-sm text-card/80">
             {untilLabel}까지 이용할 수 있어요.
-            {status.billingStatus === "active" ? " 그 뒤로 매달 자동으로 결제합니다." : status.billingStatus === "cancelled" ? " 해지하셔서 자동 연장은 하지 않아요." : status.billingStatus === "failed" ? " 지난 결제가 실패했어요. 카드를 다시 등록해 주세요." : ""}
+            {status.billingStatus === "active" ? " 그 뒤로 매달 자동으로 이어집니다." : status.billingStatus === "cancelled" ? " 해지되어 자동 연장은 되지 않아요." : status.billingStatus === "failed" ? " 지난 결제가 실패했어요. 카드를 다시 등록해 주세요." : ""}
           </p>
           {status.cardLabel ? <p className="mt-1 text-xs text-card/60">등록 카드 {status.cardLabel}</p> : null}
           <div className="mt-3 flex flex-wrap gap-2">
@@ -147,7 +147,7 @@ export default function PremiumCard() {
             월 {PREMIUM_PRICE_KRW.toLocaleString("ko-KR")}원으로 시작하기
           </button>
           <p className="mt-2 text-center text-[11px] text-card/60">
-            {provider === "toss" ? "카드를 한 번 등록하면 매달 자동으로 결제하고, 언제든 해지할 수 있어요. 결제는 토스페이먼츠가 안전하게 처리합니다." : "언제든 해지할 수 있어요. 결제는 Stripe가 안전하게 처리합니다."}
+            {provider === "toss" ? "카드를 한 번 등록하면 매달 자동으로 결제하고, 언제든 해지할 수 있어요. 결제는 토스페이먼츠가 안전하게 처리합니다." : "언제든 해지할 수 있어요. 결제는 Stripe에서 안전하게 처리됩니다."}
             {" "}
             <a href="terms/" className="underline">이용약관</a>과 <a href="privacy/" className="underline">개인정보처리방침</a>
           </p>

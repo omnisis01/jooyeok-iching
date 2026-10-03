@@ -348,7 +348,7 @@ function judge(lineEl: Element, branch: number, changing: boolean, changed: Line
   if (isVoid) {
     if (changing || score > 0) {
       score -= 0.5;
-      reasons.push(`빈자리(공망)에 들었지만 힘이 있어, 그 자리를 벗어나는 날 뜻을 이룹니다.`);
+      reasons.push(`빈자리(공망)에 들었지만 힘이 있어, 그 자리를 벗어나는 날 이루어집니다.`);
     } else {
       score -= 2;
       reasons.push(`빈자리(공망)에 들고 힘도 없어 실속이 없습니다.`);
@@ -366,12 +366,12 @@ const VERDICTS: Record<Category, Record<"길" | "평" | "흉", string>> = {
     흉: "재물의 기운이 약합니다. 지출을 줄이고 새 투자나 큰 거래는 미루는 것이 안전합니다.",
   },
   exam: {
-    길: "관운이 살아 있습니다. 시험, 승진, 취업에서 좋은 소식을 기다려 보세요. 준비한 만큼 결과가 나옵니다.",
+    길: "관운이 살아 있습니다. 시험, 승진, 취업에서 좋은 소식을 기다려 보세요. 준비한 만큼 인정받습니다.",
     평: "가능성은 있으나 결정적이지 않습니다. 부족한 부분을 보완하면서 때를 기다리세요.",
     흉: "관운이 약합니다. 이번에는 결과를 얻기 어렵거나 늦어질 수 있으니 다음 기회를 준비하세요.",
   },
   love: {
-    길: "상대의 기운이 살아 있어 인연을 이어 갈 가능성이 큽니다. 마음을 표현하기 좋은 때입니다.",
+    길: "상대의 기운이 살아 있어 인연이 이어질 가능성이 큽니다. 마음을 표현하기 좋은 때입니다.",
     평: "관계가 오가지만 아직 확실하지 않습니다. 서두르지 말고 관계를 차분히 다지세요.",
     흉: "상대의 기운이 약하거나 흔들립니다. 지금은 억지로 밀어붙이기보다 시간을 두는 편이 낫습니다.",
   },
@@ -470,7 +470,7 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
   // 종합: 용신 중심, 세효 보조
   const total = useJudgement.score + worldJudgement.score * 0.3;
   const level: "길" | "평" | "흉" = total >= 1.5 ? "길" : total >= -0.5 ? "평" : "흉";
-  const titleMap = { 길: "뜻을 이룰 기운이에요", 평: "지켜볼 기운이에요", 흉: "조심할 기운이에요" };
+  const titleMap = { 길: "이루어질 기운이에요", 평: "지켜볼 기운이에요", 흉: "조심할 기운이에요" };
 
   // 응기
   const timing: string[] = [];
@@ -479,7 +479,7 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
     const harmony = (1 - ub + 12) % 12;
     const useEl = BRANCH_ELEMENT[ub];
     if (useJudgement.level === "왕") {
-      timing.push(`${branchLabel(ub)}의 날이나 달, 또는 짝이 되는 ${branchLabel(harmony)}의 날이나 달에 뜻을 이루기 쉽습니다.`);
+      timing.push(`${branchLabel(ub)}의 날이나 달, 또는 짝이 되는 ${branchLabel(harmony)}의 날이나 달에 이루어지기 쉽습니다.`);
     } else {
       const parents = (["목", "화", "토", "금", "수"] as Element[]).filter((e) => generates(e, useEl));
       timing.push(`용신이 약하니 ${parents.join(", ")} 기운이 강한 날이나 달(${BRANCHES.map((b, i) => (parents.includes(BRANCH_ELEMENT[i]) ? b : null)).filter(Boolean).join(", ")})에 힘을 얻어 진전이 있습니다.`);
