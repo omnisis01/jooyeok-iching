@@ -297,7 +297,7 @@ export async function renderShareCard(reading: Reading, opts: { premium?: boolea
   } else {
     ctx.fillStyle = C.muted;
     ctx.font = font(400, 26);
-    ctx.fillText("움직이는 효가 없어 본괘의 뜻이 그대로 이어집니다.", W / 2, y);
+    ctx.fillText("움직이는 효가 없어 본괘의 뜻이 그대로 갑니다.", W / 2, y);
     y += 30;
   }
 

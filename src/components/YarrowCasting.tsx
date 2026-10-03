@@ -152,7 +152,7 @@ export default function YarrowCasting({ question, onComplete }: Props) {
       </div>
 
       <div className="flex flex-col items-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6">
-        <p className="text-sm text-muted">3변마다 효 하나가 정해집니다</p>
+        <p className="text-sm text-muted">3변을 마칠 때마다 효 하나를 얻어요</p>
         <div className="my-6 text-gold-soft">
           <HexagramFigure lines={lines} revealed={values.length} changing={changing} size={150} />
         </div>
@@ -184,7 +184,7 @@ export default function YarrowCasting({ question, onComplete }: Props) {
           })}
         </ol>
         <p className="mt-4 text-xs leading-relaxed text-muted">
-          남은 개수를 4로 나누면 효값입니다. 36은 9(바뀌는 양), 32는 8(그대로인 음), 28은 7(그대로인 양), 24는 6(바뀌는 음)
+          남은 개수를 4로 나누면 효값입니다. 36은 9(변하는 양), 32는 8(그대로인 음), 28은 7(그대로인 양), 24는 6(변하는 음)
         </p>
       </div>
     </div>

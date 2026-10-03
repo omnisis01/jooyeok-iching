@@ -19,7 +19,7 @@ function Diagram() {
   const width = 120;
   const half = (width - width * 0.2) / 2;
   return (
-    <svg viewBox={`0 0 ${w} 190`} className="mx-auto h-auto w-full max-w-[340px]" role="img" aria-label="괘 하나가 여섯 효로 이루어진 그림">
+    <svg viewBox={`0 0 ${w} 190`} className="mx-auto h-auto w-full max-w-[340px]" role="img" aria-label="여섯 효를 쌓아 만든 괘 하나의 그림">
       {LINE_LABELS.map((label, row) => {
         const i = 5 - row;
         const y = top + row * (lineH + gap);
@@ -65,7 +65,7 @@ export function GuaHyoBody() {
     <div className="space-y-3 text-[15px] leading-relaxed text-foreground/85">
       <Diagram />
       <p>
-        <b className="text-foreground">효(爻)</b>는 줄 하나예요. 이어진 줄은 양, 끊어진 줄은 음. 아래부터 초효, 이효, 삼효, 사효, 오효, 상효라 부르고, 아래가 일의 시작, 위가 마무리 단계를 뜻합니다.
+        <b className="text-foreground">효(爻)</b>는 줄 하나예요. 꽉 찬 줄은 양, 가운데가 빈 줄은 음. 아래부터 초효, 이효, 삼효, 사효, 오효, 상효라 부르고, 아래가 일의 시작, 위가 마무리 단계를 뜻합니다.
       </p>
       <p>
         <b className="text-foreground">괘(卦)</b>는 그 줄 여섯 개를 쌓은 그림 하나예요. 점을 칠 때는 줄을 한 번에 하나씩 여섯 번 뽑아 아래부터 쌓습니다. 위 세 줄과 아래 세 줄의 조합으로 64가지가 있고, 하나하나가 하나의 상황을 뜻합니다.

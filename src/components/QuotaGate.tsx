@@ -77,7 +77,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
           Pro로 횟수 제한 없이 보기
         </button>
       ) : null}
-      <p className="mt-4 text-xs text-muted">무료 횟수는 매일 밤 12시(한국 시간)에 다시 채워져요. 친구에게 공유하면 하루 {SHARE_COUPONS_PER_DAY}번까지 한 번씩 더 뽑을 수 있어요.</p>
+      <p className="mt-4 text-xs text-muted">무료 횟수는 매일 밤 12시(한국 시간)에 다시 채워 드려요. 친구에게 공유하면 하루 {SHARE_COUPONS_PER_DAY}번까지 한 번씩 더 뽑을 수 있어요.</p>
     </section>
   );
 }

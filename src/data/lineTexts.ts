@@ -50,7 +50,7 @@ export function changingLinesRule(count: number): string | null {
       return "변효가 셋이면 본괘와 지괘의 뜻을 함께 봅니다. 본괘가 현재, 지괘가 앞으로의 흐름입니다.";
     case 4:
     case 5:
-      return "변효가 많으니 지괘를 중심으로 읽되, 변하지 않은 효를 눈여겨보세요. 상황이 크게 바뀌는 때입니다.";
+      return "변효가 많으니 지괘를 중심으로 읽되, 변하지 않은 효를 눈여겨보세요. 상황이 크게 변하는 때입니다.";
     default:
       return "여섯 효가 모두 변하니 지괘의 뜻이 곧 답입니다. 완전히 새로운 국면입니다.";
   }

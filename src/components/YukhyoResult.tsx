@@ -88,7 +88,7 @@ export default function YukhyoResult({ result, onRestart, saveToHistory = true, 
         <p className="mt-4 text-[17px] leading-relaxed">{verdict.text}</p>
         {timing.length ? (
           <div className="mt-4 rounded-2xl bg-background p-4 text-sm leading-relaxed text-foreground/80">
-            <p className="mb-1 font-semibold text-foreground">언제쯤 이루어질까요</p>
+            <p className="mb-1 font-semibold text-foreground">언제쯤 이룰 수 있을까요</p>
             {timing.map((t, i) => (
               <p key={i}>{t}</p>
             ))}

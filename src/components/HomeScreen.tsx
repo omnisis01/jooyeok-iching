@@ -145,7 +145,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
             주역이란
           </button>
         </div>
-        <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘의 뜻과 효사가 바로 열려요.</p>
+        <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘의 뜻과 효사를 바로 보여 드려요.</p>
         <div className="mt-3 flex justify-center">
           <HexagramWheel size={340} onSelect={(h, how) => { track("wheel_open", { how }); setSelected(h); }} resetKey={wheelReset} randomRef={wheelRandom} className="h-auto w-full max-w-[340px]" />
         </div>
@@ -336,7 +336,7 @@ function YukhyoSummary({ record }: { record: Extract<HistoryRecord, { type: "yuk
         </div>
       </div>
       <p className="mt-4 leading-relaxed">{record.text}</p>
-      <p className="mt-3 text-xs text-muted">무료 회원은 종합 풀이만 다시 볼 수 있어요. Pro에서는 도표와 용신 풀이까지 그대로 다시 열립니다.</p>
+      <p className="mt-3 text-xs text-muted">무료 회원은 종합 풀이만 다시 볼 수 있어요. Pro는 도표와 용신 풀이까지 그대로 다시 볼 수 있어요.</p>
     </section>
   );
 }

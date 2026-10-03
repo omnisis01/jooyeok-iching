@@ -28,7 +28,7 @@ export default function InteractiveHexagram({ primary, changingLines, resulting 
             onClick={() => setShowResulting((v) => !v)}
             className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold transition ${showResulting ? "bg-jade/15 text-jade" : "bg-vermilion/12 text-vermilion"}`}
           >
-            <RefreshCw size={12} /> {showResulting ? "본괘로 돌아가기" : "변효가 뒤집히면"}
+            <RefreshCw size={12} /> {showResulting ? "본괘로 돌아가기" : "변효를 뒤집어 보기"}
           </button>
         ) : null}
       </div>
@@ -73,7 +73,7 @@ export default function InteractiveHexagram({ primary, changingLines, resulting 
                       transition={{ duration: 1.1, repeat: showResulting ? 0 : Infinity, ease: "easeInOut" }}
                     >
                       <ChevronLeft size={14} />
-                      {showResulting ? "뒤집힘" : "변효"}
+                      {showResulting ? "변함" : "변효"}
                     </motion.span>
                   ) : (
                     <span className="text-muted/60">{yang ? "양" : "음"}</span>
@@ -97,7 +97,7 @@ export default function InteractiveHexagram({ primary, changingLines, resulting 
             <div className="flex flex-wrap items-center gap-2">
               <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${changingLines.includes(tapped) ? "bg-vermilion/15 text-vermilion" : "bg-foreground/10 text-foreground/80"}`}>
                 {lineTitle(current.lines, tapped)} {LINE_NAMES[tapped]}
-                {changingLines.includes(tapped) ? (showResulting ? " (뒤집힌 줄)" : " (변효)") : ""}
+                {changingLines.includes(tapped) ? (showResulting ? " (변한 줄)" : " (변효)") : ""}
               </span>
               <span className="font-serif text-gold-soft">{getLineText(current.number, tapped).hanja}</span>
             </div>
@@ -106,7 +106,7 @@ export default function InteractiveHexagram({ primary, changingLines, resulting 
         ) : null}
       </AnimatePresence>
       <p className="mt-2 text-center text-[11px] text-muted">
-        {changingLines.length ? "빨간 줄이 변효예요. 줄을 누르면 그 줄의 효사가 보여요." : "움직이는 효가 없어요. 줄을 누르면 효사가 보여요."}
+        {changingLines.length ? "빨간 줄이 변효예요. 줄을 누르면 그 줄의 효사를 보여 드려요." : "움직이는 효가 없어요. 줄을 누르면 효사를 보여 드려요."}
       </p>
     </div>
   );

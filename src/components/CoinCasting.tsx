@@ -139,7 +139,7 @@ export default function CoinCasting({ question, onComplete }: Props) {
 
       {/* 쌓이는 괘 */}
       <div className="flex flex-col items-center rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)] p-6">
-        <p className="text-sm text-muted">아래 효부터 쌓입니다</p>
+        <p className="text-sm text-muted">아래 효부터 쌓아요</p>
         <div className="my-6 text-gold-soft">
           <HexagramFigure lines={lines} revealed={tosses.length} changing={changing} size={150} />
         </div>

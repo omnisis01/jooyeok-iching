@@ -124,14 +124,14 @@ export default function DivinationFlow() {
               <MethodCard
                 icon={<Coins size={28} />}
                 title="동전 세 개, 척전법"
-                desc="동전 3개를 6번 던져 점을 칩니다. 가장 널리 쓰이는 방법이고 변하는 효가 여러 개 나올 수 있어요."
+                desc="동전 3개를 6번 던져 점을 칩니다. 가장 많은 사람이 쓰는 방법이고 변하는 효가 여러 개 나올 수 있어요."
                 time="약 1분"
                 onClick={() => start("coin")}
               />
               <MethodCard
                 icon={<Landmark size={28} />}
                 title="산통 흔들기, 산통점"
-                desc="산통을 흔들어 산가지 3개를 뽑습니다. 아래 괘, 위 괘, 움직이는 효가 차례로 정해지는 우리 전통 방식이에요."
+                desc="산통을 흔들어 산가지 3개를 뽑습니다. 아래 괘, 위 괘, 움직이는 효를 차례로 정하는 우리 전통 방식이에요."
                 time="약 30초"
                 onClick={() => start("santong")}
               />
