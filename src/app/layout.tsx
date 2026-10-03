@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   applicationName: "나만의 정통주역운세",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "주역운세" },
   manifest: `${BASE}/manifest.webmanifest`,
-  icons: { icon: `${BASE}/icon.svg`, apple: `${BASE}/apple-touch-icon.png` },
+  icons: { icon: `${BASE}/icon-v2.svg`, apple: `${BASE}/apple-touch-icon-v2.png` },
 };
 
 export const viewport: Viewport = {

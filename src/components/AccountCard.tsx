@@ -142,7 +142,7 @@ export default function AccountCard() {
         </>
       ) : (
         <>
-          <p className="mt-1 text-sm text-muted">이메일만 넣으면 비밀번호 없이 로그인 링크를 보내 드려요. 로그인하면 무료 점이 하루 1번에서 3번으로 늘고, 기록이 여러 기기에서 이어집니다.</p>
+          <p className="mt-1 text-sm text-muted">이메일만 넣으면 비밀번호 없이 로그인 링크를 보내 드려요. 로그인하면 무료 점치기 기회가 하루 1번에서 3번으로 늘고, 기록이 여러 기기에서 이어집니다.</p>
           <form
             className="mt-3 flex gap-2"
             onSubmit={(e) => {
