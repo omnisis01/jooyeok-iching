@@ -1,5 +1,5 @@
-// 점을 볼 때 고르는 운세 분류 6가지 (주역점과 육효가 함께 쓴다)
-export type Category = "wealth" | "love" | "exam" | "contract" | "health" | "overall";
+// 점을 볼 때 고르는 운세 분류 8가지 (주역점과 육효가 함께 쓴다)
+export type Category = "wealth" | "love" | "exam" | "business" | "work" | "contract" | "health" | "overall";
 
 export type CategoryDef = {
   key: Category;
@@ -13,7 +13,9 @@ export const CATEGORIES: CategoryDef[] = [
   { key: "wealth", label: "재물운", short: "재물", desc: "돈, 투자, 장사" },
   { key: "love", label: "애정운", short: "애정", desc: "연애, 결혼, 관계" },
   { key: "exam", label: "합격운", short: "합격", desc: "시험, 면접, 승진" },
-  { key: "contract", label: "계약(프로젝트)운", short: "계약", desc: "계약, 거래, 일의 성사" },
+  { key: "business", label: "사업운", short: "사업", desc: "장사, 창업, 확장" },
+  { key: "work", label: "업무운", short: "업무", desc: "직장, 프로젝트" },
+  { key: "contract", label: "계약운", short: "계약", desc: "계약, 거래, 협상" },
   { key: "health", label: "건강운", short: "건강", desc: "몸과 마음" },
 ];
 
@@ -21,12 +23,14 @@ export function categoryOf(key: string | undefined): CategoryDef {
   return CATEGORIES.find((c) => c.key === normalizeCategory(key)) ?? CATEGORIES[0];
 }
 
-/** 예전 기록의 분류 키를 새 6분류로 맞춘다 */
+/** 예전 기록의 분류 키를 지금 분류로 맞춘다 */
 export function normalizeCategory(key: string | undefined): Category {
   switch (key) {
     case "wealth":
     case "love":
     case "health":
+    case "business":
+    case "work":
       return key;
     case "career":
     case "exam":
@@ -85,6 +89,22 @@ export const LINE_STAGE_BY_CATEGORY: Record<Category, [string, string, string, s
     "결정권자 곁에 있는 자리예요. 상대의 입장을 먼저 정리해 주세요.",
     "일이 성사되는 중심 자리예요. 지금 결정하면 잘 마무리됩니다.",
     "일이 끝에 왔어요. 마무리 조건과 사후 관리를 챙기세요.",
+  ],
+  business: [
+    "사업이 이제 막 싹트는 자리예요. 시장과 자금부터 살피세요.",
+    "안에서 사업의 뼈대를 세우는 단계예요. 사람과 운영을 챙기세요.",
+    "작은 가게에서 큰 시장으로 넘어가는 문턱이에요. 무리한 확장을 조심하세요.",
+    "큰 거래처나 투자자 곁에 선 자리예요. 상대가 원하는 것을 먼저 헤아리세요.",
+    "사업의 중심 자리예요. 지금 내리는 결단이 매출을 좌우합니다.",
+    "사업이 정점에 이른 자리예요. 더 벌이기보다 지키고 다음을 준비하세요.",
+  ],
+  work: [
+    "새 업무를 막 맡은 자리예요. 묻고 배우며 기초를 다지세요.",
+    "실무를 담당하는 자리예요. 꼼꼼하게 처리하면 신뢰가 쌓입니다.",
+    "실무에서 관리로 넘어가는 문턱이에요. 실수가 나기 쉬우니 한 번 더 확인하세요.",
+    "상사 곁에서 일하는 자리예요. 보고를 자주 하고 뜻을 맞추세요.",
+    "팀을 이끄는 중심 자리예요. 분명하게 정하면 사람들이 따라옵니다.",
+    "일이 끝에 이른 자리예요. 마무리와 인수인계를 챙기세요.",
   ],
   health: [
     "몸의 신호가 이제 막 나타나는 단계예요. 작을 때 살피세요.",

@@ -2,10 +2,14 @@
 import type { Category } from "@/lib/categories";
 import { CATEGORY_READINGS_01_32 } from "./categoryReadings-01-32";
 import { CATEGORY_READINGS_33_64 } from "./categoryReadings-33-64";
+import { BUSINESS_WORK_READINGS } from "./categoryReadings-business-work";
 
 export type CategoryReading = Record<Category, string>;
 
-const ALL: Record<number, CategoryReading> = { ...CATEGORY_READINGS_01_32, ...CATEGORY_READINGS_33_64 };
+const BASE: Record<number, Omit<CategoryReading, "business" | "work">> = { ...CATEGORY_READINGS_01_32, ...CATEGORY_READINGS_33_64 };
+const ALL: Record<number, CategoryReading> = Object.fromEntries(
+  Object.entries(BASE).map(([n, r]) => [n, { ...r, ...BUSINESS_WORK_READINGS[Number(n)] }]),
+) as Record<number, CategoryReading>;
 
 export function categoryReading(hexNumber: number, category: Category): string {
   const r = ALL[hexNumber];

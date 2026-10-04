@@ -75,16 +75,16 @@ export default function DivinationFlow() {
         {stage === "setup" ? (
           <motion.div key="setup" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
             <p className="font-bold">무엇이 궁금하세요?</p>
-            <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-4 gap-2">
               {CATEGORIES.map((c) => (
                 <button
                   key={c.key}
                   onClick={() => setCategory(c.key)}
                   aria-pressed={category === c.key}
-                  className={`rounded-2xl px-2 py-3 text-center transition ${category === c.key ? "bg-foreground text-card" : "bg-card text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.06)] hover:bg-background"}`}
+                  className={`rounded-2xl px-1 py-3 text-center transition ${category === c.key ? "bg-foreground text-card" : "bg-card text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.06)] hover:bg-background"}`}
                 >
-                  <span className="block text-base font-bold">{c.label}</span>
-                  <span className={`mt-0.5 block text-[11px] ${category === c.key ? "text-card/70" : "text-muted"}`}>{c.desc}</span>
+                  <span className="block text-[15px] font-bold">{c.label}</span>
+                  <span className={`mt-0.5 block text-[10px] leading-tight ${category === c.key ? "text-card/70" : "text-muted"}`}>{c.desc}</span>
                 </button>
               ))}
             </div>

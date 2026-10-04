@@ -55,7 +55,7 @@ export default function YukhyoSection() {
           <motion.div key="setup" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
             <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
               <p className="font-bold">무엇이 궁금하세요?</p>
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {CATEGORIES.map((c) => (
                   <button
                     key={c.key}

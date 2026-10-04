@@ -126,7 +126,7 @@ export default function AppShell() {
         <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-3 pt-4 backdrop-blur lg:hidden">
           <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />
-            {TITLES[tab]}
+            주역운세
           </button>
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-muted sm:inline">{dateLabel}</span>

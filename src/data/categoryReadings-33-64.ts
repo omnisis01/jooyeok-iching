@@ -1,7 +1,7 @@
 // 33~64괘의 운세별 괘사 풀이 (총운, 재물운, 애정운, 합격운, 계약운, 건강운)
 import type { CategoryReading } from "./categoryReadings";
 
-export const CATEGORY_READINGS_33_64: Record<number, CategoryReading> = {
+export const CATEGORY_READINGS_33_64: Record<number, Omit<CategoryReading, "business" | "work">> = {
   33: { overall: "물러나는 날이에요. 거리 두기가 곧 지키는 길입니다.", wealth: "투자에서 한발 빼세요. 지금은 현금을 지킬 때.", love: "잠시 거리를 두는 게 관계를 살려요. 매달리지 마세요.", exam: "무리한 도전보다 한 단계 낮춰 안전하게.", contract: "불리한 협상에서는 물러나세요. 다음 기회가 있습니다.", health: "무리에서 빠져나와 쉬세요. 회복이 먼저." },
   34: { overall: "힘이 넘치는 날이에요. 바른 길에 쓰면 이롭습니다.", wealth: "공격적인 수익 기회가 있지만 힘만 믿으면 낭패예요.", love: "적극적으로 다가가되 강요는 금물.", exam: "기세가 좋아요. 자만하지 말고 실수 점검.", contract: "밀어붙이면 되지만 옳은지 한 번 더 확인하세요.", health: "활력이 넘쳐요. 운동에 이롭고 과격함만 주의." },
   35: { overall: "해가 떠오르듯 나아가는 날이에요. 인정받습니다.", wealth: "승진이나 인정으로 수입이 늘어요.", love: "자신을 드러내면 호감을 얻어요. 밝게 나서세요.", exam: "합격과 승진에 좋은 날이에요. 적극적으로 지원하세요.", contract: "제안하고 발표하면 성사돼요. 앞에 나서세요.", health: "기운이 오르는 날. 방심하지 말고 유지하세요." },
