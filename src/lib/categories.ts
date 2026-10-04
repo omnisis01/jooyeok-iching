@@ -9,13 +9,13 @@ export type CategoryDef = {
 };
 
 export const CATEGORIES: CategoryDef[] = [
-  { key: "overall", label: "총운", short: "총운", desc: "오늘 전체 흐름" },
-  { key: "wealth", label: "재물운", short: "재물", desc: "돈, 투자, 장사" },
-  { key: "love", label: "애정운", short: "애정", desc: "연애, 결혼, 관계" },
-  { key: "exam", label: "합격운", short: "합격", desc: "시험, 면접, 승진" },
+  { key: "overall", label: "총운", short: "총운", desc: "하루 흐름, 인간관계" },
+  { key: "wealth", label: "재물운", short: "재물", desc: "수입, 지출, 투자" },
+  { key: "love", label: "애정운", short: "애정", desc: "연애, 결혼, 연인" },
+  { key: "exam", label: "합격운", short: "합격", desc: "시험, 면접, 자격증" },
   { key: "business", label: "사업운", short: "사업", desc: "장사, 창업, 확장" },
-  { key: "work", label: "업무운", short: "업무", desc: "직장, 프로젝트" },
-  { key: "contract", label: "계약운", short: "계약", desc: "계약, 거래, 협상" },
+  { key: "work", label: "업무운", short: "업무", desc: "직장, 프로젝트, 승진" },
+  { key: "contract", label: "계약운", short: "계약", desc: "계약, 협상, 서류" },
   { key: "health", label: "건강운", short: "건강", desc: "몸과 마음" },
 ];
 

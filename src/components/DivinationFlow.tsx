@@ -84,7 +84,7 @@ export default function DivinationFlow() {
                   className={`rounded-2xl px-1 py-3 text-center transition ${category === c.key ? "bg-foreground text-card" : "bg-card text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.06)] hover:bg-background"}`}
                 >
                   <span className="block text-[15px] font-bold">{c.label}</span>
-                  <span className={`mt-0.5 block text-[10px] leading-tight ${category === c.key ? "text-card/70" : "text-muted"}`}>{c.desc}</span>
+                  <span className={`mt-0.5 block break-keep text-[10px] leading-tight ${category === c.key ? "text-card/70" : "text-muted"}`}>{c.desc}</span>
                 </button>
               ))}
             </div>

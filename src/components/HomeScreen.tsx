@@ -1,12 +1,9 @@
-// 홈 화면: 오늘의 괘 한마디, 점치기 입구, 나의 점 기록
+// 홈 화면: 64괘 원도, 점치기 입구, 나의 점 기록
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ChevronRight, ImageDown, Shuffle, Trash2 } from "lucide-react";
-import ShareCardModal from "./ShareCardModal";
-import { renderDailyStoryCard, storyFileName } from "@/lib/storyCard";
-import { SITE_URL } from "@/lib/shareCard";
+import { ArrowLeft, ChevronRight, Shuffle, Trash2 } from "lucide-react";
 import { confirmUnlock, unlockReturn } from "@/lib/unlock";
 import { clearReturnParams } from "@/lib/premium";
 import { readingKey } from "@/lib/unlock";
@@ -26,7 +23,6 @@ import { categoryOf, normalizeCategory } from "@/lib/categories";
 import { QuotaBadge } from "./QuotaGate";
 import { dayInfo } from "@/lib/yukhyo";
 import { useToday } from "@/lib/useToday";
-import { dailyHexagram } from "@/lib/daily";
 import { clearHistory, formatAt, loadHistory, readingFromRecord, removeRecord, type HistoryRecord } from "@/lib/history";
 import { cloudEnabled } from "@/lib/supabase";
 import { deleteRemote } from "@/lib/cloudSync";
@@ -40,7 +36,6 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [premium, setPremium] = useState(false);
-  const [dailyShare, setDailyShare] = useState(false);
   const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
 
   const { today, hour } = useToday();
@@ -68,7 +63,6 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
     return () => window.clearTimeout(t);
   }, []);
   const day = today ? dayInfo(today) : null;
-  const daily = today ? dailyHexagram(today) : null;
   const greeting = hour === null ? "" : hour < 5 ? "고요한 밤이에요" : hour < 11 ? "좋은 아침이에요" : hour < 17 ? "좋은 오후예요" : "편안한 저녁이에요";
 
   useEffect(() => {
@@ -157,50 +151,6 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       </div>
 
       {unlockMessage ? <p className="rounded-2xl bg-card px-4 py-3 text-center text-sm font-semibold text-gold-soft">{unlockMessage}</p> : null}
-
-      {/* 오늘의 괘 한마디 */}
-      <motion.button
-        onClick={() => daily && setSelected(daily)}
-        whileTap={{ scale: 0.98 }}
-        className="flex min-h-[112px] w-full items-center gap-4 rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)]"
-      >
-        {daily ? (
-          <>
-            <div className="shrink-0 text-gold">
-              <HexagramFigure lines={daily.lines} size={56} title={daily.name} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-vermilion">오늘의 괘 한마디</p>
-              <p className="mt-1 font-bold">
-                {daily.name} <span className="font-normal text-muted">{daily.hanja}</span>
-              </p>
-              <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground/80">{daily.advice}</p>
-            </div>
-            <ChevronRight size={18} className="shrink-0 text-muted" />
-          </>
-        ) : (
-          <p className="text-xs font-bold text-vermilion">오늘의 괘 한마디</p>
-        )}
-      </motion.button>
-      {daily && today ? (
-        <div className="-mt-2 flex justify-end">
-          <button onClick={() => { track("daily_card", {}); setDailyShare(true); }} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-muted hover:text-foreground">
-            <ImageDown size={14} /> 오늘의 괘를 이미지로
-          </button>
-          <ShareCardModal
-            job={
-              dailyShare
-                ? {
-                    render: () => renderDailyStoryCard(daily, today),
-                    fileName: storyFileName("오늘의괘", daily),
-                    text: `오늘의 괘 ${daily.name}(${daily.hanja}), ${daily.keyword}\n${daily.advice}\n${SITE_URL}`,
-                  }
-                : null
-            }
-            onClose={() => setDailyShare(false)}
-          />
-        </div>
-      ) : null}
 
       {/* 점치기 입구 */}
       <motion.button

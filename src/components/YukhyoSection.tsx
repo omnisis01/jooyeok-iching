@@ -65,7 +65,7 @@ export default function YukhyoSection() {
                     }`}
                   >
                     <span className="block text-sm font-bold">{c.label}</span>
-                    <span className={`mt-0.5 block text-[11px] ${category === c.key ? "text-card/70" : "text-muted"}`}>{c.desc}</span>
+                    <span className={`mt-0.5 block break-keep text-[11px] ${category === c.key ? "text-card/70" : "text-muted"}`}>{c.desc}</span>
                   </button>
                 ))}
               </div>
