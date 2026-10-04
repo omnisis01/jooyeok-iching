@@ -40,7 +40,7 @@ export function QuotaBadge() {
   if (q.premium) return <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold">Pro, 횟수 제한 없음</span>;
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-background px-3 py-1 text-xs font-bold text-foreground">
-      <Ticket size={12} /> 오늘 남은 무료 점 {q.remaining}회
+      <Ticket size={12} /> 오늘 남은 무료 점괘 {q.remaining}회
       {q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY ? <span className="font-normal text-muted">(로그인하면 하루 {FREE_PER_DAY}회)</span> : null}
     </span>
   );
@@ -57,7 +57,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
   return (
     <section className="rounded-3xl bg-card p-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <Ticket size={28} className="mx-auto text-vermilion" />
-      <h3 className="mt-3 text-lg font-bold">오늘의 무료 점 {q.free}회를 모두 썼어요</h3>
+      <h3 className="mt-3 text-lg font-bold">오늘의 무료 점괘 {q.free}회를 모두 썼어요</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted">주역은 한 질문에 한 번만 뽑고, 하루에도 정성껏 몇 번만 치는 것이 좋다고 해요. 그래도 다른 것을 더 묻고 싶다면 아래 방법이 있어요.</p>
       {q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY ? (
         <button
