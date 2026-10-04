@@ -144,7 +144,8 @@ export default function CoinCasting({ question, onComplete }: Props) {
           <HexagramFigure lines={lines} revealed={tosses.length} changing={changing} size={150} />
         </div>
         <ol className="w-full space-y-1.5 text-sm">
-          {LINE_NAMES.map((name, i) => {
+          {[5, 4, 3, 2, 1, 0].map((i) => {
+            const name = LINE_NAMES[i];
             const t = tosses[i];
             return (
               <li

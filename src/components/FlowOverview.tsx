@@ -1,6 +1,7 @@
 // 결과 맨 위에 괘 → 움직이는 효 → 지괘를 한 줄로 보여주는 흐름 요약
 "use client";
 
+import { iga } from "@/lib/josa";
 import { ChevronRight } from "lucide-react";
 import type { Hexagram } from "@/data/hexagrams";
 import { LINE_NAMES } from "@/lib/iching";
@@ -37,7 +38,7 @@ export default function FlowOverview({ primary, changingLines, resulting }: Prop
         <Step
           label="움직이는 효"
           name={focus !== null ? `${lineTitle(primary.lines, focus)}${changingLines.length > 1 ? ` 외 ${changingLines.length - 1}` : ""}` : "없음"}
-          sub={focus !== null ? LINE_NAMES[focus] + "이 변해요" : "그대로 머물러요"}
+          sub={focus !== null ? iga(LINE_NAMES[focus]) + " 변해요" : "그대로 머물러요"}
         >
           <div className="text-gold">
             <HexagramFigure lines={primary.lines} changing={changingLines} size={56} title="움직이는 효" />

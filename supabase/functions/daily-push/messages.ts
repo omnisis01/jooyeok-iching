@@ -46,6 +46,13 @@ function julianDay(y: number, m: number, d: number, hourKst = 12): number {
   return jdn + (hourKst - 9 - 12) / 24;
 }
 
+/** 받침이 있으면 "이에요", 없으면 "예요" */
+export function ieyo(word: string): string {
+  const code = word.charCodeAt(word.length - 1);
+  const hangul = code >= 0xac00 && code <= 0xd7a3;
+  return word + (hangul && (code - 0xac00) % 28 !== 0 ? "이에요" : "예요");
+}
+
 /** 받침이 있으면 "이", 없으면 "가" */
 export function ga(word: string): string {
   const code = word.charCodeAt(word.length - 1);
@@ -110,12 +117,12 @@ type Template = { title: (c: Ctx) => string; body: (c: Ctx) => string };
 const POOL: Record<Exclude<Reason, "skip">, Template[]> = {
   term: [
     { title: (c) => `오늘 ${c.termName}, 달이 바뀌었어요`, body: (c) => `${MONTH_NAMES[c.monthIndex]}이 시작됐어요. 육효의 월건이 달라지니 이달의 흐름을 새로 물어볼 때예요.` },
-    { title: (c) => `${c.termName}이에요. 이달 첫 점 어때요`, body: (c) => `절기가 바뀌면 괘를 읽는 달의 기운도 바뀌어요. ${MONTH_NAMES[c.monthIndex]}의 큰 판세를 하나 뽑아 두세요.` },
+    { title: (c) => `${ieyo(c.termName!)}. 이달 첫 점 어때요`, body: (c) => `절기가 바뀌면 괘를 읽는 달의 기운도 바뀌어요. ${MONTH_NAMES[c.monthIndex]}의 큰 판세를 하나 뽑아 두세요.` },
     { title: (c) => `새 절기 ${c.termName}`, body: () => `오늘부터 한 달, 괘에 붙는 달의 기운이 새로 정해졌어요. 이달에 결정할 일 하나만 조용히 물어보세요.` },
     { title: (c) => `${c.termName} 아침이에요`, body: (c) => `달이 ${MONTH_NAMES[c.monthIndex]}로 넘어갔어요. 지난달 답은 잊고, 이달의 자리를 다시 짚어 볼 시간이에요.` },
   ],
   holiday: [
-    { title: (c) => `${c.holiday}이에요. 한 해의 판세를 물어볼까요`, body: (c) => `${c.ganzhi}일, 온 가족이 새 출발을 말하는 날이에요. 올해 마음에 둔 일 하나만 괘로 물어보세요.` },
+    { title: (c) => `${ieyo(c.holiday!)}. 한 해의 판세를 물어볼까요`, body: (c) => `${c.ganzhi}일, 온 가족이 새 출발을 말하는 날이에요. 올해 마음에 둔 일 하나만 괘로 물어보세요.` },
     { title: (c) => `${c.holiday} 아침, 한 번만 물어보세요`, body: () => `큰 명절은 오래 전부터 점을 치던 날이에요. 마음을 모아 이번 한 해의 큰 판세를 하나 뽑아 두세요.` },
     { title: (c) => `좋은 ${c.holiday} 되세요`, body: (c) => `${c.animal}의 날이에요. 붐비는 하루가 시작되기 전, 조용한 지금 한 가지만 물어보면 좋아요.` },
   ],

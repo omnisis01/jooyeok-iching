@@ -130,8 +130,9 @@ export default function SantongCasting({ question, onComplete }: Props) {
           />
         </div>
         <ul className="w-full space-y-2 text-sm">
-          <ResultRow label="하괘" active={step === 0} value={lower ? `${lower.symbol} ${lower.name} ${lower.nature} (${lower.number}번)` : null} />
-          <ResultRow label="상괘" active={step === 1} value={upper ? `${upper.symbol} ${upper.name} ${upper.nature} (${upper.number}번)` : null} />
+          {/* 괘 그림처럼 위가 상괘, 아래가 하괘 */}
+          <ResultRow label="상괘 (위 세 효)" active={step === 1} value={upper ? `${upper.symbol} ${upper.name} ${upper.nature} (${upper.number}번)` : null} />
+          <ResultRow label="하괘 (아래 세 효)" active={step === 0} value={lower ? `${lower.symbol} ${lower.name} ${lower.nature} (${lower.number}번)` : null} />
           <ResultRow label="동효" active={step === 2} value={moving ? `${LINE_NAMES[moving - 1]} (${moving}번)` : null} accent />
         </ul>
         <p className="mt-4 text-xs leading-relaxed text-muted">

@@ -1,6 +1,7 @@
 // 떠 있는 동그란 버튼 "주역의 괘와 효란?"과, 누르면 열리는 그림 설명(효, 괘, 변효, 지괘, 읽는 순서 5단계)
 "use client";
 
+import { iga } from "@/lib/josa";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight, RefreshCw, X } from "lucide-react";
@@ -204,7 +205,7 @@ function StepResult() {
         <GuideHex lines={flipped ? EX_RESULT.lines : EX_PRIMARY.lines} changing={EX_LINE} flipped={flipped} names marker />
       </div>
       <p className="mt-3 text-center text-sm text-foreground/80">
-        {flipped ? `양이던 ${EX_LINE_TITLE}가 음으로 바뀌어 ${EX_RESULT.name}가 되었어요` : "빨간 줄이 곧 반대로 뒤집혀요"}
+        {flipped ? `양이던 ${iga(EX_LINE_TITLE)} 음으로 바뀌어 ${iga(EX_RESULT.name)} 되었어요` : "빨간 줄이 곧 반대로 뒤집혀요"}
       </p>
       <div className="mt-3 text-center">
         <button onClick={() => setFlipped((f) => !f)} className="inline-flex items-center gap-1 rounded-full bg-card px-4 py-2 text-xs font-bold">

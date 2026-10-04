@@ -11,6 +11,7 @@ import { analyzeYukhyo } from "@/lib/yukhyo";
 import { UNLOCK_PRICE_KRW, isUnlockedLocal, isUnlockedRemote, readingKey, startUnlock, unlockEnabled } from "@/lib/unlock";
 import { getSession } from "@/lib/cloudSync";
 import YukhyoResult from "./YukhyoResult";
+import { eulreul } from "@/lib/josa";
 import { track } from "@/lib/track";
 
 export default function DeepReading({ reading }: { reading: Reading }) {
@@ -92,7 +93,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
           </div>
           {reading.resulting ? (
             <div>
-              <h4 className="text-sm font-bold text-jade">앞으로의 흐름, 지괘 {reading.resulting.name}을 운세별로</h4>
+              <h4 className="text-sm font-bold text-jade">앞으로의 흐름, 지괘 {eulreul(reading.resulting.name)} 운세별로</h4>
               <dl className="mt-2 space-y-3">
                 {CATEGORIES.map((c) => (
                   <div key={c.key} className="rounded-2xl bg-background p-3">
