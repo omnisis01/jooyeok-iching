@@ -1,5 +1,7 @@
-// 점을 볼 때 고르는 운세 분류 8가지 (주역점과 육효가 함께 쓴다)
-export type Category = "wealth" | "love" | "exam" | "business" | "work" | "contract" | "health" | "overall";
+// 점을 볼 때 고르는 운세 분류 12가지 (주역점과 육효가 함께 쓴다)
+export type Category =
+  | "wealth" | "love" | "exam" | "business" | "work" | "contract" | "health" | "overall"
+  | "move" | "travel" | "family" | "lawsuit";
 
 export type CategoryDef = {
   key: Category;
@@ -17,6 +19,10 @@ export const CATEGORIES: CategoryDef[] = [
   { key: "work", label: "업무운", short: "업무", desc: "직장, 프로젝트, 승진" },
   { key: "contract", label: "계약운", short: "계약", desc: "계약, 협상, 서류" },
   { key: "health", label: "건강운", short: "건강", desc: "몸과 마음" },
+  { key: "move", label: "이사운", short: "이사", desc: "이사, 집 구하기" },
+  { key: "travel", label: "여행운", short: "여행", desc: "여행, 나들이, 이동" },
+  { key: "family", label: "가족운", short: "가족", desc: "부모, 자녀, 형제" },
+  { key: "lawsuit", label: "소송운", short: "소송", desc: "소송, 분쟁, 합의" },
 ];
 
 export function categoryOf(key: string | undefined): CategoryDef {
@@ -31,16 +37,20 @@ export function normalizeCategory(key: string | undefined): Category {
     case "health":
     case "business":
     case "work":
+    case "move":
+    case "travel":
+    case "family":
+    case "lawsuit":
       return key;
+    case "children":
+      return "family";
     case "career":
     case "exam":
       return "exam";
     case "document":
     case "contract":
       return "contract";
-    case "children":
     case "friend":
-    case "move":
     case "self":
     case "overall":
     default:
@@ -105,6 +115,38 @@ export const LINE_STAGE_BY_CATEGORY: Record<Category, [string, string, string, s
     "상사 곁에서 일하는 자리예요. 보고를 자주 하고 뜻을 맞추세요.",
     "팀을 이끄는 중심 자리예요. 분명하게 정하면 사람들이 따라옵니다.",
     "일이 끝에 이른 자리예요. 마무리와 인수인계를 챙기세요.",
+  ],
+  move: [
+    "이사를 막 생각하기 시작한 자리예요. 동네부터 둘러보세요.",
+    "안에서 짐과 살림을 준비하는 단계예요. 차근히 챙기세요.",
+    "옮기기 직전 문턱이에요. 날짜와 조건이 어긋나기 쉬워요.",
+    "집주인이나 중개인과 마주한 자리예요. 상대 사정도 헤아리세요.",
+    "새 집을 정하는 중심 자리예요. 지금 고르면 오래 편합니다.",
+    "이사를 마무리하는 자리예요. 전입 신고와 정리를 챙기세요.",
+  ],
+  travel: [
+    "여행을 꿈꾸는 단계예요. 가고 싶은 곳을 적어 보세요.",
+    "일정을 짜는 단계예요. 꼼꼼할수록 편합니다.",
+    "집을 나서는 문턱이에요. 준비물과 이동 시간을 다시 확인하세요.",
+    "여행지에 들어선 자리예요. 현지 사람과 규칙을 존중하세요.",
+    "여행이 가장 즐거운 자리예요. 마음껏 누리세요.",
+    "돌아오는 길이에요. 마지막까지 짐과 안전을 챙기세요.",
+  ],
+  family: [
+    "집안 일이 막 시작되는 자리예요. 작은 것부터 살피세요.",
+    "집 안에서 살림을 챙기는 자리예요. 묵묵한 손길이 힘입니다.",
+    "식구 사이가 흔들리기 쉬운 문턱이에요. 말을 아끼세요.",
+    "어른 곁에 선 자리예요. 부모님 뜻을 먼저 헤아리세요.",
+    "집안의 중심이 되는 자리예요. 분명하게 정하면 가족이 따라옵니다.",
+    "가족 일이 한 단락 맺는 자리예요. 고마움을 전하세요.",
+  ],
+  lawsuit: [
+    "분쟁이 막 시작된 자리예요. 크게 벌이기 전에 말로 풀어 보세요.",
+    "증거와 자료를 모으는 단계예요. 꼼꼼히 기록하세요.",
+    "법정으로 넘어가는 문턱이에요. 감정적인 대응은 금물.",
+    "판단하는 사람 곁에 선 자리예요. 사실만 차분히 전하세요.",
+    "판결의 중심 자리예요. 지금 정한 방향이 결과를 가릅니다.",
+    "분쟁이 끝에 이른 자리예요. 더 끌지 말고 매듭지으세요.",
   ],
   health: [
     "몸의 신호가 이제 막 나타나는 단계예요. 작을 때 살피세요.",
