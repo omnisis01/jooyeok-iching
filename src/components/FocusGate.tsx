@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import Taegeuk from "./Taegeuk";
 
 type Props = {
@@ -17,6 +17,11 @@ type Props = {
 export default function FocusGate({ action, topic, question, onReady }: Props) {
   const [seconds, setSeconds] = useState(0);
 
+  const reduce = useReducedMotion();
+  // 한 번 숨쉬기 = 들이쉬기 4초 + 내쉬기 4초
+  const BREATH = 8;
+  const inhale = seconds % BREATH < BREATH / 2;
+
   useEffect(() => {
     const t = window.setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => window.clearInterval(t);
@@ -24,15 +29,43 @@ export default function FocusGate({ action, topic, question, onReady }: Props) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl bg-card p-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-      <motion.div
-        className="focus-orb mx-auto flex h-36 w-36 items-center justify-center rounded-full bg-vermilion/8"
-        animate={{ scale: [1, 1.12, 1] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      {/* 호흡 원: 들이쉴 때 크게 부풀고 내쉴 때 작아진다. 빛 고리가 바깥으로 퍼진다 */}
+      <div className="focus-orb relative mx-auto flex h-48 w-48 items-center justify-center">
+        {reduce
+          ? null
+          : [0, 1].map((i) => (
+              <motion.span
+                key={i}
+                className="absolute inset-0 rounded-full border-2 border-vermilion/70"
+                initial={{ scale: 0.6, opacity: 0 }}
+                animate={{ scale: [0.6, 1.25], opacity: [0.7, 0] }}
+                transition={{ duration: BREATH / 2, repeat: Infinity, ease: "easeOut", delay: i * (BREATH / 4) }}
+              />
+            ))}
+        <motion.div
+          className="absolute inset-3 rounded-full bg-vermilion/25 shadow-[0_0_70px_rgba(216,69,43,0.55)]"
+          animate={reduce ? { scale: 1 } : { scale: [0.72, 1, 0.72] }}
+          transition={{ duration: BREATH, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="relative"
+          animate={reduce ? { scale: 1 } : { scale: [0.78, 1.12, 0.78] }}
+          transition={{ duration: BREATH, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Taegeuk size={96} className="animate-spin-slow drop-shadow-[0_8px_24px_rgba(216,69,43,0.45)]" />
+        </motion.div>
+      </div>
+      <motion.p
+        key={inhale ? "in" : "out"}
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-3 text-lg font-bold tracking-wide text-vermilion"
+        aria-live="polite"
       >
-        <Taegeuk size={88} className="animate-spin-slow drop-shadow-[0_6px_18px_rgba(216,69,43,0.25)]" />
-      </motion.div>
+        {inhale ? "천천히 들이쉬고" : "천천히 내쉬고"}
+      </motion.p>
 
-      <p className="mt-6 text-sm font-bold text-vermilion">잠시 눈을 감고 마음을 모아 주세요</p>
+      <p className="mt-4 text-sm font-bold text-foreground/80">잠시 눈을 감고 마음을 모아 주세요</p>
       <h2 className="mt-2 text-xl font-bold leading-snug">
         최대한 정신을 집중해서
         <br />
@@ -57,7 +90,7 @@ export default function FocusGate({ action, topic, question, onReady }: Props) {
           </>
         )}
       </p>
-      <p className="mt-4 text-xs text-muted">천천히 숨을 들이쉬고 내쉬며 원이 커졌다 작아지는 것을 따라가 보세요.</p>
+      <p className="mt-4 text-xs text-muted">원이 커지면 들이쉬고, 작아지면 내쉬세요.</p>
       <p className="mt-4 rounded-2xl bg-background px-4 py-3 text-sm leading-relaxed text-foreground/85">
         <b className="text-foreground">한 가지 질문에 한 번만 뽑아요.</b> 처음 뽑은 답이 가장 정확해요. 마음에 안 든다고 같은 질문을 다시 뽑으면 효과가 없어요.
       </p>

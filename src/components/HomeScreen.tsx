@@ -1,17 +1,15 @@
-// 홈 화면: 64괘 원도, 점치기 입구, 나의 점 기록
+// 홈 화면: 인사말, 점치기 입구, 64괘 원도(장식), 나의 점 기록
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ChevronRight, Shuffle, Trash2 } from "lucide-react";
+import { ArrowLeft, ChevronRight, Trash2 } from "lucide-react";
 import { confirmUnlock, unlockReturn } from "@/lib/unlock";
 import { clearReturnParams } from "@/lib/premium";
 import { readingKey } from "@/lib/unlock";
-import type { Hexagram } from "@/data/hexagrams";
 import type { Tab } from "./AppShell";
 import HexagramFigure from "./HexagramFigure";
 import HexagramWheel from "./HexagramWheel";
-import HexagramDetail from "./HexagramDetail";
 import ResultView from "./ResultView";
 import AccountCard from "./AccountCard";
 import PremiumCard from "./PremiumCard";
@@ -26,12 +24,8 @@ import { useToday } from "@/lib/useToday";
 import { clearHistory, formatAt, loadHistory, readingFromRecord, removeRecord, type HistoryRecord } from "@/lib/history";
 import { cloudEnabled } from "@/lib/supabase";
 import { deleteRemote } from "@/lib/cloudSync";
-import { track } from "@/lib/track";
 
 export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
-  const [selected, setSelected] = useState<Hexagram | null>(null);
-  const [wheelReset, setWheelReset] = useState(0);
-  const wheelRandom = useRef<(() => void) | null>(null);
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -132,24 +126,6 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </h1>
       </div>
 
-      <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-        <div className="flex items-center justify-between">
-          <p className="font-bold">64괘</p>
-          <button onClick={() => go("about")} className="text-sm text-muted hover:text-foreground">
-            주역이란
-          </button>
-        </div>
-        <p className="mt-1 text-sm text-muted">괘를 누르면 그 괘의 뜻과 효사가 바로 열려요.</p>
-        <div className="mt-3 flex justify-center">
-          <HexagramWheel size={340} onSelect={(h, how) => { track("wheel_open", { how }); setSelected(h); }} resetKey={wheelReset} randomRef={wheelRandom} className="h-auto w-full max-w-[340px]" />
-        </div>
-        <div className="mt-2 flex justify-center">
-          <button onClick={() => wheelRandom.current?.()} className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
-            <Shuffle size={15} /> 무작위로 하나 뽑기
-          </button>
-        </div>
-      </div>
-
       {unlockMessage ? <p className="rounded-2xl bg-card px-4 py-3 text-center text-sm font-semibold text-gold-soft">{unlockMessage}</p> : null}
 
       {/* 점치기 입구 */}
@@ -171,6 +147,25 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           <QuotaBadge />
         </span>
       </motion.button>
+
+      <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+        <div className="flex items-center justify-between">
+          <p className="font-bold">64괘</p>
+          <button onClick={() => go("about")} className="text-sm text-muted hover:text-foreground">
+            주역이란
+          </button>
+        </div>
+        <div className="mt-3 flex justify-center">
+          <HexagramWheel size={340} className="h-auto w-full max-w-[340px]" />
+        </div>
+        <div className="mt-2 flex justify-center">
+          <button onClick={() => go("hexagrams")} className="inline-flex items-center gap-1 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
+            64괘 둘러보기 <ChevronRight size={15} />
+          </button>
+        </div>
+      </div>
+
+
 
 
       <Card title="육효로 묻기" desc="돈, 직장, 연애처럼 구체적인 질문에 답합니다" onClick={() => go("yukhyo")} accent="bg-vermilion/10 text-vermilion" badge="상세 점" />
@@ -242,13 +237,6 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
 
       <p className="px-2 text-center text-xs leading-relaxed text-muted lg:col-span-2">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
-      <HexagramDetail
-        hex={selected}
-        onClose={() => {
-          setSelected(null);
-          setWheelReset((k) => k + 1);
-        }}
-      />
     </div>
   );
 }
