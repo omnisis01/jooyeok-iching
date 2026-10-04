@@ -367,7 +367,7 @@ export default function GuaHyoGuide() {
             <span className="flex justify-between"><span className="h-[3px] w-[10px] rounded-full bg-card" /><span className="h-[3px] w-[10px] rounded-full bg-card" /></span>
             <span className="h-[3px] rounded-full bg-vermilion" />
           </span>
-          <span className="mt-1 text-[10px] font-bold leading-none">괘와 효</span>
+          <span className="mt-1 text-[10px] font-bold leading-none">괘와 효?</span>
         </motion.button>
       </div>
 
