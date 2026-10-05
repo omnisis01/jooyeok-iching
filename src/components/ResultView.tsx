@@ -140,7 +140,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
                       {isFocus && changingLines.length > 1 ? <span className="text-xs text-muted">중심 효</span> : null}
                     </div>
                     <p className="mt-2">{lt.text}</p>
-                    <p className="mt-1.5 font-semibold text-foreground">{cat.short}운으로 보면, {LINE_STAGE_BY_CATEGORY[cat.key][i]}</p>
+                    <p className="mt-1.5 font-semibold text-foreground">{cat.label}으로 보면, {LINE_STAGE_BY_CATEGORY[cat.key][i]}</p>
                     <p className="mt-1.5 text-foreground/75"><span className="mr-1.5 rounded bg-foreground/8 px-1.5 py-0.5 text-[11px] font-semibold text-foreground/70">조언</span>{lt.advice}</p>
                   </li>
                 );
