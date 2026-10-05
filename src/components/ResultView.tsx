@@ -125,7 +125,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
       {changingLines.length ? (
         <section className="grid gap-6 lg:grid-cols-[1fr_auto_1fr]">
           <div className="rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-            <h3 className="text-sm font-bold text-vermilion">② 효사로 보는 지금 내 자리 (변효 풀이)</h3>
+            <h3 className="text-sm font-bold text-vermilion">② 주역 효사로 보는 지금 나의 운세 자리 (변효 풀이)</h3>
             <ul className="mt-3 space-y-4 text-base leading-relaxed text-foreground/90">
               {[...changingLines].reverse().map((i) => {
                 const lt = getLineText(primary.number, i);
@@ -190,7 +190,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다시 
 
       {/* 읽는 법과 용어 설명은 결과를 다 본 뒤에 */}
       <p className="rounded-2xl bg-card/60 px-4 py-3 text-center text-sm leading-relaxed text-muted">
-        주역은 두 겹으로 읽어요. <b className="text-foreground/80">괘사</b>는 큰 판세, <b className="text-foreground/80">효사</b>는 지금 내 위치. 둘을 합쳐 한마디로 정리합니다.
+        주역은 <b className="text-foreground/80">괘사</b>와 <b className="text-foreground/80">효사</b>를 함께 읽어요. 괘사로 지금 상황의 큰 판세를 보고, 효사로 그 안에서 내가 선 자리를 봅니다. 둘을 합쳐 한마디로 정리했어요.
       </p>
       <GuaHyoExplainer />
 
