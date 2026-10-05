@@ -14,6 +14,7 @@ export default function ShakeHint({ state, onEnable, verb = "던질" }: { state:
     );
   }
   if (state === "denied") return <p className="text-xs text-muted">흔들기 감지가 꺼져 있어요. 버튼으로 {verb} 수 있어요.</p>;
+  if (state === "listening-soon") return <p className="inline-flex items-center gap-1.5 text-xs text-muted"><Smartphone size={13} /> 화면을 한 번 누르면 흔들어서 {verb} 수 있어요</p>;
   return (
     <p className="inline-flex items-center gap-1.5 text-xs text-muted">
       <Smartphone size={13} /> 폰을 흔들어서 {verb} 수 있어요

@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import Taegeuk from "./Taegeuk";
+import { motionGrantedBefore, requestMotion } from "@/lib/motion";
 
 type Props = {
   /** 예) "동전을 던져" */
@@ -96,7 +97,11 @@ export default function FocusGate({ action, topic, question, onReady }: Props) {
       </p>
 
       <button
-        onClick={onReady}
+        onClick={() => {
+          // 예전에 흔들기를 허락했다면 이 순간 조용히 다시 켠다(아이폰은 누르는 순간에만 가능)
+          if (motionGrantedBefore()) requestMotion();
+          onReady();
+        }}
         className="mt-6 w-full rounded-full bg-vermilion py-4 text-lg font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
       >
         {seconds < 3 ? "마음을 모으는 중" : "집중했어요, 시작하기"}

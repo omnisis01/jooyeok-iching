@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Check, Download, ImageDown, Link2, X } from "lucide-react";
+import { Check, Download, ImageDown, Link2, Send, X } from "lucide-react";
 import { SITE_URL } from "@/lib/shareCard";
 import { track } from "@/lib/track";
 
@@ -81,16 +81,29 @@ export default function ShareCardModal({ job, onClose }: Props) {
     setStatus(touch ? "다운로드 폴더에 파일로 저장했어요. 사진첩에 넣으려면 이미지를 길게 누르세요" : "이미지를 저장했어요");
   };
 
-  const share = async () => {
+  /** 사진첩 저장: 이미지 파일만 넘겨 공유 창 맨 위에 '이미지 저장'이 오게 한다 */
+  const saveToPhotos = async () => {
     if (!blob || !reading) return;
-    track("share_image", { via: "share_sheet", format });
+    track("share_image", { via: "save_photos", format });
+    const file = new File([blob], fileName, { type: "image/png" });
+    try {
+      await navigator.share({ files: [file] });
+      setStatus("\u2018이미지 저장\u2019을 골랐다면 사진첩에 들어갔어요");
+    } catch (e) {
+      if (!(e instanceof DOMException && e.name === "AbortError")) setStatus("저장 창을 열지 못했어요. 이미지를 길게 눌러 저장해 주세요");
+    }
+  };
+
+  /** 보내기: 이미지와 소개 글을 함께 카카오톡, 인스타그램 등으로 */
+  const send = async () => {
+    if (!blob || !reading) return;
+    track("share_image", { via: "send", format });
     const file = new File([blob], fileName, { type: "image/png" });
     try {
       await navigator.share({ files: [file], title: "나만의 정통주역운세", text: reading.text });
-      setStatus("보냈어요. 사진첩에 넣었다면 앨범에서 확인해 보세요");
+      setStatus("보냈어요");
     } catch (e) {
-      // 사용자가 공유 시트를 닫은 경우는 오류가 아니다
-      if (!(e instanceof DOMException && e.name === "AbortError")) setStatus("공유에 실패했습니다. 이미지를 저장해서 올려 주세요");
+      if (!(e instanceof DOMException && e.name === "AbortError")) setStatus("보내지 못했어요. 잠시 후 다시 시도해 주세요");
     }
   };
 
@@ -158,38 +171,38 @@ export default function ShareCardModal({ job, onClose }: Props) {
               )}
             </div>
 
-            {touch && url ? <p className="mt-2 text-center text-xs text-muted">이미지를 길게 누르면 사진첩에 바로 저장할 수 있어요</p> : null}
+            {touch && url && !canShareFiles ? <p className="mt-2 text-center text-xs text-muted">이미지를 길게 누르면 사진첩에 바로 저장할 수 있어요</p> : null}
 
             <div className="mt-4 grid grid-cols-2 gap-2">
-              {canShareFiles ? (
-                <>
-                  <button
-                    onClick={share}
-                    disabled={!blob}
-                    className="col-span-2 inline-flex items-center justify-center gap-2 rounded-full bg-vermilion px-4 py-3.5 text-base font-bold text-card transition hover:brightness-105 disabled:opacity-50"
-                  >
-                    <ImageDown size={18} /> 사진에 저장하거나 보내기
-                  </button>
-                  <button
-                    onClick={download}
-                    disabled={!url}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60 disabled:opacity-50"
-                  >
-                    <Download size={16} /> 파일로 내려받기
-                  </button>
-                </>
+              {touch && canShareFiles ? (
+                <button
+                  onClick={saveToPhotos}
+                  disabled={!blob}
+                  className="col-span-2 inline-flex items-center justify-center gap-2 rounded-full bg-vermilion px-4 py-3.5 text-base font-bold text-card transition hover:brightness-105 disabled:opacity-50"
+                >
+                  <ImageDown size={18} /> 사진첩에 저장하기
+                </button>
               ) : (
                 <button
                   onClick={download}
                   disabled={!url}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-3 text-sm font-semibold text-card transition hover:opacity-90 disabled:opacity-50"
+                  className="col-span-2 inline-flex items-center justify-center gap-2 rounded-full bg-vermilion px-4 py-3.5 text-base font-bold text-card transition hover:brightness-105 disabled:opacity-50"
                 >
-                  <Download size={16} /> 이미지 저장
+                  <Download size={18} /> 이미지 저장하기
                 </button>
               )}
+              {canShareFiles ? (
+                <button
+                  onClick={send}
+                  disabled={!blob}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60 disabled:opacity-50"
+                >
+                  <Send size={16} /> 보내기
+                </button>
+              ) : null}
               <button
                 onClick={copyLink}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60"
+                className={`${canShareFiles ? "" : "col-span-2 "}inline-flex items-center justify-center gap-2 rounded-full bg-background px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-border/60`}
               >
                 <Link2 size={16} /> 글로 복사
               </button>
@@ -199,10 +212,14 @@ export default function ShareCardModal({ job, onClose }: Props) {
                 <span className="inline-flex items-center gap-1 text-gold-soft">
                   <Check size={12} /> {status}
                 </span>
+              ) : touch && canShareFiles ? (
+                "저장하기를 누르면 열리는 창에서 \u2018이미지 저장\u2019을 고르세요. 보내기는 카카오톡, 인스타그램으로 바로 보내요."
               ) : canShareFiles ? (
-                "위 버튼을 누르면 사진 앱에 저장하거나 카카오톡, 인스타그램으로 보낼 수 있어요."
+                "이미지로 저장할 수 있고, 보내기로 다른 앱에 바로 보낼 수도 있어요."
+              ) : touch ? (
+                "이 브라우저에서는 사진첩에 바로 넣을 수 없어요. 위 이미지를 길게 눌러 저장해 주세요."
               ) : (
-                "이 브라우저에서는 사진 앱에 바로 넣을 수 없어 파일로 내려받아요."
+                "이미지 파일로 저장해요."
               )}
             </p>
           </motion.div>

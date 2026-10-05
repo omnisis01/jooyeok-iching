@@ -2,10 +2,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motionGrantedBefore, motionReady, rearmMotionOnNextTap, requestMotion } from "./motion";
 
-type MotionCtor = typeof DeviceMotionEvent & { requestPermission?: () => Promise<"granted" | "denied"> };
-
-export type ShakeState = "unsupported" | "needs-permission" | "listening" | "denied";
+export type ShakeState = "unsupported" | "needs-permission" | "listening-soon" | "listening" | "denied";
 
 const THRESHOLD = 16; // m/s², 세게 한 번 흔드는 정도
 const COOLDOWN_MS = 1500;
@@ -23,9 +22,16 @@ export function useShake(onShake: () => void, enabled = true) {
     if (typeof window === "undefined" || !("DeviceMotionEvent" in window)) return;
     // 손가락으로 쓰는 기기에서만 흔들기를 안내한다
     if (!window.matchMedia("(pointer: coarse)").matches) return;
-    const ctor = window.DeviceMotionEvent as MotionCtor;
-    const t = window.setTimeout(() => setState(typeof ctor.requestPermission === "function" ? "needs-permission" : "listening"), 0);
-    return () => window.clearTimeout(t);
+    const decide = () => setState(motionReady() ? "listening" : motionGrantedBefore() ? "listening-soon" : "needs-permission");
+    const t = window.setTimeout(decide, 0);
+    // 예전에 허락했다면 다음 터치에서 조용히 다시 켠다(던지기 버튼을 누르는 순간 등)
+    const off = rearmMotionOnNextTap();
+    window.addEventListener("motion-permission", decide);
+    return () => {
+      window.clearTimeout(t);
+      off();
+      window.removeEventListener("motion-permission", decide);
+    };
   }, []);
 
   useEffect(() => {
@@ -49,15 +55,10 @@ export function useShake(onShake: () => void, enabled = true) {
   }, [state, enabled]);
 
   /** 아이폰: 사용자가 누른 순간에만 허락을 물을 수 있다 */
+  /** 아이폰: 사용자가 누른 순간에만 허락을 물을 수 있다. 한 번 허락하면 기억한다 */
   const requestPermission = useCallback(async () => {
-    const ctor = window.DeviceMotionEvent as MotionCtor;
-    if (typeof ctor.requestPermission !== "function") return;
-    try {
-      const r = await ctor.requestPermission();
-      setState(r === "granted" ? "listening" : "denied");
-    } catch {
-      setState("denied");
-    }
+    const ok = await requestMotion();
+    setState(ok ? "listening" : "denied");
   }, []);
 
   return { state, requestPermission };
