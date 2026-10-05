@@ -1,4 +1,5 @@
 // 육효점(납갑서법) 엔진: 납갑·팔궁·세응·육친·육수·일진·월건·공망·용신·왕쇠·응기 계산
+import { josa } from "./josa";
 import { kstDateString } from "./clock";
 import { HEXAGRAMS, findHexagramByLines, type Hexagram } from "@/data/hexagrams";
 import { CATEGORIES, normalizeCategory, type Category } from "./categories";
@@ -321,10 +322,10 @@ function judge(lineEl: Element, branch: number, changing: boolean, changed: Line
     if (!m.changing || (self && m.index === self.index)) continue;
     if (generates(m.element, lineEl)) {
       score += 1;
-      reasons.push(`${m.index + 1}효 ${m.relation}(${branchLabel(m.branch)})이 움직여 힘을 보태 줍니다.`);
+      reasons.push(`${m.index + 1}효 ${m.relation}(${branchLabel(m.branch)})${josa(m.relation, "이", "가")} 움직여 힘을 보태 줍니다.`);
     } else if (overcomes(m.element, lineEl)) {
       score -= 1.5;
-      reasons.push(`${m.index + 1}효 ${m.relation}(${branchLabel(m.branch)})이 움직여 누릅니다.`);
+      reasons.push(`${m.index + 1}효 ${m.relation}(${branchLabel(m.branch)})${josa(m.relation, "이", "가")} 움직여 누릅니다.`);
     }
   }
 

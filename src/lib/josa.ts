@@ -19,3 +19,8 @@ export function eulreul(word: string): string {
 export function eunneun(word: string): string {
   return word + (hasBatchim(word) ? "은" : "는");
 }
+
+/** 조사만 돌려준다. 이름 뒤에 괄호(한자 등)가 끼어 있을 때 쓴다. 예) josa("처재", "이", "가") → "가" */
+export function josa(word: string, withBatchim: string, withoutBatchim: string): string {
+  return hasBatchim(word) ? withBatchim : withoutBatchim;
+}

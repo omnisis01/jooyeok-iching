@@ -74,7 +74,7 @@ export default function AccountCard() {
 
       {session ? (
         <>
-          <p className="mt-1 text-sm text-muted">{session.user.email} 로 로그인했어요. 어느 기기에서 열어도 점 기록이 이어져요.</p>
+          <p className="mt-1 text-sm text-muted">{session.user.email} 계정으로 로그인했어요. 어느 기기에서 열어도 점 기록이 이어져요.</p>
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               disabled={busy}

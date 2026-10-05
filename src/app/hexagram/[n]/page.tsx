@@ -1,4 +1,5 @@
 // 64괘 개별 페이지(검색 유입용, 정적 생성). 괘 하나의 뜻, 세 줄 요약, 운세 6분류 풀이, 여섯 효사를 한 페이지에 모두 펼친다
+import { josa } from "@/lib/josa";
 import type { Metadata } from "next";
 import { HEXAGRAMS, hexagramSymbol } from "@/data/hexagrams";
 import { getAllLineTexts, lineTitle } from "@/data/lineTexts";
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: PageProps<"/hexagram/[n]">): 
   const { n } = await params;
   const hex = hexOf(n);
   const title = `${hex.name} ${hex.hanja} 뜻과 효사, 주역 제${hex.number}괘`;
-  const description = `${hex.name}(${hex.hanja})은 ${hex.keyword}. ${hex.summary.slice(0, 80)}`;
+  const description = `${hex.name}(${hex.hanja})${josa(hex.name, "은", "는")} ${hex.keyword}. ${hex.summary.slice(0, 80)}`;
   return {
     title,
     description,
