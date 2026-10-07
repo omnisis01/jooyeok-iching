@@ -47,7 +47,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       setUnlockMessage("결제를 확인하는 중이에요");
       try {
         await confirmUnlock(back);
-        setUnlockMessage("깊이 읽기가 열렸어요");
+        setUnlockMessage("육효로 더 깊이 들여다보기가 열렸어요");
         const rec = loadHistory().find((r) => r.type === "iching" && readingKey(readingFromRecord(r)) === back.key);
         if (rec) setViewing(rec);
       } catch (e) {
@@ -164,11 +164,6 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           </button>
         </div>
       </div>
-
-
-
-
-      <Card title="육효로 묻기" desc="돈, 직장, 연애처럼 구체적인 질문에 답합니다" onClick={() => go("yukhyo")} accent="bg-vermilion/10 text-vermilion" badge="상세 점" />
 
       {/* 나의 점 기록 */}
       <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">

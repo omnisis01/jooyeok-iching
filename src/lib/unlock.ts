@@ -71,7 +71,7 @@ export async function startUnlock(reading: Reading, label: string): Promise<void
     method: "CARD",
     amount: { currency: "KRW", value: UNLOCK_PRICE_KRW },
     orderId,
-    orderName: `깊이 읽기, ${label}`,
+    orderName: `육효 깊이 보기, ${label}`,
     successUrl: `${siteBase()}?unlock=success&key=${encodeURIComponent(key)}`,
     failUrl: `${siteBase()}?unlock=fail`,
     customerEmail: session.session.user.email ?? undefined,

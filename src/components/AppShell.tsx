@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { BookOpen, Compass, Grid3x3, Home, Sparkles } from "lucide-react";
+import { BookOpen, Grid3x3, Home, Sparkles } from "lucide-react";
 import Taegeuk from "./Taegeuk";
 import ThemeToggle from "./ThemeToggle";
 import { useToday } from "@/lib/useToday";
@@ -12,18 +12,17 @@ import { attachServerQuota, refreshServerQuota } from "@/lib/quota";
 import { getSession, onAuthChange } from "@/lib/cloudSync";
 import HomeScreen from "./HomeScreen";
 import DivinationFlow from "./DivinationFlow";
-import YukhyoSection from "./YukhyoSection";
 import HexagramGallery from "./HexagramGallery";
 import AboutScreen from "./AboutScreen";
 import GuaHyoGuide from "./GuaHyoGuide";
 import { setTrackUser, track } from "@/lib/track";
 
-export type Tab = "home" | "divine" | "yukhyo" | "hexagrams" | "about";
+// 육효는 메인 탭에서 빼고 결과 화면의 유료 "육효로 더 깊이 들여다보기"로 옮겼다
+export type Tab = "home" | "divine" | "hexagrams" | "about";
 
 const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: "home", label: "홈", icon: <Home size={22} /> },
   { key: "divine", label: "점보기", icon: <Sparkles size={22} /> },
-  { key: "yukhyo", label: "육효", icon: <Compass size={22} /> },
   { key: "hexagrams", label: "64괘", icon: <Grid3x3 size={22} /> },
   { key: "about", label: "알아보기", icon: <BookOpen size={22} /> },
 ];
@@ -31,14 +30,15 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
 const TITLES: Record<Tab, string> = {
   home: "나만의 정통주역운세",
   divine: "점보기",
-  yukhyo: "육효로 묻기",
   hexagrams: "64괘",
   about: "주역 알아보기",
 };
 
 function tabFromHash(): Tab {
   if (typeof window === "undefined") return "home";
-  const h = window.location.hash.replace("#", "") as Tab;
+  const raw = window.location.hash.replace("#", "");
+  // 예전 육효 탭 주소(#yukhyo)는 점보기로 보낸다
+  const h = (raw === "yukhyo" ? "divine" : raw) as Tab;
   return TABS.some((t) => t.key === h) ? h : "home";
 }
 
@@ -142,11 +142,6 @@ export default function AppShell() {
               {tab === "divine" ? (
                 <section id="divine" className="scroll-mt-24">
                   <DivinationFlow />
-                </section>
-              ) : null}
-              {tab === "yukhyo" ? (
-                <section id="yukhyo" className="scroll-mt-24">
-                  <YukhyoSection />
                 </section>
               ) : null}
               {tab === "hexagrams" ? (

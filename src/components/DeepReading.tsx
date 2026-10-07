@@ -1,4 +1,4 @@
-// 결과 하나의 "깊이 읽기": 운세 6분류 전부, 지괘의 분류별 풀이, 같은 괘를 육효로 다시 읽기
+// 결과 하나의 "육효로 더 깊이 들여다보기": 같은 괘를 육효로 다시 읽기, 운세 12분류 전부, 지괘의 분류별 풀이
 // Pro이거나 건별 결제로 열었을 때만 펼쳐진다. 결제가 꺼져 있으면 카드 자체를 보이지 않는다
 "use client";
 
@@ -60,7 +60,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
     <section className="rounded-3xl bg-card shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <button onClick={() => (state ? setOpen((o) => !o) : undefined)} className="flex w-full items-center justify-between px-5 py-4 text-left" aria-expanded={state ? open : undefined}>
         <span className="flex items-center gap-2 font-bold">
-          {state ? <Sparkles size={18} className="text-gold-soft" /> : <Lock size={18} className="text-muted" />}이 결과 깊이 읽기
+          {state ? <Sparkles size={18} className="text-gold-soft" /> : <Lock size={18} className="text-muted" />}육효로 더 깊이 들여다보기
         </span>
         {state ? <ChevronDown size={18} className={`text-muted transition-transform ${open ? "rotate-180" : ""}`} /> : <span className="text-xs font-bold text-vermilion">{UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원</span>}
       </button>
@@ -68,9 +68,9 @@ export default function DeepReading({ reading }: { reading: Reading }) {
       {!state ? (
         <div className="px-5 pb-5">
           <ul className="space-y-1.5 text-sm leading-relaxed text-foreground/85">
-            <li>운세 여섯 가지(총운, 재물, 애정, 합격, 계약, 건강)를 이 괘로 한꺼번에 읽어요.</li>
+            <li>같은 괘를 육효로 다시 읽어, 점친 날의 기운과 내 질문의 핵심 효로 언제쯤 이루어질지까지 봐요.</li>
+            <li>운세 열두 가지(총운, 재물, 애정, 합격 등)를 이 괘로 한꺼번에 읽어요.</li>
             <li>지괘의 운세별 풀이로 앞으로의 흐름을 분류별로 봐요.</li>
-            <li>같은 괘를 육효로 다시 읽어 언제쯤 이루어질지까지 봐요.</li>
           </ul>
           <button disabled={busy} onClick={buy} className="mt-4 w-full rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] disabled:opacity-50">
             {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기
@@ -80,6 +80,17 @@ export default function DeepReading({ reading }: { reading: Reading }) {
         </div>
       ) : open ? (
         <div className="space-y-5 px-5 pb-5">
+          <div>
+            <h4 className="text-sm font-bold text-muted">육효로 다시 읽으면</h4>
+            <div className="mt-2">
+              <YukhyoResult
+                result={analyzeYukhyo({ lines: reading.primary.lines, changingLines: reading.changingLines, category: cat.key, date: (reading.castAt ?? new Date().toISOString()).slice(0, 10), castAt: reading.castAt })}
+                onRestart={() => setOpen(false)}
+                saveToHistory={false}
+                embedded
+              />
+            </div>
+          </div>
           <div>
             <h4 className="text-sm font-bold text-muted">운세별로 보면</h4>
             <dl className="mt-2 space-y-3">
@@ -104,17 +115,6 @@ export default function DeepReading({ reading }: { reading: Reading }) {
               </dl>
             </div>
           ) : null}
-          <div>
-            <h4 className="text-sm font-bold text-muted">같은 괘를 육효로 다시 읽으면</h4>
-            <div className="mt-2">
-              <YukhyoResult
-                result={analyzeYukhyo({ lines: reading.primary.lines, changingLines: reading.changingLines, category: cat.key, date: (reading.castAt ?? new Date().toISOString()).slice(0, 10), castAt: reading.castAt })}
-                onRestart={() => setOpen(false)}
-                saveToHistory={false}
-                embedded
-              />
-            </div>
-          </div>
         </div>
       ) : null}
     </section>
