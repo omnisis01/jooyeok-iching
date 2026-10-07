@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import Taegeuk from "./Taegeuk";
 import { motionGrantedBefore, requestMotion } from "@/lib/motion";
 
@@ -17,11 +17,8 @@ type Props = {
 
 export default function FocusGate({ action, topic, question, onReady }: Props) {
   const [seconds, setSeconds] = useState(0);
-
-  const reduce = useReducedMotion();
-  // 한 번 숨쉬기 = 들이쉬기 4초 + 내쉬기 4초
-  const BREATH = 8;
-  const inhale = seconds % BREATH < BREATH / 2;
+  // 들이쉬기 4초, 내쉬기 4초. 원의 CSS 애니메이션이 방향을 바꿀 때마다 문구도 바꿔 박자를 맞춘다
+  const [inhale, setInhale] = useState(true);
 
   useEffect(() => {
     const t = window.setInterval(() => setSeconds((s) => s + 1), 1000);
@@ -30,31 +27,15 @@ export default function FocusGate({ action, topic, question, onReady }: Props) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl bg-card p-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-      {/* 호흡 원: 들이쉴 때 크게 부풀고 내쉴 때 작아진다. 빛 고리가 바깥으로 퍼진다 */}
+      {/* 호흡 원: 들이쉴 때 크게 부풀고 내쉴 때 작아진다. 빛 고리가 바깥으로 퍼진다.
+          커졌다 작아지는 전환이 끊기지 않도록 CSS alternate 애니메이션으로 움직인다 */}
       <div className="focus-orb relative mx-auto flex h-48 w-48 items-center justify-center">
-        {reduce
-          ? null
-          : [0, 1].map((i) => (
-              <motion.span
-                key={i}
-                className="absolute inset-0 rounded-full border-2 border-vermilion/70"
-                initial={{ scale: 0.6, opacity: 0 }}
-                animate={{ scale: [0.6, 1.25], opacity: [0.7, 0] }}
-                transition={{ duration: BREATH / 2, repeat: Infinity, ease: "easeOut", delay: i * (BREATH / 4) }}
-              />
-            ))}
-        <motion.div
-          className="absolute inset-3 rounded-full bg-vermilion/25 shadow-[0_0_70px_rgba(216,69,43,0.55)]"
-          animate={reduce ? { scale: 1 } : { scale: [0.72, 1, 0.72] }}
-          transition={{ duration: BREATH, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="relative"
-          animate={reduce ? { scale: 1 } : { scale: [0.78, 1.12, 0.78] }}
-          transition={{ duration: BREATH, repeat: Infinity, ease: "easeInOut" }}
-        >
+        <span className="breathe-ring absolute inset-0 rounded-full border-2 border-vermilion/70" />
+        <span className="breathe-ring breathe-ring-late absolute inset-0 rounded-full border-2 border-vermilion/70" />
+        <div className="breathe-glow absolute inset-3 rounded-full bg-vermilion/25 shadow-[0_0_70px_rgba(216,69,43,0.55)]" />
+        <div className="breathe-core relative" onAnimationIteration={() => setInhale((v) => !v)}>
           <Taegeuk size={96} className="animate-spin-slow drop-shadow-[0_8px_24px_rgba(216,69,43,0.45)]" />
-        </motion.div>
+        </div>
       </div>
       <motion.p
         key={inhale ? "in" : "out"}

@@ -110,9 +110,39 @@ input[type="date"] {
   animation: spin-slow 240s linear infinite reverse;
 }
 
+/* 마음 모으기 호흡 원: alternate로 왕복해 커졌다 작아지는 순간이 매끄럽다 */
+@keyframes breathe-glow {
+  from { transform: scale(0.72); }
+  to { transform: scale(1); }
+}
+@keyframes breathe-core {
+  from { transform: scale(0.78); }
+  to { transform: scale(1.12); }
+}
+@keyframes breathe-ring {
+  0% { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(1.25); opacity: 0; }
+}
+.breathe-glow {
+  animation: breathe-glow 4s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+.breathe-core {
+  animation: breathe-core 4s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+.breathe-ring {
+  opacity: 0;
+  animation: breathe-ring 4s ease-out infinite;
+}
+.breathe-ring-late {
+  animation-delay: 2s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-spin-slow,
-  .animate-spin-slower {
+  .animate-spin-slower,
+  .breathe-glow,
+  .breathe-core,
+  .breathe-ring {
     animation: none;
   }
 }

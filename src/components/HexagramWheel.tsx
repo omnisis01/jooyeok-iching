@@ -35,6 +35,8 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 const R = 300;
 const CENTER = R;
 const OUTER = 262;
+// 안쪽 8괘 고리 반지름: 중앙 태극(반지름 60)과 바깥 64괘 고리(OUTER - 32) 사이 가운데
+const TRI_RING = 148;
 const FIG_W = 30;
 const FIG_LINE = 3.2;
 const FIG_GAP = 2.6;
@@ -141,19 +143,28 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
 
       {/* 안쪽 고리: 8괘 */}
       <g ref={innerRef} className="animate-spin-slower" style={{ transformOrigin: "50% 50%" }}>
-        <circle cx={CENTER} cy={CENTER} r={150} fill="none" stroke="var(--border)" strokeWidth="1" strokeDasharray="4 6" />
+        <circle cx={CENTER} cy={CENTER} r={TRI_RING} fill="none" stroke="var(--border)" strokeWidth="1" strokeDasharray="4 6" />
         {TRIGRAMS.map((t, i) => {
           const angle = (i / 8) * 360 - 90;
           const rad = (angle * Math.PI) / 180;
-          const x = round2(CENTER + 150 * Math.cos(rad));
-          const y = round2(CENTER + 150 * Math.sin(rad));
+          const x = round2(CENTER + TRI_RING * Math.cos(rad));
+          const y = round2(CENTER + TRI_RING * Math.sin(rad));
           return (
             <g key={t.number} transform={`translate(${x} ${y})`}>
-              <circle r={26} fill="var(--card)" stroke="var(--border)" />
-              <text textAnchor="middle" dominantBaseline="central" fontSize="24" fill="var(--foreground)" dy="-3">
-                {t.symbol}
-              </text>
-              <text textAnchor="middle" fontSize="9" fill="var(--muted)" y={18}>
+              <circle r={46} fill="var(--card)" stroke="var(--border)" strokeWidth="1.5" />
+              {/* 글꼴의 괘 기호는 작게 보여 세 줄을 직접 그린다. lines[0]이 맨 아래 효 */}
+              {[2, 1, 0].map((li, row) => {
+                const y = -26 + row * 12;
+                return t.lines[li] === "1" ? (
+                  <rect key={li} x={-24} y={y} width={48} height={7} rx={1.5} fill="var(--foreground)" />
+                ) : (
+                  <g key={li}>
+                    <rect x={-24} y={y} width={20} height={7} rx={1.5} fill="var(--foreground)" />
+                    <rect x={4} y={y} width={20} height={7} rx={1.5} fill="var(--foreground)" />
+                  </g>
+                );
+              })}
+              <text textAnchor="middle" fontSize="17" fontWeight="700" fill="var(--muted)" y={31}>
                 {t.natureHanja}
               </text>
             </g>
