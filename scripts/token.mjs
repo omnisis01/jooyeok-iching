@@ -45,3 +45,10 @@ export async function getSupabaseToken() {
   }
   return token;
 }
+
+/** 키체인의 토큰이 만료됐을 때: 지우고 새 토큰을 입력받는다 */
+export async function renewSupabaseToken() {
+  if (process.platform === "darwin") spawnSync("security", ["delete-generic-password", "-s", SERVICE], { encoding: "utf8" });
+  console.log("\n저장된 토큰이 만료되었어요. supabase.com/dashboard/account/tokens 에서 새 토큰을 만들어 붙여 넣어 주세요.");
+  return getSupabaseToken();
+}

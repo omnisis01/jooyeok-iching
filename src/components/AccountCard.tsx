@@ -3,8 +3,9 @@
 
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { Bell, BellOff, Cloud, LogOut, Mail, RefreshCw } from "lucide-react";
+import { Bell, BellOff, Cloud, LogOut, Mail, RefreshCw, ShieldCheck } from "lucide-react";
 import { cloudEnabled } from "@/lib/supabase";
+import { fetchIsAdmin } from "@/lib/admin";
 import { getSession, onAuthChange, pushOne, sendMagicLink, signOut, syncAll } from "@/lib/cloudSync";
 import { currentSubscription, pushEnabled, pushSupported, subscribePush, unsubscribePush } from "@/lib/push";
 import { loadHistory } from "@/lib/history";
@@ -24,6 +25,8 @@ export default function AccountCard() {
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  // 관리자 계정이면 관리자 모드 버튼을 보여 준다(권한은 서버가 확인)
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     if (!cloudEnabled) return;
@@ -38,6 +41,14 @@ export default function AccountCard() {
       off();
     };
   }, []);
+
+  useEffect(() => {
+    let alive = true;
+    if (session) fetchIsAdmin().then((v) => alive && setAdmin(v));
+    return () => {
+      alive = false;
+    };
+  }, [session]);
 
   // 로그인 상태에서 새 기록이 생기면 바로 올린다
   useEffect(() => {
@@ -138,6 +149,11 @@ export default function AccountCard() {
             >
               <LogOut size={14} /> 로그아웃
             </button>
+            {admin ? (
+              <a href="#admin" className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-card">
+                <ShieldCheck size={14} /> 관리자 모드
+              </a>
+            ) : null}
           </div>
         </>
       ) : (

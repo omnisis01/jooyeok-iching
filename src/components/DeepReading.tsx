@@ -13,6 +13,7 @@ import { getSession } from "@/lib/cloudSync";
 import YukhyoResult from "./YukhyoResult";
 import { eulreul } from "@/lib/josa";
 import { track } from "@/lib/track";
+import { fetchIsAdmin } from "@/lib/admin";
 
 export default function DeepReading({ reading }: { reading: Reading }) {
   const key = readingKey(reading);
@@ -20,6 +21,16 @@ export default function DeepReading({ reading }: { reading: Reading }) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  // 관리자는 결제를 켜기 전에도 열린 상태로 미리 본다
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    fetchIsAdmin().then((v) => alive && setAdmin(v));
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!unlockEnabled) return;
@@ -35,8 +46,8 @@ export default function DeepReading({ reading }: { reading: Reading }) {
     };
   }, [key]);
 
-  if (!unlockEnabled) return null;
-  const state = unlocked ?? isUnlockedLocal(key);
+  if (!unlockEnabled && !admin) return null;
+  const state = admin || (unlocked ?? isUnlockedLocal(key));
   const cat = categoryOf(reading.category);
 
   const buy = async () => {

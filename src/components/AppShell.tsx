@@ -4,6 +4,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { BookOpen, Grid3x3, Home, Sparkles } from "lucide-react";
+import AdminScreen from "./AdminScreen";
+import { resetAdmin } from "@/lib/admin";
 import Taegeuk from "./Taegeuk";
 import ThemeToggle from "./ThemeToggle";
 import { useToday } from "@/lib/useToday";
@@ -18,7 +20,7 @@ import GuaHyoGuide from "./GuaHyoGuide";
 import { setTrackUser, track } from "@/lib/track";
 
 // 육효는 메인 탭에서 빼고 결과 화면의 유료 "육효로 더 깊이 들여다보기"로 옮겼다
-export type Tab = "home" | "divine" | "hexagrams" | "about";
+export type Tab = "home" | "divine" | "hexagrams" | "about" | "admin";
 
 const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: "home", label: "홈", icon: <Home size={22} /> },
@@ -32,6 +34,7 @@ const TITLES: Record<Tab, string> = {
   divine: "점보기",
   hexagrams: "64괘",
   about: "주역 알아보기",
+  admin: "관리자 모드",
 };
 
 function tabFromHash(): Tab {
@@ -39,7 +42,8 @@ function tabFromHash(): Tab {
   const raw = window.location.hash.replace("#", "");
   // 예전 육효 탭 주소(#yukhyo)는 점보기로 보낸다
   const h = (raw === "yukhyo" ? "divine" : raw) as Tab;
-  return TABS.some((t) => t.key === h) ? h : "home";
+  // 관리자 모드(#admin)는 아래 탭에 없고, 계정 카드의 버튼이나 주소로 들어온다
+  return h === "admin" || TABS.some((t) => t.key === h) ? h : "home";
 }
 
 export default function AppShell() {
@@ -61,6 +65,7 @@ export default function AppShell() {
       track("app_open", { from: from ?? "direct", logged_in: Boolean(s) }, { oncePerSession: true });
     });
     const off = onAuthChange((s) => {
+      resetAdmin();
       const was = Boolean(s);
       attachServerQuota(s?.user.id ?? null);
       setTrackUser(s?.user.id ?? null);
@@ -151,6 +156,7 @@ export default function AppShell() {
                 </section>
               ) : null}
               {tab === "about" ? <AboutScreen /> : null}
+              {tab === "admin" ? <AdminScreen /> : null}
             </motion.div>
         </main>
 
