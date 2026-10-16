@@ -8,11 +8,11 @@
 
 ## 지금 바로
 
-### 0. 관리자 계정 등록 (5분)
-- [ ] 사이트 홈의 계정 카드에서 관리자로 쓸 이메일로 로그인해 둡니다(이미 로그인했으면 건너뜀).
-- [ ] supabase.com/dashboard/account/tokens → "Generate new token" → 이름 `jooyeok-cli` → 만든 토큰을 복사합니다. (예전 토큰은 만료됨)
-- [ ] 터미널에서 `node scripts/setup-admin.mjs` 실행 → 토큰 붙여 넣기(화면에 안 보임) → 키체인 저장 Y → 관리자 이메일 입력.
-- [ ] 사이트를 새로 고치면 계정 카드에 "관리자 모드" 버튼이 보입니다. 주소 끝에 `#admin`을 붙여도 열립니다.
+### 0. 관리자 계정 등록 (5분) — 완료 10월 17일 (omnisis01@gmail.com, 토큰은 만료 없는 legacy 토큰으로 키체인에 보관)
+- [x] 사이트 홈의 계정 카드에서 관리자로 쓸 이메일로 로그인해 둡니다(이미 로그인했으면 건너뜀).
+- [x] supabase.com/dashboard/account/tokens → "Generate new token" → 이름 `jooyeok-cli` → 만든 토큰을 복사합니다. (예전 토큰은 만료됨)
+- [x] 터미널에서 `node scripts/setup-admin.mjs` 실행 → 토큰 붙여 넣기(화면에 안 보임) → 키체인 저장 Y → 관리자 이메일 입력.
+- [x] 사이트를 새로 고치면 계정 카드에 "관리자 모드" 버튼이 보입니다. 주소 끝에 `#admin`을 붙여도 열립니다.
 
 ## 이번 주 (10월 1일 ~ 5일)
 
