@@ -44,7 +44,6 @@ const FIG_H = 6 * FIG_LINE + 5 * FIG_GAP;
 
 export default function HexagramWheel({ size = 560, onSelect, className, resetKey = 0, randomRef }: Props) {
   const outerRef = useRef<SVGGElement>(null);
-  const innerRef = useRef<SVGGElement>(null);
   const [picked, setPicked] = useState<number | null>(null);
   const [pickedAtKey, setPickedAtKey] = useState(resetKey);
   // 팝업이 닫혀 resetKey가 바뀌면 표시를 감춘다
@@ -55,7 +54,7 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
   const open = (index: number, how: "tap" | "random" = "tap") => {
     if (!onSelect || busyRef.current) return;
     busyRef.current = true;
-    for (const el of [outerRef.current, innerRef.current]) if (el) el.style.animationPlayState = "paused";
+    if (outerRef.current) outerRef.current.style.animationPlayState = "paused";
     setPicked(index);
     setPickedAtKey(resetKey);
     window.setTimeout(() => {
@@ -73,7 +72,7 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
 
   // 팝업이 닫히면 다시 돈다
   useEffect(() => {
-    for (const el of [outerRef.current, innerRef.current]) if (el) el.style.animationPlayState = "running";
+    if (outerRef.current) outerRef.current.style.animationPlayState = "running";
   }, [resetKey]);
 
   return (
@@ -142,7 +141,8 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
       </g>
 
       {/* 안쪽 고리: 8괘 */}
-      <g ref={innerRef} className="animate-spin-slower" style={{ transformOrigin: "50% 50%" }}>
+      {/* 8괘는 돌지 않고 제자리에 둬서 읽기 쉽게 한다 */}
+      <g>
         <circle cx={CENTER} cy={CENTER} r={TRI_RING} fill="none" stroke="var(--border)" strokeWidth="1" strokeDasharray="4 6" />
         {TRIGRAMS.map((t, i) => {
           const angle = (i / 8) * 360 - 90;
@@ -151,20 +151,20 @@ export default function HexagramWheel({ size = 560, onSelect, className, resetKe
           const y = round2(CENTER + TRI_RING * Math.sin(rad));
           return (
             <g key={t.number} transform={`translate(${x} ${y})`}>
-              <circle r={46} fill="var(--card)" stroke="var(--border)" strokeWidth="1.5" />
+              <circle r={50} fill="var(--card)" stroke="var(--border)" strokeWidth="1.5" />
               {/* 글꼴의 괘 기호는 작게 보여 세 줄을 직접 그린다. lines[0]이 맨 아래 효 */}
               {[2, 1, 0].map((li, row) => {
-                const y = -26 + row * 12;
+                const y = -34 + row * 9;
                 return t.lines[li] === "1" ? (
-                  <rect key={li} x={-24} y={y} width={48} height={7} rx={1.5} fill="var(--foreground)" />
+                  <rect key={li} x={-20} y={y} width={40} height={6} rx={1.5} fill="var(--foreground)" />
                 ) : (
                   <g key={li}>
-                    <rect x={-24} y={y} width={20} height={7} rx={1.5} fill="var(--foreground)" />
-                    <rect x={4} y={y} width={20} height={7} rx={1.5} fill="var(--foreground)" />
+                    <rect x={-20} y={y} width={16.5} height={6} rx={1.5} fill="var(--foreground)" />
+                    <rect x={3.5} y={y} width={16.5} height={6} rx={1.5} fill="var(--foreground)" />
                   </g>
                 );
               })}
-              <text textAnchor="middle" fontSize="17" fontWeight="700" fill="var(--muted)" y={31}>
+              <text textAnchor="middle" fontSize="32" fontWeight="700" fill="var(--foreground)" y={33}>
                 {t.natureHanja}
               </text>
             </g>
