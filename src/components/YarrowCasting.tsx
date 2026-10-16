@@ -2,6 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useCastingMode } from "@/lib/useCastingMode";
 import { AnimatePresence, motion } from "motion/react";
 import { FastForward, Scissors, SkipForward, Sparkles } from "lucide-react";
 import {
@@ -29,6 +30,7 @@ const TOTAL = 49;
 const ALL_IDS = Array.from({ length: TOTAL }, (_, i) => i);
 
 export default function YarrowCasting({ question, onComplete }: Props) {
+  useCastingMode();
   const [values, setValues] = useState<LineValue[]>([]);
   const [changes, setChanges] = useState<YarrowChange[]>([]);
   const [active, setActive] = useState<number[]>(ALL_IDS);

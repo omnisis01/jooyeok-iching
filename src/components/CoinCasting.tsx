@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useShake } from "@/lib/useShake";
+import { useCastingMode } from "@/lib/useCastingMode";
 import ShakeHint from "./ShakeHint";
 import { AnimatePresence, motion } from "motion/react";
 import { Coins, FastForward, Sparkles } from "lucide-react";
@@ -27,6 +28,7 @@ type Props = {
 const TOSS_MS = 1100;
 
 export default function CoinCasting({ question, onComplete }: Props) {
+  useCastingMode();
   const [tosses, setTosses] = useState<CoinToss[]>([]);
   const [tossing, setTossing] = useState(false);
   const [autoRun, setAutoRun] = useState(false);
