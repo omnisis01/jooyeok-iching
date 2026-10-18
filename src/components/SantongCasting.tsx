@@ -95,7 +95,8 @@ export default function SantongCasting({ question, onComplete }: Props) {
           if (!el) return;
           const ph = i * 1.7;
           const y = -Math.abs(Math.sin(t * (23 + i * 1.3) + ph)) * 14 * a;
-          const r = Math.sin(t * (17 + i) + ph) * 3.2 * a;
+          // 흔들려도 가장자리 산가지가 통 입구 테를 넘지 않을 만큼만 기운다
+          const r = Math.sin(t * (17 + i) + ph) * 2 * a;
           el.setAttribute("transform", `translate(0 ${y.toFixed(2)}) rotate(${r.toFixed(2)} ${CX} 330)`);
         });
         if (a > 0.15 && now > nextClack.current) {
@@ -338,9 +339,9 @@ function Tube({ count, step, risen, phase, tubeRef, stickRefs }: TubeProps) {
         {/* 산가지: 통 바닥 쪽 한 점을 중심으로 부채꼴로 꽂혀 있다. 아랫부분은 통 앞면에 가려진다 */}
         {sticks.map((n, i) => {
           const spread = count === 1 ? 0 : (i / (count - 1)) * 2 - 1;
-          const angle = spread * 9;
+          const angle = spread * 6;
           const height = 108 + ((i * 37) % 5) * 7;
-          const x = CX + spread * 34;
+          const x = CX + spread * 24;
           const top = TOP - height + 60;
           const isRisen = risen === n;
           return (
