@@ -7,7 +7,7 @@ import { SITE_URL } from "@/lib/shareCard";
 import { grantShareCoupon, quotaState, SHARE_COUPONS_PER_DAY } from "@/lib/quota";
 import { track } from "@/lib/track";
 
-const SHARE_TEXT = "나만의 정통주역운세에서 내 괘를 뽑아 봤어요. 주역 원전 그대로 쉬운 말로 풀어 줘요. 같이 하나 뽑아 봐요.";
+const SHARE_TEXT = "나만의 정통주역운세에서 내 괘를 뽑아 봤어요. 3천년 역사의 주역 데이터로 점사를 풀어 줘요. 같이 하나 뽑아 봐요.";
 
 type Props = {
   /** 쿠폰을 받은 뒤 할 일 (예: 바로 다시 뽑기) */

@@ -103,7 +103,7 @@ export default function AppShell() {
           <Taegeuk size={28} />
           나만의 정통주역운세
         </button>
-        <p className="mt-1 px-2 text-xs text-vermilion">원전 그대로, 쉬운 말로</p>
+        <p className="mt-1 px-2 text-xs text-vermilion">3천년 역사의 데이터 기반 점사풀이</p>
         <ul className="mt-8 space-y-1">
           {TABS.map((t) => {
             const active = tab === t.key;

@@ -117,7 +117,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
       <div className="px-1 pt-2 lg:col-span-2">
-        <p className="text-xs font-bold text-vermilion">원전 그대로, 쉬운 말로</p>
+        <p className="text-xs font-bold text-vermilion">3천년 역사의 데이터 기반 점사풀이</p>
         <p className="mt-1 min-h-5 text-sm text-muted">{greeting}</p>
         <h1 className="mt-1 text-[26px] font-extrabold leading-tight">
           {day ? `오늘은 ${day.label.replace("일", "")} 날,` : "오늘은"}

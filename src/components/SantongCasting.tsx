@@ -339,9 +339,9 @@ function Tube({ count, step, risen, phase, tubeRef, stickRefs }: TubeProps) {
         {/* 산가지: 통 바닥 쪽 한 점을 중심으로 부채꼴로 꽂혀 있다. 아랫부분은 통 앞면에 가려진다 */}
         {sticks.map((n, i) => {
           const spread = count === 1 ? 0 : (i / (count - 1)) * 2 - 1;
-          const angle = spread * 6;
+          const angle = spread * 6.5;
           const height = 108 + ((i * 37) % 5) * 7;
-          const x = CX + spread * 24;
+          const x = CX + spread * 27;
           const top = TOP - height + 60;
           const isRisen = risen === n;
           return (
