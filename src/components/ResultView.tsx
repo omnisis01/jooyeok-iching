@@ -21,6 +21,7 @@ import { formatCastAt } from "@/lib/castTime";
 import FlowOverview from "./FlowOverview";
 import InteractiveHexagram from "./InteractiveHexagram";
 import DeepReading from "./DeepReading";
+import AiReadingCard from "./AiReadingCard";
 import AdSlot from "./AdSlot";
 import { makeId, saveRecord } from "@/lib/history";
 import { iga, josa } from "@/lib/josa";
@@ -135,6 +136,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
           </div>
         </div>
       </section>
+
+      <AiReadingCard reading={reading} />
 
       {expanded ? (
         <motion.div ref={detailsRef} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="scroll-mt-24 space-y-6">

@@ -13,7 +13,7 @@ import MethodGuide, { type Method } from "./MethodGuide";
 import FocusGate from "./FocusGate";
 import { PERIODS, type Period } from "@/lib/period";
 import { todayString } from "@/lib/yukhyo";
-import { CATEGORIES, categoryOf, type Category } from "@/lib/categories";
+import { CATEGORIES, QUESTION_EXAMPLES, categoryOf, type Category } from "@/lib/categories";
 import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
 import { consumeCast, quotaState, refreshServerQuota } from "@/lib/quota";
 import { track } from "@/lib/track";
@@ -23,6 +23,8 @@ type Stage = "setup" | "focus" | Method | "result";
 export default function DivinationFlow() {
   const [stage, setStage] = useState<Stage>("setup");
   const [category, setCategory] = useState<Category>("overall");
+  // 점치기 전에 쓰는 질문(선택). AI 풀이와 결과 화면에 그대로 쓰인다
+  const [question, setQuestion] = useState("");
   const [reading, setReading] = useState<Reading | null>(null);
   const [castKey, setCastKey] = useState(0);
   const [pending, setPending] = useState<Method>("coin");
@@ -61,12 +63,13 @@ export default function DivinationFlow() {
   const complete = (r: Reading) => {
     consumeCast();
     track("cast_done", { kind: "iching", method: r.method, category, changing: r.changingLines.length });
-    setReading({ ...r, category, period, periodDate: period === "date" ? periodDate : undefined });
+    setReading({ ...r, category, question: question.trim() || undefined, period, periodDate: period === "date" ? periodDate : undefined });
     setStage("result");
   };
 
   const restart = () => {
     setReading(null);
+    setQuestion("");
     setStage("setup");
   };
 
@@ -88,6 +91,26 @@ export default function DivinationFlow() {
                 </button>
               ))}
             </div>
+
+            <label htmlFor="question" className="mt-6 block font-bold">
+              질문을 적어 주세요 <span className="text-sm font-normal text-muted">(선택)</span>
+            </label>
+            <input
+              id="question"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value.slice(0, 60))}
+              maxLength={60}
+              placeholder={QUESTION_EXAMPLES[category][0]}
+              className="mt-3 w-full rounded-2xl bg-card px-4 py-3 shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
+            />
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {QUESTION_EXAMPLES[category].map((ex) => (
+                <button key={ex} onClick={() => setQuestion(ex)} className="rounded-full bg-background px-3 py-1.5 text-xs text-foreground/80 transition hover:bg-border/60">
+                  {ex}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 break-keep text-xs leading-relaxed text-muted">구체적으로 적을수록 풀이가 내 상황에 더 잘 맞아요. &ldquo;~할까요, 말까요?&rdquo;처럼 물어보세요.</p>
 
             <p className="mt-6 font-bold">언제의 일을 묻나요</p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -154,6 +177,7 @@ export default function DivinationFlow() {
             <FocusGate
               action={pending === "coin" ? "동전을 던져" : pending === "santong" ? "산통을 흔들어" : "산가지를 나누어"}
               topic={categoryOf(category).label}
+              question={question.trim() || undefined}
               onReady={beginCast}
             />
           </motion.div>
