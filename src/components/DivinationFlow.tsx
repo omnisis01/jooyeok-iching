@@ -105,7 +105,7 @@ export default function DivinationFlow() {
             />
             <div className="mt-2 flex flex-wrap gap-1.5">
               {QUESTION_EXAMPLES[category].map((ex) => (
-                <button key={ex} onClick={() => setQuestion(ex)} className="rounded-full bg-background px-3 py-1.5 text-xs text-foreground/80 transition hover:bg-border/60">
+                <button key={ex} onClick={() => setQuestion(ex)} className="rounded-full bg-card px-3 py-1.5 text-xs text-foreground/80 shadow-[0_2px_10px_rgba(31,29,26,0.06)] transition hover:bg-border/60">
                   {ex}
                 </button>
               ))}
