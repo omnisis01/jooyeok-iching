@@ -2,6 +2,7 @@
 // AI 풀이 설정: 표와 권한 함수(0008_ai.sql)를 올리고, 근거 자료를 묶어 서버 함수 ai-reading을 배포한다
 // 실행: node scripts/setup-ai.mjs            (배포만. AI 키가 없으면 대체 풀이만 나간다)
 //       node scripts/setup-ai.mjs --key      (Anthropic API 키를 화면에 안 보이게 입력받아 서버 비밀값으로 저장)
+//       node scripts/setup-ai.mjs --migrate  (처음 설치할 때만: 0008, 0009 표와 함수)
 // 키는 출력하거나 파일로 남기지 않는다(잠깐 쓰는 임시 파일은 바로 지운다)
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -55,10 +56,13 @@ async function main() {
   const ref = project.id;
   const envTok = { SUPABASE_ACCESS_TOKEN: token };
 
-  console.log("[1] AI 풀이 표와 권한 함수를 올립니다");
-  await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0008_ai.sql"), "utf8") });
-  await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0009_admin_ai.sql"), "utf8") });
-  console.log("완료");
+  // 표와 함수는 처음 한 번만 올린다(뒤의 마이그레이션이 이벤트 이름 목록 등을 늘려 두었으므로 다시 올리면 덮어쓴다)
+  if (process.argv.includes("--migrate")) {
+    console.log("[1] AI 풀이 표와 권한 함수를 올립니다");
+    await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0008_ai.sql"), "utf8") });
+    await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0009_admin_ai.sql"), "utf8") });
+    console.log("완료");
+  }
 
   console.log("[2] 근거 자료를 묶습니다");
   run("node", ["scripts/build-ai-bundle.mjs"]);
