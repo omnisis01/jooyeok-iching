@@ -1,4 +1,4 @@
-// AI 풀이 카드: 결과 요약 바로 아래. 내 질문에 맞춰 괘사, 효사, 지괘, 육효 시기를 근거로 풀어 준다
+// AI 점사풀이 카드: 결과 요약 바로 아래. 내 질문에 맞춰 괘사, 효사, 지괘, 육효 시기를 근거로 풀어 준다
 // 권한(관리자, Pro 하루 1회, 건별 결제, 첫 1회 체험)은 서버가 정하고, 화면은 버튼 문구만 고른다
 "use client";
 
@@ -81,26 +81,26 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
       if (r.status === "done" || r.status === "fallback") setView({ kind: "done", result: r.result, fallback: r.status === "fallback" });
       else setView({ kind: r.status });
     } catch (e) {
-      setView({ kind: "error", message: e instanceof Error ? e.message : "AI 풀이를 불러오지 못했어요" });
+      setView({ kind: "error", message: e instanceof Error ? e.message : "AI 점사풀이를 불러오지 못했어요" });
     }
   };
 
   const buy = async () => {
     try {
       track("deep_buy_click", { from: "ai" });
-      await startUnlock(reading, `${reading.primary.name} ${cat.label} AI 풀이`);
+      await startUnlock(reading, `${reading.primary.name} ${cat.label} AI 점사풀이`);
     } catch (e) {
       setView({ kind: "error", message: e instanceof Error ? e.message : "결제를 시작하지 못했어요" });
     }
   };
 
-  const label = can === "trial" ? "AI 풀이 무료로 받아 보기 (첫 1회)" : can === "pro" ? "AI 풀이 받기 (Pro, 오늘 1회)" : can === "admin" ? "AI 풀이 받기 (관리자)" : "AI 풀이 받기";
+  const label = can === "trial" ? "AI 점사풀이 무료로 받아 보기 (첫 1회)" : can === "pro" ? "AI 점사풀이 받기 (Pro, 오늘 1회)" : can === "admin" ? "AI 점사풀이 받기 (관리자)" : "AI 점사풀이 받기";
 
   return (
-    <section className="break-keep rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+    <section id="ai-reading" className="break-keep scroll-mt-24 rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <div className="flex items-center gap-2">
         <Sparkles size={18} className="text-gold-soft" />
-        <h3 className="font-bold">AI가 내 질문에 맞춰 풀어 드려요</h3>
+        <h3 className="font-bold">AI 점사풀이</h3>
       </div>
       <p className="mt-1.5 text-sm leading-relaxed text-muted">
         {ctx.question ? <>&ldquo;{ctx.question}&rdquo;에 대해, </> : <>{cat.label}에 대해, </>}
@@ -123,7 +123,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
           <AiResult result={view.result} fallback={view.fallback} timing={ctx.yukhyo.timing} expert={needsExpertNote(ctx)} sources={sourcesOf(ctx)} onRetry={run} />
           {!view.fallback ? (
             <button onClick={() => setShareOpen(true)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
-              <ImageDown size={18} /> AI 풀이 이미지로 저장하기
+              <ImageDown size={18} /> AI 점사풀이 이미지로 저장하기
             </button>
           ) : null}
           <ShareCardModal
@@ -156,7 +156,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
           </p>
           {unlockEnabled && payOn ? (
             <button onClick={buy} className="w-full rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
-              {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기 (AI 풀이 포함)
+              {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기 (AI 점사풀이 포함)
             </button>
           ) : (
             <p className="rounded-2xl bg-background px-4 py-3 text-sm text-muted">결제는 곧 열려요. 조금만 기다려 주세요.</p>
@@ -172,7 +172,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
               }}
               className="w-full rounded-full bg-foreground py-3 font-bold text-card"
             >
-              로그인하고 AI 풀이 한 번 무료로 받기
+              로그인하고 AI 점사풀이 한 번 무료로 받기
             </button>
           ) : (
             <button onClick={run} disabled={loggedIn === null} className="w-full rounded-full bg-foreground py-3 font-bold text-card transition hover:opacity-90 disabled:opacity-50">
@@ -197,7 +197,7 @@ function AiResult({ result, fallback, timing, expert, sources, onRetry }: { resu
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-5 space-y-5">
       {fallback ? (
         <div className="flex items-start justify-between gap-3 rounded-2xl bg-background px-4 py-3 text-xs leading-relaxed text-muted">
-          <span>AI 연결이 원활하지 않아 기본 자료로 정리했어요. 잠시 뒤 다시 누르면 AI 풀이를 받을 수 있고, 횟수는 차감되지 않았어요.</span>
+          <span>AI 연결이 원활하지 않아 기본 자료로 정리했어요. 잠시 뒤 다시 누르면 AI 점사풀이를 받을 수 있고, 횟수는 차감되지 않았어요.</span>
           <button onClick={onRetry} className="inline-flex shrink-0 items-center gap-1 font-semibold text-foreground">
             <RefreshCw size={12} /> 다시
           </button>

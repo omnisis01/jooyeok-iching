@@ -122,9 +122,9 @@ export default function AppShell() {
             );
           })}
         </ul>
-        <div className="mt-auto flex items-center justify-between px-2">
+        <div className="mt-auto space-y-2 px-2">
           <p className="text-xs text-muted">{dateLabel}</p>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 whitespace-nowrap">
             <TextSizeToggle />
             <ThemeToggle />
           </div>

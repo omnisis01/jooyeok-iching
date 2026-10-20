@@ -1,9 +1,11 @@
-// 점괘 결과: 첫 화면은 괘 그림, 이름, 핵심 한 줄만 담은 요약 카드. "풀이 자세히 보기"를 누르면 본괘 해설, 변효, 지괘가 펼쳐진다
+// 점괘 결과: 요약 카드(지금, 변하는 효, 앞으로) → AI 점사풀이(이 앱의 풀이) → 그 아래 "원문과 근거 보기"(괘사, 효사, 변효 풀이, 지괘, 육효)
+// 풀이는 AI 점사풀이 하나로 모으고, 예전의 상세 풀이는 그 근거로 펼쳐 보게 한다
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Check, ChevronDown, ChevronRight, Copy, ImageDown, RotateCcw } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, ChevronRight, Copy, ImageDown, RotateCcw, Sparkles } from "lucide-react";
+import { cloudEnabled } from "@/lib/supabase";
 import { hexagramSymbol } from "@/data/hexagrams";
 import { LINE_NAMES, trigramsOf, type Reading } from "@/lib/iching";
 import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
@@ -143,9 +145,16 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
         </div>
 
         <div className="mt-6 flex flex-col items-center gap-3">
-          {!expanded ? (
+          {cloudEnabled ? (
+            <button
+              onClick={() => document.getElementById("ai-reading")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-7 py-3.5 font-bold text-card transition hover:opacity-90"
+            >
+              <Sparkles size={18} /> AI 점사풀이 받기
+            </button>
+          ) : !expanded ? (
             <button onClick={openDetails} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-7 py-3.5 font-bold text-card transition hover:opacity-90">
-              풀이 자세히 보기 <ChevronDown size={18} />
+              원문과 근거 보기 <ChevronDown size={18} />
             </button>
           ) : null}
           <div className="flex flex-wrap justify-center gap-2">
@@ -163,10 +172,23 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
       </section>
 
       <AiReadingCard reading={reading} />
+      {cloudEnabled ? (
+        <button
+          onClick={() => (expanded ? setExpanded(false) : openDetails())}
+          aria-expanded={expanded}
+          className="flex w-full items-center justify-between rounded-2xl bg-card px-5 py-4 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)]"
+        >
+          <span>
+            <span className="block font-bold">원문과 근거 보기</span>
+            <span className="mt-0.5 block text-xs text-muted">괘사, 효사 원문, 변효 풀이, 지괘, 육효. 풀이가 어디서 나왔는지 직접 읽어 보세요</span>
+          </span>
+          <ChevronDown size={18} className={`shrink-0 text-muted transition-transform ${expanded ? "rotate-180" : ""}`} />
+        </button>
+      ) : null}
 
       {expanded ? (
         <motion.div ref={detailsRef} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="scroll-mt-24 space-y-6">
-          <FlowOverview primary={primary} changingLines={changingLines} resulting={resulting} />
+          {changingLines.length ? <FlowOverview primary={primary} changingLines={changingLines} resulting={resulting} /> : null}
 
           {/* 본괘 */}
           <section className="grid gap-6 rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)] sm:p-8 lg:grid-cols-[auto_1fr]">

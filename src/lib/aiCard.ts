@@ -1,4 +1,4 @@
-// AI 풀이를 이미지 한 장으로: 질문, 괘 흐름, 한 줄 답, 어떻게 변하나요, 효사, 할 일, 조심할 점. 저장해 두고 다시 보거나 보내기 좋게
+// AI 점사풀이를 이미지 한 장으로: 질문, 괘 흐름, 한 줄 답, 어떻게 변하나요, 효사, 할 일, 조심할 점. 저장해 두고 다시 보거나 보내기 좋게
 import type { Reading } from "./iching";
 import type { AiReading } from "./aiReading";
 import { C, SITE_URL, W, drawFlow, ensureFonts, font, roundRect, wrap as wrapChars } from "./shareCard";
@@ -46,7 +46,7 @@ export async function renderAiCard(reading: Reading, ai: AiReading, timing: stri
   ctx.textAlign = "center";
   ctx.fillStyle = C.goldSoft;
   ctx.font = font(600, 26);
-  ctx.fillText("나만의 정통주역운세  AI 풀이", W / 2, 110);
+  ctx.fillText("나만의 정통주역운세  AI 점사풀이", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
   ctx.fillText(`${categoryOf(reading.category).label}${reading.castAt ? `, ${formatCastAt(reading.castAt)}` : ""}`, W / 2, 150);

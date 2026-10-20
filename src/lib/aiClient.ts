@@ -1,4 +1,4 @@
-// AI 풀이 서버 함수(ai-reading) 부르기와, 저장된 풀이, 권한 확인
+// AI 점사풀이 서버 함수(ai-reading) 부르기와, 저장된 풀이, 권한 확인
 import type { Reading } from "./iching";
 import { kstDateString } from "./clock";
 import { cloudEnabled, supabase } from "./supabase";
@@ -55,6 +55,6 @@ export async function requestAiReading(reading: Reading): Promise<AiResponse> {
     body: JSON.stringify({ input: aiInputOf(reading) }),
   });
   const json = (await res.json().catch(() => ({}))) as AiResponse & { error?: string };
-  if (!res.ok) throw new Error(json.error || "AI 풀이를 불러오지 못했어요. 잠시 후 다시 시도해 주세요");
+  if (!res.ok) throw new Error(json.error || "AI 점사풀이를 불러오지 못했어요. 잠시 후 다시 시도해 주세요");
   return json;
 }
