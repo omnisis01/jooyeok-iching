@@ -16,6 +16,7 @@ import { track } from "@/lib/track";
 import { SITE_URL } from "@/lib/shareCard";
 import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
 import ShareCardModal from "./ShareCardModal";
+import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
 const STEPS = ["괘사를 읽는 중", "효사를 읽는 중", "질문에 맞추는 중", "쉬운 말로 다듬는 중"];
 // 받기 전에 어떤 내용을 받는지 미리 보여 준다
@@ -35,6 +36,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
   const [view, setView] = useState<View>({ kind: "idle" });
   const [step, setStep] = useState(0);
   const [shareOpen, setShareOpen] = useState(false);
+  const payOn = usePaymentsOn();
   const ctx = useMemo(() => buildContext(aiInputOf(reading)), [reading]);
   const cat = categoryOf(reading.category);
 
@@ -152,7 +154,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
           <p className="flex items-center gap-1.5 text-sm font-semibold">
             <Lock size={14} className="text-muted" /> 무료 체험을 이미 썼어요
           </p>
-          {unlockEnabled ? (
+          {unlockEnabled && payOn ? (
             <button onClick={buy} className="w-full rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
               {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기 (AI 풀이 포함)
             </button>

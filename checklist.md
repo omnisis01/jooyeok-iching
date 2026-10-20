@@ -408,6 +408,13 @@
 - [x] 홈 시작 카드의 배경 원도가 제목을 가리던 문제(8괘 확대 뒤 생김): 옅게, 오른쪽으로
 - [ ] 신년 상품 "2027년 한 해를 묻는 괘"(11월 중순, 공정표대로)
 
+## 2026-10-20 70차: 장애 감시, 관리자 전용 시험 결제
+- [x] AI 카드의 "좋은 말만 하지 않아요" 문구 뺌(지침 안의 규칙은 유지)
+- [x] 장애 감시: health 함수(숫자만, HEALTH_TOKEN 필요), daily-push가 발송마다 push_run 기록, scripts/monitor.mjs, .github/workflows/monitor.yml(30분마다). 사이트 첫 화면과 64괘 페이지 응답, 서버와 DB, AI 키 유무, 최근 2시간 AI 연결 실패(키 만료, 크레딧 소진), AI 대체 비율, 아침 알림 26시간 안 발송과 수신 0명 확인. 문제면 GitHub 이슈(메일 알림), 정상으로 돌아오면 알리고 닫음. 수동 실행 "정상" 확인
+- [x] scripts/setup-monitor.mjs: 0011 마이그레이션, 비밀값 생성해 Supabase와 GitHub에 저장(출력 안 함), 함수 배포, monitor 라벨
+- [x] 결제 시험 모드: 토스 키가 test_면 결제 버튼은 관리자에게만(usePaymentsOn), 서버 승인 함수도 관리자만(testModeBlocked). 라이브 키로 바꾸면 모두에게 열림
+- [ ] 대표님: 토스페이먼츠 가입(사업자 없이 가능) 후 시험 키를 setup-payments-toss.mjs로
+
 ## 다음에 할 만한 것
 - [ ] 배포 채널 계획 `PLAN-distribution.md` 검토 후 순서 확정(권장: 토스페이먼츠 → 앱인토스 → 구글 플레이 → 애플)
 - [x] 결제(Pro): 토스 정기결제와 건별 결제 코드 완료. 실키 검증은 위 항목, `profiles.premium_until` (SETUP.md 4절)

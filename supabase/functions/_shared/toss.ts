@@ -27,6 +27,13 @@ export function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 }
 
+/** 시험용 키(test_)로 돌 때는 관리자 결제만 받는다. 일반 사용자가 시험 카드로 Pro를 얻지 못하게 */
+export async function testModeBlocked(admin: SupabaseClient, userId: string): Promise<boolean> {
+  if (!(Deno.env.get("TOSS_SECRET_KEY") ?? "").startsWith("test_")) return false;
+  const { data } = await admin.from("admins").select("user_id").eq("user_id", userId).maybeSingle();
+  return !data;
+}
+
 /** 요청의 사용자 토큰으로 본인을 확인한다 */
 export async function requireUser(req: Request) {
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {

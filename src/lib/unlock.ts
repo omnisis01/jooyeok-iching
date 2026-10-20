@@ -8,6 +8,7 @@ import { SITE_URL } from "./shareCard";
 
 export const UNLOCK_PRICE_KRW = Number(process.env.NEXT_PUBLIC_UNLOCK_PRICE_KRW || 1000);
 /** 건별 결제는 토스 일반 결제로만 한다 */
+/** 건별 결제를 쓸 수 있게 만들어졌는지(빌드 설정). 화면에 보일지는 usePaymentsOn()까지 함께 본다 */
 export const unlockEnabled = paymentsEnabled && provider === "toss";
 
 const LOCAL_KEY = "jooyeok-master-unlocks-v1";

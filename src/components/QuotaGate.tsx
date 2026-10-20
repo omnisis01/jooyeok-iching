@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { Ticket } from "lucide-react";
 import { FREE_PER_DAY, FREE_PER_DAY_GUEST, SHARE_COUPONS_PER_DAY, quotaState, type QuotaState } from "@/lib/quota";
 import { msUntilKstMidnight } from "@/lib/clock";
-import { paymentsEnabled } from "@/lib/premium";
+
 import ShareForCoupon from "./ShareForCoupon";
 import { track } from "@/lib/track";
+import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
 export function useQuota(): QuotaState {
   const [state, setState] = useState<QuotaState>({ premium: false, guest: true, free: FREE_PER_DAY_GUEST, used: 0, coupons: 0, shares: 0, remaining: FREE_PER_DAY_GUEST, canShareForCoupon: true });
@@ -48,6 +49,7 @@ export function QuotaBadge() {
 
 /** 횟수를 다 썼을 때 보여주는 안내. 남아 있으면 아무것도 그리지 않는다 */
 export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void }) {
+  const payOn = usePaymentsOn();
   const q = useQuota();
   const exhausted = !q.premium && q.remaining <= 0;
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
         </button>
       ) : null}
       <ShareForCoupon className="mt-3" label="친구에게 공유하고 한 번 더 뽑기" />
-      {paymentsEnabled ? (
+      {payOn ? (
         <button onClick={() => { track("pro_click", { where: "quota" }); onGoPremium?.(); }} className="mt-3 w-full rounded-full bg-vermilion px-5 py-3 text-sm font-bold text-card transition hover:brightness-105">
           Pro로 횟수 제한 없이 보기
         </button>

@@ -17,12 +17,14 @@ import {
   type PremiumStatus,
 } from "@/lib/premium";
 import { getSession, onAuthChange } from "@/lib/cloudSync";
+import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
 export default function PremiumCard() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [status, setStatus] = useState<PremiumStatus>({ until: null, billingStatus: null, cardLabel: null });
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const payOn = usePaymentsOn();
 
   useEffect(() => {
     if (!paymentsEnabled) return;
@@ -66,7 +68,7 @@ export default function PremiumCard() {
     };
   }, []);
 
-  if (!paymentsEnabled) return null;
+  if (!payOn) return null;
 
   const run = async (fn: () => Promise<string | void>) => {
     setBusy(true);

@@ -25,8 +25,10 @@ import { useToday } from "@/lib/useToday";
 import { clearHistory, formatAt, loadHistory, readingFromRecord, removeRecord, type HistoryRecord } from "@/lib/history";
 import { cloudEnabled } from "@/lib/supabase";
 import { deleteRemote } from "@/lib/cloudSync";
+import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
 export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
+  const payOn = usePaymentsOn();
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -91,7 +93,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </button>
         {viewing.type === "iching" ? (
           <ResultView reading={readingFromRecord(viewing)} onRestart={() => setViewing(null)} restartLabel="닫기" saveToHistory={false} />
-        ) : premium || !paymentsEnabled ? (
+        ) : premium || !payOn ? (
           <YukhyoResult
             result={analyzeYukhyo({
               lines: viewing.lines,
@@ -112,7 +114,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
     );
   }
 
-  const limited = paymentsEnabled && !premium ? history.slice(0, FREE_HISTORY_LIMIT) : history;
+  const limited = payOn && !premium ? history.slice(0, FREE_HISTORY_LIMIT) : history;
   const shown = showAll ? limited : limited.slice(0, 3);
 
   return (
@@ -223,7 +225,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
             {showAll ? "접기" : `전체 ${limited.length}개 보기`}
           </button>
         ) : null}
-        {paymentsEnabled && !premium && history.length > FREE_HISTORY_LIMIT ? (
+        {payOn && !premium && history.length > FREE_HISTORY_LIMIT ? (
           <p className="mt-2 text-xs text-muted">무료 회원은 최근 {FREE_HISTORY_LIMIT}개까지 볼 수 있어요. Pro는 전부 보관해요.</p>
         ) : null}
       </section>

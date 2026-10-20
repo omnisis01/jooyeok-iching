@@ -1,5 +1,5 @@
 // 건별 결제(깊이 읽기) 승인: 토스 결제창에서 돌아온 paymentKey를 승인하고 unlocks에 기록한다
-import { CORS, adminClient, json, requireUser, tossHeaders } from "../_shared/toss.ts";
+import { CORS, adminClient, json, requireUser, testModeBlocked, tossHeaders } from "../_shared/toss.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -15,6 +15,7 @@ Deno.serve(async (req) => {
   if (!orderId.startsWith(`ul-${user.id.slice(0, 8)}-`)) return json({ error: "주문번호가 사용자와 다릅니다" }, 403);
 
   const admin = adminClient();
+  if (await testModeBlocked(admin, user.id)) return json({ error: "지금은 결제를 시험하는 중이에요. 곧 열려요" }, 403);
   // 같은 주문을 두 번 승인하지 않는다
   const { data: existing } = await admin.from("payments").select("status").eq("order_id", orderId).maybeSingle();
   if (existing?.status === "DONE") {

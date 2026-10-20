@@ -14,6 +14,7 @@ import YukhyoResult from "./YukhyoResult";
 import { eulreul } from "@/lib/josa";
 import { track } from "@/lib/track";
 import { fetchIsAdmin } from "@/lib/admin";
+import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
 export default function DeepReading({ reading }: { reading: Reading }) {
   const key = readingKey(reading);
@@ -23,6 +24,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
   const [message, setMessage] = useState<string | null>(null);
   // 관리자는 결제를 켜기 전에도 열린 상태로 미리 본다
   const [admin, setAdmin] = useState(false);
+  const payOn = usePaymentsOn();
 
   useEffect(() => {
     let alive = true;
@@ -46,7 +48,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
     };
   }, [key]);
 
-  if (!unlockEnabled && !admin) return null;
+  if (!(unlockEnabled && payOn) && !admin) return null;
   const state = admin || (unlocked ?? isUnlockedLocal(key));
   const cat = categoryOf(reading.category);
 

@@ -8,6 +8,8 @@ export type Provider = "toss" | "stripe";
 const tossClientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
 export const provider: Provider = (process.env.NEXT_PUBLIC_PAYMENT_PROVIDER as Provider) || (tossClientKey ? "toss" : "stripe");
 export const paymentsEnabled = cloudEnabled && process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === "true" && (provider === "stripe" || Boolean(tossClientKey));
+/** 토스 시험용 키(test_)로 돌고 있는지. 이때는 관리자만 결제 화면을 본다(usePaymentsOn), 서버도 관리자 결제만 받는다 */
+export const paymentsTestMode = provider === "toss" && Boolean(tossClientKey?.startsWith("test_"));
 
 export const PREMIUM_PRICE_KRW = Number(process.env.NEXT_PUBLIC_PREMIUM_PRICE_KRW || 4900);
 
