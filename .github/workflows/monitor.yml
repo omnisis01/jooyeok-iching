@@ -1,0 +1,23 @@
+# 장애 감시: 30분마다 사이트와 서버 상태를 확인하고, 문제가 있으면 이슈를 연다(GitHub가 메일로 알린다)
+name: monitor
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+permissions:
+  issues: write
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/monitor.mjs
+        env:
+          HEALTH_URL: ${{ secrets.HEALTH_URL }}
+          HEALTH_TOKEN: ${{ secrets.HEALTH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

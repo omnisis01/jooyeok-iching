@@ -54,6 +54,7 @@ Deno.serve(async (req) => {
   const hex = dailyHexagram(kstDateString());
   const message = buildMessage(kstDateString(), slot, hex);
   if (!message) {
+    await supabase.from("events").insert({ name: "push_run", props: { slot, skipped: true } });
     return new Response(JSON.stringify({ date: kstDateString(), slot, sent: 0, skipped: true }), { headers: { "Content-Type": "application/json" } });
   }
   const payload = JSON.stringify(message);
@@ -75,6 +76,10 @@ Deno.serve(async (req) => {
       }
     }
   }
+
+  // 장애 감시(scripts/monitor.mjs)가 보는 발송 기록
+  const total = subs?.length ?? 0;
+  await supabase.from("events").insert({ name: "push_run", props: { slot, total, sent, removed, failed: total - sent - removed } });
 
   return new Response(JSON.stringify({ date: kstDateString(), slot, reason: message.reason, title: message.title, sent, removed }), {
     headers: { "Content-Type": "application/json" },

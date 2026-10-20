@@ -106,7 +106,6 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
       </p>
       {view.kind !== "done" ? (
         <>
-          <p className="mt-2 text-sm font-semibold text-foreground/85">좋은 말만 하지 않아요. 괘가 말하는 그대로, 내 질문에 맞춰 전해요.</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {PREVIEW.map((t) => (
               <span key={t} className="rounded-full bg-background px-2.5 py-1 text-xs text-foreground/75">
