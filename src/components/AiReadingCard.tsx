@@ -10,7 +10,10 @@ import { buildContext, needsExpertNote, type AiReading } from "@/lib/aiReading";
 import { aiEntitlement, aiInputOf, requestAiReading, savedAiReading, type AiEntitlement } from "@/lib/aiClient";
 import { getSession, onAuthChange } from "@/lib/cloudSync";
 import { cloudEnabled } from "@/lib/supabase";
-import { UNLOCK_PRICE_KRW, startUnlock, unlockEnabled } from "@/lib/unlock";
+import { UNLOCK_PRICE_KRW, readingKey, startUnlock, unlockEnabled } from "@/lib/unlock";
+import { currentSubscription, pushEnabled, pushSupported, subscribePush } from "@/lib/push";
+import { setReminder } from "@/lib/aiClient";
+import { Bell } from "lucide-react";
 import { categoryOf } from "@/lib/categories";
 import { track } from "@/lib/track";
 import { SITE_URL } from "@/lib/shareCard";
@@ -120,7 +123,19 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
 
       {view.kind === "done" ? (
         <>
-          <AiResult result={view.result} fallback={view.fallback} timing={ctx.yukhyo.timing} expert={needsExpertNote(ctx)} sources={sourcesOf(ctx)} onRetry={run} />
+          <AiResult
+            result={view.result}
+            fallback={view.fallback}
+            timing={ctx.yukhyo.timing}
+            expert={needsExpertNote(ctx)}
+            sources={sourcesOf(ctx)}
+            onRetry={run}
+            reminder={
+              view.result.timingIndex >= 0 && ctx.yukhyo.timingDates[view.result.timingIndex] ? (
+                <ReminderButton date={ctx.yukhyo.timingDates[view.result.timingIndex]} readingKey={readingKey(reading)} question={ctx.question} hexName={reading.primary.name} />
+              ) : null
+            }
+          />
           {!view.fallback ? (
             <button onClick={() => setShareOpen(true)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
               <ImageDown size={18} /> AI 점사풀이 이미지로 저장하기
@@ -190,7 +205,7 @@ function sourcesOf(ctx: ReturnType<typeof buildContext>): string {
   return [`${ctx.primary.name} 괘 해설`, ...ctx.changing.map((c) => `${c.name} 효사`), ...(ctx.resulting ? [`${ctx.resulting.name} 괘 해설`] : []), "육효 판단"].join(", ");
 }
 
-function AiResult({ result, fallback, timing, expert, sources, onRetry }: { result: AiReading; fallback: boolean; timing: string[]; expert: boolean; sources: string; onRetry: () => void }) {
+function AiResult({ result, fallback, timing, expert, sources, onRetry, reminder }: { result: AiReading; fallback: boolean; timing: string[]; expert: boolean; sources: string; onRetry: () => void; reminder?: React.ReactNode }) {
   const when = result.timingIndex >= 0 ? timing[result.timingIndex] : null;
   const choices = result.choices && (result.choices.go || result.choices.wait) ? result.choices : null;
   return (
@@ -233,7 +248,12 @@ function AiResult({ result, fallback, timing, expert, sources, onRetry }: { resu
           {choices.wait ? <Block title="미루면">{choices.wait}</Block> : null}
         </div>
       ) : null}
-      {when ? <Block title="육효로 본 때">{when}</Block> : null}
+      {when ? (
+        <div>
+          <Block title="육효로 본 때">{when}</Block>
+          {reminder}
+        </div>
+      ) : null}
       <div className="rounded-2xl bg-vermilion/8 px-4 py-3">
         <h4 className="text-xs font-bold text-vermilion">조심할 점</h4>
         <p className="mt-1 text-[15px] leading-relaxed">{result.caution}</p>
@@ -252,6 +272,58 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
     <div>
       <h4 className="text-xs font-bold text-muted">{title}</h4>
       <p className="mt-1 text-[15px] leading-relaxed text-foreground/90">{children}</p>
+    </div>
+  );
+}
+
+/** AI가 짚은 날 아침에 "오늘이 그날이에요" 알림. 로그인한 사람만, 알림을 켜지 않았으면 함께 켠다 */
+function ReminderButton({ date, readingKey: key, question, hexName }: { date: string; readingKey: string; question: string | null; hexName: string }) {
+  const [state, setState] = useState<"hidden" | "idle" | "busy" | "done" | "ios" | "error">("hidden");
+  const [error, setError] = useState<string | null>(null);
+  const label = `${Number(date.slice(5, 7))}월 ${Number(date.slice(8, 10))}일`;
+
+  useEffect(() => {
+    if (!pushEnabled || Date.parse(date) <= Date.now()) return;
+    let alive = true;
+    getSession().then((s) => alive && s && setState("idle"));
+    return () => {
+      alive = false;
+    };
+  }, [date]);
+
+  if (state === "hidden") return null;
+
+  const set = async () => {
+    setState("busy");
+    setError(null);
+    try {
+      const s = await getSession();
+      if (!s) throw new Error("먼저 로그인해 주세요");
+      if (!pushSupported()) {
+        const ios = /iP(hone|ad)/.test(navigator.userAgent) && !window.matchMedia("(display-mode: standalone)").matches;
+        setState(ios ? "ios" : "error");
+        if (!ios) setError("이 브라우저는 알림을 지원하지 않아요");
+        return;
+      }
+      if (!(await currentSubscription())) await subscribePush(s.user.id);
+      await setReminder(date, key, question, hexName);
+      track("reminder_set", {});
+      setState("done");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "알림을 걸지 못했어요");
+      setState("error");
+    }
+  };
+
+  if (state === "done") return <p className="mt-2 text-xs text-gold-soft">{label} 아침에 &ldquo;오늘이 그날이에요&rdquo; 알림을 보내 드릴게요.</p>;
+  if (state === "ios")
+    return <p className="mt-2 text-xs leading-relaxed text-muted">아이폰은 사파리 공유 버튼에서 <b className="text-foreground">홈 화면에 추가</b>를 한 뒤, 그 아이콘으로 열어야 알림을 걸 수 있어요.</p>;
+  return (
+    <div className="mt-2">
+      <button onClick={set} disabled={state === "busy"} className="inline-flex items-center gap-1.5 rounded-full bg-background px-4 py-2 text-xs font-semibold transition hover:bg-border/60 disabled:opacity-50">
+        <Bell size={13} /> {label} 아침에 알림 받기
+      </button>
+      {error ? <p className="mt-1 text-xs text-vermilion">{error}</p> : null}
     </div>
   );
 }

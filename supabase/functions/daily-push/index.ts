@@ -51,6 +51,29 @@ Deno.serve(async (req) => {
     // 본문이 없으면 시간으로 정한다
   }
   slot ??= kstNow().getUTCHours() < 12 ? "morning" : "evening";
+  // 시기 알림: AI 점사풀이가 짚은 날이 오늘인 사람에게 따로 보낸다(아침에만). 본 발송과 별개로 센다
+  let reminded = 0;
+  if (slot === "morning") {
+    const { data: due } = await supabase.from("reminders").select("user_id, reading_key, question, hex_name").eq("date", kstDateString()).is("sent_at", null).limit(500);
+    for (const r of due ?? []) {
+      const { data: mine } = await supabase.from("push_subscriptions").select("endpoint, keys").eq("user_id", r.user_id).lt("fail_count", 5);
+      const body = r.question
+        ? `“${r.question}” 하고 물었던 ${r.hex_name} 괘에서 짚은 때가 오늘이에요. 어떻게 흘러가는지 살펴보세요.`
+        : `${r.hex_name} 괘에서 짚은 때가 오늘이에요. 어떻게 흘러가는지 살펴보세요.`;
+      const rp = JSON.stringify({ title: "오늘이 그날이에요", body, url: "./?from=reminder#home", tag: `reminder-${r.reading_key}`, reason: "reminder" });
+      for (const s of mine ?? []) {
+        try {
+          await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, rp, { TTL: 60 * 60 * 12 });
+          reminded++;
+        } catch {
+          // 죽은 구독은 아래 본 발송에서 정리한다
+        }
+      }
+      await supabase.from("reminders").update({ sent_at: new Date().toISOString() }).eq("user_id", r.user_id).eq("reading_key", r.reading_key);
+    }
+    if (reminded) await supabase.from("events").insert({ name: "reminder_sent", props: { n: reminded } });
+  }
+
   const hex = dailyHexagram(kstDateString());
   const message = buildMessage(kstDateString(), slot, hex);
   if (!message) {

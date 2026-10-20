@@ -270,6 +270,8 @@ export type YukhyoResult = {
   timing: string[];
   /** timing과 같은 순서로, 양력 달과 가까운 날짜로 바꾼 쉬운 문장 */
   timingPlain: string[];
+  /** timingPlain마다 "가까운 날"의 날짜(YYYY-MM-DD). 알림 걸기에 쓴다 */
+  timingDates: string[];
   elementNote: string;
 };
 
@@ -514,16 +516,22 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
   // 응기
   const timing: string[] = [];
   const timingPlain: string[] = [];
+  const timingDates: string[] = [];
   // 지지를 양력 달로(절기 기준 대략): 인 2월 … 자 12월, 축 1월
   const monthOf = (b: number) => (b === 0 ? 12 : b === 1 ? 1 : b);
   const months = (bs: number[]) => [...new Set(bs.map(monthOf))].sort((a, b) => a - b).map((m) => `${m}월`).join(", ");
   // 점친 날 다음부터 처음 돌아오는 그 지지의 날(12일마다 돌아온다)
-  const nextDay = (b: number) => {
+  const nextDate = (b: number) => {
     const off = (b - day.dayBranch + 12) % 12 || 12;
     const d = new Date(`${input.date}T12:00:00Z`);
     d.setUTCDate(d.getUTCDate() + off);
+    return d;
+  };
+  const nextDay = (b: number) => {
+    const d = nextDate(b);
     return `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일`;
   };
+  const iso = (b: number) => nextDate(b).toISOString().slice(0, 10);
   const ub = useLine?.branch ?? hiddenUse?.branch;
   if (ub !== undefined) {
     const harmony = (1 - ub + 12) % 12;
@@ -531,16 +539,19 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
     if (useJudgement.level === "왕") {
       timing.push(`${branchLabel(ub)}의 날이나 달, 또는 짝이 되는 ${branchLabel(harmony)}의 날이나 달에 이루어지기 쉽습니다.`);
       timingPlain.push(`양력 ${months([ub, harmony])} 무렵, 날로는 가까운 ${nextDay(ub)}이나 ${nextDay(harmony)}에 이루어지기 쉬워요.`);
+      timingDates.push(iso(ub));
     } else {
       const parents = (["목", "화", "토", "금", "수"] as Element[]).filter((e) => generates(e, useEl));
       timing.push(`용신이 약하니 ${parents.join(", ")} 기운이 강한 날이나 달(${BRANCHES.map((b, i) => (parents.includes(BRANCH_ELEMENT[i]) ? b : null)).filter(Boolean).join(", ")})에 힘을 얻어 진전이 있습니다.`);
       const helpers = BRANCHES.map((_, i) => i).filter((i) => parents.includes(BRANCH_ELEMENT[i]));
       const soonest = [...helpers].sort((a, b) => ((a - day.dayBranch + 12) % 12 || 12) - ((b - day.dayBranch + 12) % 12 || 12))[0];
       timingPlain.push(`지금은 힘이 약해 바로 이루어지기보다, 기운을 보태 주는 양력 ${months(helpers)} 무렵에 진전이 있어요. 가까운 날로는 ${nextDay(soonest)}이 좋아요.`);
+      timingDates.push(iso(soonest));
     }
     if (useLine?.isVoid || (hiddenUse && day.voids.includes(hiddenUse.branch))) {
       timing.push(`빈자리를 벗어나는 ${branchLabel(ub)}의 날 이후를 기다리세요.`);
       timingPlain.push(`지금은 아직 때가 비어 있어요. ${nextDay(ub)}이 지난 뒤를 기다리세요.`);
+      timingDates.push(iso(ub));
     }
   }
 
@@ -561,6 +572,7 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
     verdict: { level, title: titleMap[level], text: VERDICTS[cat][level] },
     timing,
     timingPlain,
+    timingDates,
     elementNote,
   };
 }

@@ -64,8 +64,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
     if (!saveToHistory) return;
     const at = castAt ? new Date(castAt) : new Date();
     const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join(""), question]);
-    saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, period, periodDate, category: cat.key });
-  }, [saveToHistory, method, primary.lines, changingLines, question, period, periodDate, cat.key, castAt]);
+    saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, context: reading.context, period, periodDate, category: cat.key });
+  }, [saveToHistory, method, primary.lines, changingLines, question, reading.context, period, periodDate, cat.key, castAt]);
 
   const copy = async () => {
     const text = [

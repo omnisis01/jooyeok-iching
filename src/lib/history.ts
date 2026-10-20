@@ -15,6 +15,7 @@ export type IchingRecord = {
   lines: string;
   changing: number[];
   question?: string;
+  context?: string;
   period?: Period;
   periodDate?: string;
   category?: Category;
@@ -92,7 +93,7 @@ export function readingFromRecord(r: IchingRecord): Reading {
   const primary = findHexagramByLines(r.lines);
   const changedLines = r.changing.reduce((acc, i) => acc.slice(0, i) + (acc[i] === "1" ? "0" : "1") + acc.slice(i + 1), r.lines);
   const resulting = r.changing.length ? findHexagramByLines(changedLines) : null;
-  return { method: r.method, primary, changingLines: r.changing, resulting, question: r.question, period: r.period, periodDate: r.periodDate, category: r.category, castAt: r.at };
+  return { method: r.method, primary, changingLines: r.changing, resulting, question: r.question, context: r.context, period: r.period, periodDate: r.periodDate, category: r.category, castAt: r.at };
 }
 
 export function formatAt(iso: string): string {

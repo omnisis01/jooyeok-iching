@@ -87,6 +87,8 @@ export type Reading = {
   /** 변효가 있을 때의 지괘. 없으면 null */
   resulting: Hexagram | null;
   question?: string;
+  /** 질문에 덧붙인 지금 상황 한 줄(선택). AI 점사풀이의 근거에 들어간다 */
+  context?: string;
   /** 묻는 시기 (기본 오늘) */
   period?: Period;
   /** period가 date일 때의 날짜 */

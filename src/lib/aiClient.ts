@@ -20,6 +20,7 @@ export function aiInputOf(reading: Reading): AiInput {
     date: kstDateString(at),
     castAt: reading.castAt,
     question: reading.question?.trim() ? reading.question.trim().slice(0, 60) : undefined,
+    context: reading.context?.trim() ? reading.context.trim().slice(0, 80) : undefined,
   };
 }
 
@@ -57,4 +58,10 @@ export async function requestAiReading(reading: Reading): Promise<AiResponse> {
   const json = (await res.json().catch(() => ({}))) as AiResponse & { error?: string };
   if (!res.ok) throw new Error(json.error || "AI 점사풀이를 불러오지 못했어요. 잠시 후 다시 시도해 주세요");
   return json;
+}
+
+/** AI가 짚은 날 아침에 알림 받기. 로그인과 알림 구독이 필요하다 */
+export async function setReminder(date: string, readingKey: string, question: string | null, hexName: string): Promise<void> {
+  const { error } = await supabase().rpc("set_reminder", { p_date: date, p_key: readingKey, p_question: question, p_hex: hexName });
+  if (error) throw new Error(error.message.includes("login") ? "먼저 로그인해 주세요" : error.message.includes("date") ? "지난 날짜에는 알림을 걸 수 없어요" : "알림을 걸지 못했어요");
 }

@@ -25,6 +25,8 @@ export default function DivinationFlow() {
   const [category, setCategory] = useState<Category>("overall");
   // 점치기 전에 쓰는 질문(선택). AI 풀이와 결과 화면에 그대로 쓰인다
   const [question, setQuestion] = useState("");
+  // 지금 상황 한 줄(선택). 구체적일수록 AI 점사풀이가 내 상황에 맞는다
+  const [context, setContext] = useState("");
   const [reading, setReading] = useState<Reading | null>(null);
   const [castKey, setCastKey] = useState(0);
   const [pending, setPending] = useState<Method>("coin");
@@ -63,13 +65,14 @@ export default function DivinationFlow() {
   const complete = (r: Reading) => {
     consumeCast();
     track("cast_done", { kind: "iching", method: r.method, category, changing: r.changingLines.length });
-    setReading({ ...r, category, question: question.trim() || undefined, period, periodDate: period === "date" ? periodDate : undefined });
+    setReading({ ...r, category, question: question.trim() || undefined, context: context.trim() || undefined, period, periodDate: period === "date" ? periodDate : undefined });
     setStage("result");
   };
 
   const restart = () => {
     setReading(null);
     setQuestion("");
+    setContext("");
     setStage("setup");
   };
 
@@ -111,6 +114,15 @@ export default function DivinationFlow() {
               ))}
             </div>
             <p className="mt-2 break-keep text-xs leading-relaxed text-muted">구체적으로 적을수록 풀이가 내 상황에 더 잘 맞아요. &ldquo;~할까요, 말까요?&rdquo;처럼 물어보세요.</p>
+            {question.trim() ? (
+              <input
+                value={context}
+                onChange={(e) => setContext(e.target.value.slice(0, 80))}
+                maxLength={80}
+                placeholder="지금 상황을 한 줄 더 (선택) 예: 2차 면접, 경쟁률이 높아요"
+                className="mt-3 w-full rounded-2xl bg-card px-4 py-3 text-sm shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
+              />
+            ) : null}
 
             <p className="mt-6 font-bold">언제의 일을 묻나요</p>
             <div className="mt-3 flex flex-wrap gap-2">
