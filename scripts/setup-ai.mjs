@@ -80,8 +80,10 @@ async function main() {
     console.log("[3] AI 키를 서버 비밀값(ANTHROPIC_API_KEY)으로 저장했습니다");
   }
 
-  console.log("[4] 서버 함수 ai-reading을 배포합니다");
+  console.log("[4] 서버 함수 ai-reading, ai-eval을 배포합니다");
   run("npx", ["-y", "supabase", "functions", "deploy", "ai-reading", "--use-api", "--project-ref", ref], envTok);
+  // 품질 시험용(AI_EVAL_TOKEN이 있을 때만 열림, 저장 없음)
+  run("npx", ["-y", "supabase", "functions", "deploy", "ai-eval", "--no-verify-jwt", "--use-api", "--project-ref", ref], envTok);
   console.log("완료. 결과 화면의 AI 풀이 카드에서 바로 쓸 수 있습니다.");
 }
 
