@@ -18,8 +18,9 @@ type Props = {
   onComplete: (reading: Reading) => void;
 };
 const STEPS = [
-  { key: "lower", label: "하괘", hint: "아래 세 효" },
-  { key: "upper", label: "상괘", hint: "위 세 효" },
+  // "효 3개"는 줄이 바뀌어도 붙어 있게 붙임 공백을 쓴다
+  { key: "lower", label: "하괘", hint: "아래쪽의 효\u00a03개" },
+  { key: "upper", label: "상괘", hint: "위쪽의 효\u00a03개" },
   { key: "moving", label: "동효", hint: "변하는 효" },
 ] as const;
 const NUM_HANJA = ["一", "二", "三", "四", "五", "六", "七", "八"];
@@ -205,14 +206,14 @@ export default function SantongCasting({ question, onComplete }: Props) {
       <p className="mt-1 text-xs text-muted">한 번 뽑을 때마다 하괘, 상괘, 동효가 차례로 결정돼요</p>
 
       {/* 세 번의 뽑기 진행 */}
-      <ol className="mt-4 flex gap-2">
+      <ol className="mt-4 grid w-full max-w-sm grid-cols-3 gap-2">
         {STEPS.map((s, i) => {
           const v = draws[i];
           const active = i === step;
           return (
             <li
               key={s.key}
-              className={`min-w-[84px] rounded-2xl px-3 py-2 text-xs transition ${v ? "bg-card text-foreground shadow-sm" : active ? "bg-vermilion/10 text-vermilion ring-1 ring-vermilion/30" : "bg-card/40 text-muted"}`}
+              className={`rounded-2xl px-2 py-2 text-xs leading-snug transition ${v ? "bg-card text-foreground shadow-sm" : active ? "bg-vermilion/10 text-vermilion ring-1 ring-vermilion/30" : "bg-card/40 text-muted"}`}
             >
               <span className="block font-bold">{s.label}</span>
               <span className="mt-0.5 block">{v ? resultLabel(i, v) : s.hint}</span>
