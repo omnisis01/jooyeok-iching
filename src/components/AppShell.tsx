@@ -8,6 +8,7 @@ import AdminScreen from "./AdminScreen";
 import { resetAdmin } from "@/lib/admin";
 import Taegeuk from "./Taegeuk";
 import ThemeToggle from "./ThemeToggle";
+import TextSizeToggle from "./TextSizeToggle";
 import { useToday } from "@/lib/useToday";
 import { syncClock } from "@/lib/clock";
 import { attachServerQuota, refreshServerQuota } from "@/lib/quota";
@@ -123,7 +124,10 @@ export default function AppShell() {
         </ul>
         <div className="mt-auto flex items-center justify-between px-2">
           <p className="text-xs text-muted">{dateLabel}</p>
-          <ThemeToggle />
+          <div className="flex items-center gap-1.5">
+            <TextSizeToggle />
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
 
@@ -135,6 +139,7 @@ export default function AppShell() {
           </button>
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-muted sm:inline">{dateLabel}</span>
+            <TextSizeToggle />
             <ThemeToggle />
           </div>
         </header>

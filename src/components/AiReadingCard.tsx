@@ -4,7 +4,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
-import { Lock, RefreshCw, Sparkles } from "lucide-react";
+import { ImageDown, Lock, RefreshCw, Sparkles } from "lucide-react";
 import type { Reading } from "@/lib/iching";
 import { buildContext, needsExpertNote, type AiReading } from "@/lib/aiReading";
 import { aiEntitlement, aiInputOf, requestAiReading, savedAiReading, type AiEntitlement } from "@/lib/aiClient";
@@ -13,8 +13,13 @@ import { cloudEnabled } from "@/lib/supabase";
 import { UNLOCK_PRICE_KRW, startUnlock, unlockEnabled } from "@/lib/unlock";
 import { categoryOf } from "@/lib/categories";
 import { track } from "@/lib/track";
+import { SITE_URL } from "@/lib/shareCard";
+import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
+import ShareCardModal from "./ShareCardModal";
 
 const STEPS = ["괘사를 읽는 중", "효사를 읽는 중", "질문에 맞추는 중", "쉬운 말로 다듬는 중"];
+// 받기 전에 어떤 내용을 받는지 미리 보여 준다
+const PREVIEW = ["한 줄 답", "어떻게 변하나요", "내가 선 자리(효사 원문)", "앞으로의 흐름", "할 일 3가지", "하면과 미루면", "육효로 본 때", "조심할 점"];
 
 type View =
   | { kind: "idle" }
@@ -29,6 +34,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
   const [can, setCan] = useState<AiEntitlement>(null);
   const [view, setView] = useState<View>({ kind: "idle" });
   const [step, setStep] = useState(0);
+  const [shareOpen, setShareOpen] = useState(false);
   const ctx = useMemo(() => buildContext(aiInputOf(reading)), [reading]);
   const cat = categoryOf(reading.category);
 
@@ -98,9 +104,40 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
         {ctx.question ? <>&ldquo;{ctx.question}&rdquo;에 대해, </> : <>{cat.label}에 대해, </>}
         뽑은 괘의 괘사, 효사, 지괘, 육효 시기를 근거로 풀어요.
       </p>
+      {view.kind !== "done" ? (
+        <>
+          <p className="mt-2 text-sm font-semibold text-foreground/85">좋은 말만 하지 않아요. 괘가 말하는 그대로, 내 질문에 맞춰 전해요.</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {PREVIEW.map((t) => (
+              <span key={t} className="rounded-full bg-background px-2.5 py-1 text-xs text-foreground/75">
+                {t}
+              </span>
+            ))}
+          </div>
+        </>
+      ) : null}
 
       {view.kind === "done" ? (
-        <AiResult result={view.result} fallback={view.fallback} timing={ctx.yukhyo.timing} expert={needsExpertNote(ctx)} sources={sourcesOf(ctx)} onRetry={run} />
+        <>
+          <AiResult result={view.result} fallback={view.fallback} timing={ctx.yukhyo.timing} expert={needsExpertNote(ctx)} sources={sourcesOf(ctx)} onRetry={run} />
+          {!view.fallback ? (
+            <button onClick={() => setShareOpen(true)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
+              <ImageDown size={18} /> AI 풀이 이미지로 저장하기
+            </button>
+          ) : null}
+          <ShareCardModal
+            job={
+              shareOpen && view.kind === "done"
+                ? {
+                    render: () => renderAiCard(reading, view.result, view.result.timingIndex >= 0 ? (ctx.yukhyo.timing[view.result.timingIndex] ?? null) : null),
+                    fileName: aiCardFileName(reading),
+                    text: `${view.result.answer}\n${SITE_URL}`,
+                  }
+                : null
+            }
+            onClose={() => setShareOpen(false)}
+          />
+        </>
       ) : view.kind === "loading" ? (
         <div className="mt-5 flex flex-col items-center gap-3 py-6" aria-live="polite">
           <span className="h-9 w-9 animate-spin rounded-full border-2 border-gold/30 border-t-gold" />

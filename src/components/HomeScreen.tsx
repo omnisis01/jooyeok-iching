@@ -135,7 +135,8 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         whileTap={{ scale: 0.98 }}
         className="relative w-full overflow-hidden rounded-3xl bg-foreground p-6 text-left text-card shadow-[0_12px_40px_rgba(31,29,26,0.25)]"
       >
-        <div className="pointer-events-none absolute -right-16 -top-10 opacity-60">
+        {/* 배경 장식: 8괘가 커진 뒤 제목을 가리지 않도록 옅게, 오른쪽으로 더 뺀다 */}
+        <div className="pointer-events-none absolute -right-24 -top-12 opacity-25">
           <HexagramWheel size={260} />
         </div>
         <p className="text-sm text-card/70">주역 64괘 점</p>

@@ -36,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         {/* 저장된 테마를 첫 그림 전에 적용해 흰 화면이 번쩍이지 않게 한다 */}
         <Script id="theme-init" strategy="beforeInteractive">
-          {`try{var t=localStorage.getItem("jooyeok-master-theme");document.documentElement.dataset.theme=(t==="light")?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}`}
+          {`try{var t=localStorage.getItem("jooyeok-master-theme");document.documentElement.dataset.theme=(t==="light")?"light":"dark";document.documentElement.dataset.text=localStorage.getItem("jooyeok-master-text")==="large"?"large":"normal";}catch(e){document.documentElement.dataset.theme="dark";}`}
         </Script>
         {children}
       </body>

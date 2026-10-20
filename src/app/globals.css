@@ -110,6 +110,11 @@ input[type="date"] {
   animation: spin-slow 240s linear infinite reverse;
 }
 
+/* 큰 글씨: 화면 전체를 12% 키운다(px로 정한 글자까지 함께 커지도록 zoom을 쓴다) */
+html[data-text="large"] body {
+  zoom: 1.12;
+}
+
 /* 점을 뽑는 동안에는 떠 있는 괘와 효 버튼을 숨긴다(흔들기 버튼을 가리지 않게) */
 body[data-casting] .guide-fab {
   display: none;
