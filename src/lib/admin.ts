@@ -11,6 +11,9 @@ export type AdminDashboard = {
   paid_total: number;
   paid_today: number;
   push_subs: number;
+  ai_total: number;
+  ai_today: number;
+  ai_month_models: { model: string; n: number; in_tok: number; out_tok: number }[];
   days: { day: string; name: string; n: number; people: number }[];
 };
 

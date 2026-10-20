@@ -1879,18 +1879,32 @@ function analyzeYukhyo(input) {
   const level = total >= 1.5 ? "\uAE38" : total >= -0.5 ? "\uD3C9" : "\uD749";
   const titleMap = { \uAE38: "\uC774\uB8E8\uC5B4\uC9C8 \uAE30\uC6B4\uC774\uC5D0\uC694", \uD3C9: "\uC9C0\uCF1C\uBCFC \uAE30\uC6B4\uC774\uC5D0\uC694", \uD749: "\uC870\uC2EC\uD560 \uAE30\uC6B4\uC774\uC5D0\uC694" };
   const timing = [];
+  const timingPlain = [];
+  const monthOf = (b) => b === 0 ? 12 : b === 1 ? 1 : b;
+  const months = (bs) => [...new Set(bs.map(monthOf))].sort((a, b) => a - b).map((m) => `${m}\uC6D4`).join(", ");
+  const nextDay = (b) => {
+    const off = (b - day.dayBranch + 12) % 12 || 12;
+    const d = /* @__PURE__ */ new Date(`${input.date}T12:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + off);
+    return `${d.getUTCMonth() + 1}\uC6D4 ${d.getUTCDate()}\uC77C`;
+  };
   const ub = useLine?.branch ?? hiddenUse?.branch;
   if (ub !== void 0) {
     const harmony = (1 - ub + 12) % 12;
     const useEl = BRANCH_ELEMENT[ub];
     if (useJudgement.level === "\uC655") {
       timing.push(`${branchLabel(ub)}\uC758 \uB0A0\uC774\uB098 \uB2EC, \uB610\uB294 \uC9DD\uC774 \uB418\uB294 ${branchLabel(harmony)}\uC758 \uB0A0\uC774\uB098 \uB2EC\uC5D0 \uC774\uB8E8\uC5B4\uC9C0\uAE30 \uC27D\uC2B5\uB2C8\uB2E4.`);
+      timingPlain.push(`\uC591\uB825 ${months([ub, harmony])} \uBB34\uB835, \uB0A0\uB85C\uB294 \uAC00\uAE4C\uC6B4 ${nextDay(ub)}\uC774\uB098 ${nextDay(harmony)}\uC5D0 \uC774\uB8E8\uC5B4\uC9C0\uAE30 \uC26C\uC6CC\uC694.`);
     } else {
       const parents = ["\uBAA9", "\uD654", "\uD1A0", "\uAE08", "\uC218"].filter((e) => generates(e, useEl));
       timing.push(`\uC6A9\uC2E0\uC774 \uC57D\uD558\uB2C8 ${parents.join(", ")} \uAE30\uC6B4\uC774 \uAC15\uD55C \uB0A0\uC774\uB098 \uB2EC(${BRANCHES.map((b, i) => parents.includes(BRANCH_ELEMENT[i]) ? b : null).filter(Boolean).join(", ")})\uC5D0 \uD798\uC744 \uC5BB\uC5B4 \uC9C4\uC804\uC774 \uC788\uC2B5\uB2C8\uB2E4.`);
+      const helpers = BRANCHES.map((_, i) => i).filter((i) => parents.includes(BRANCH_ELEMENT[i]));
+      const soonest = [...helpers].sort((a, b) => ((a - day.dayBranch + 12) % 12 || 12) - ((b - day.dayBranch + 12) % 12 || 12))[0];
+      timingPlain.push(`\uC9C0\uAE08\uC740 \uD798\uC774 \uC57D\uD574 \uBC14\uB85C \uC774\uB8E8\uC5B4\uC9C0\uAE30\uBCF4\uB2E4, \uAE30\uC6B4\uC744 \uBCF4\uD0DC \uC8FC\uB294 \uC591\uB825 ${months(helpers)} \uBB34\uB835\uC5D0 \uC9C4\uC804\uC774 \uC788\uC5B4\uC694. \uAC00\uAE4C\uC6B4 \uB0A0\uB85C\uB294 ${nextDay(soonest)}\uC774 \uC88B\uC544\uC694.`);
     }
     if (useLine?.isVoid || hiddenUse && day.voids.includes(hiddenUse.branch)) {
       timing.push(`\uBE48\uC790\uB9AC\uB97C \uBC97\uC5B4\uB098\uB294 ${branchLabel(ub)}\uC758 \uB0A0 \uC774\uD6C4\uB97C \uAE30\uB2E4\uB9AC\uC138\uC694.`);
+      timingPlain.push(`\uC9C0\uAE08\uC740 \uC544\uC9C1 \uB54C\uAC00 \uBE44\uC5B4 \uC788\uC5B4\uC694. ${nextDay(ub)}\uC774 \uC9C0\uB09C \uB4A4\uB97C \uAE30\uB2E4\uB9AC\uC138\uC694.`);
     }
   }
   const elementNote = `\uC774 \uAD18\uB294 ${palace.palaceName}\uC758 ${palace.generationName}\uC774\uACE0, \uAD81\uC758 \uC624\uD589\uC740 ${palace.element}(${ELEMENT_HANJA[palace.element]})\uC785\uB2C8\uB2E4. \uB098\uB97C \uB73B\uD558\uB294 \uC138\uD6A8\uB294 ${palace.world + 1}\uD6A8, \uC0C1\uB300\uB97C \uB73B\uD558\uB294 \uC751\uD6A8\uB294 ${palace.response + 1}\uD6A8\uC785\uB2C8\uB2E4.`;
@@ -1908,6 +1922,7 @@ function analyzeYukhyo(input) {
     worldJudgement,
     verdict: { level, title: titleMap[level], text: VERDICTS[cat][level] },
     timing,
+    timingPlain,
     elementNote
   };
 }
@@ -1941,7 +1956,7 @@ function buildContext(x) {
       const lt = getLineText(p.number, i);
       return { index: i, name: LINE_NAMES[i], title: lineTitle(x.lines, i), hanja: lt.hanja, text: lt.text, advice: lt.advice, stage: LINE_STAGE_BY_CATEGORY[cat][i] };
     }),
-    yukhyo: { level: y.verdict.level, title: y.verdict.title, text: y.verdict.text, timing: y.timing },
+    yukhyo: { level: y.verdict.level, title: y.verdict.title, text: y.verdict.text, timing: y.timingPlain },
     allowedNames: [p.name, ...r ? [r.name] : []]
   };
 }
@@ -1957,13 +1972,14 @@ var AI_SYSTEM = `\uB2F9\uC2E0\uC740 \uC8FC\uC5ED \uC810\uAD18\uB97C \uC26C\uC6B4
 - \uBAA8\uB4E0 \uBB38\uC7A5\uC744 "~\uD574\uC694", "~\uC608\uC694", "~\uC138\uC694"\uB85C \uB05D\uB098\uB294 \uD574\uC694\uCCB4\uB85C \uC501\uB2C8\uB2E4. "~\uD569\uB2C8\uB2E4", "~\uC785\uB2C8\uB2E4"\uB85C \uB05D\uB0B4\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uCC98\uC74C \uBCF4\uB294 \uC0AC\uB78C\uB3C4 \uBC14\uB85C \uC54C\uC544\uB4E3\uAC8C, \uC804\uBB38 \uC6A9\uC5B4\uB294 \uD480\uC5B4\uC11C \uC501\uB2C8\uB2E4.
 - \uD55C\uC790\uB294 quote\uC5D0\uB9CC \uC501\uB2C8\uB2E4. \uC601\uC5B4\uB97C \uC4F0\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.
 - \uAC00\uC6B4\uB383\uC810, \uD654\uC0B4\uD45C, \uC904\uD45C, \uD558\uC774\uD508 \uAC19\uC740 \uAE30\uD638\uB97C \uC4F0\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uBAA9\uB85D \uAE30\uD638\uB098 \uBC88\uD638\uB3C4 \uBB38\uC7A5 \uC548\uC5D0 \uB123\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.
-- "\uBC18\uB4DC\uC2DC", "\uBB34\uC870\uAC74", "100%", "\uD2C0\uB9BC\uC5C6\uC774", "\uC7A5\uB2F4" \uAC19\uC740 \uB2E8\uC815\uD558\uB294 \uB9D0\uC744 \uC4F0\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.
+- "\uBC18\uB4DC\uC2DC", "\uBB34\uC870\uAC74", "100%", "\uD2C0\uB9BC\uC5C6\uC774" \uAC19\uC740 \uB2E8\uC815\uD558\uB294 \uB9D0\uC744 \uC4F0\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.
 - \uB4E3\uAE30 \uC88B\uC740 \uB9D0\uB9CC \uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC790\uB8CC\uAC00 \uD749\uD558\uBA74 \uD749\uD558\uB2E4\uACE0 \uBD80\uB4DC\uB7FD\uC9C0\uB9CC \uBD84\uBA85\uD558\uAC8C \uB9D0\uD569\uB2C8\uB2E4. \uC88B\uC740 \uAD18\uB77C\uB3C4 \uC870\uC2EC\uD560 \uC810\uC740 \uAF2D \uD558\uB098 \uC501\uB2C8\uB2E4.
 - \uBCD1\uBA85 \uC9C4\uB2E8, \uC57D, \uD22C\uC790 \uC885\uBAA9\uC774\uB098 \uAE08\uC561, \uBC95\uB960 \uD310\uB2E8\uC744 \uB2E8\uC815\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.
 - \uB9E4\uBC88 \uAC19\uC740 \uD2C0\uC758 \uBB38\uC7A5\uC744 \uBC18\uBCF5\uD558\uC9C0 \uB9D0\uACE0, \uC0AC\uC6A9\uC790\uC758 \uC9C8\uBB38\uC5D0 \uB098\uC628 \uB9D0\uC744 \uC0B4\uB824 \uADF8 \uC0AC\uB78C\uC758 \uC0C1\uD669\uC5D0 \uB300\uC785\uD569\uB2C8\uB2E4.
 
 \uCE78\uBCC4\uB85C \uC4F8 \uAC83
 - answer: \uC9C8\uBB38\uC5D0 \uB300\uD55C \uC9C1\uB2F5 \uD55C \uBB38\uC7A5(15~60\uC790). \uBC29\uD5A5\uC744 \uBD84\uBA85\uD788 \uD569\uB2C8\uB2E4.
+- change: \uC5B4\uB5BB\uAC8C \uBCC0\uD558\uB098\uC694. \uC0AC\uB78C\uB4E4\uC774 \uAC00\uC7A5 \uAD81\uAE08\uD574\uD558\uB294 \uCE78\uC785\uB2C8\uB2E4. \uC9C0\uAE08 \uC0C1\uD669\uC5D0\uC11C \uC55E\uC73C\uB85C \uBB34\uC5C7\uC774 \uC5B4\uB5BB\uAC8C \uBC14\uB00C\uB294\uC9C0\uB97C \uC9C8\uBB38\uC5D0 \uB300\uC785\uD574 \uC501\uB2C8\uB2E4. \uC5B4\uB290 \uD6A8\uAC00 \uBCC0\uD558\uB294\uC9C0\uC640 \uC9C0\uAD18\uAC00 \uB73B\uD558\uB294 \uBC29\uD5A5\uC744 \uADFC\uAC70\uB85C, "\uC9C0\uAE08\uC740 ~\uD558\uC9C0\uB9CC ~\uB85C \uBC14\uB00C\uC5B4\uC694"\uCC98\uB7FC \uBCC0\uD654\uC758 \uC55E\uB4A4\uAC00 \uBCF4\uC774\uAC8C(1~2\uBB38\uC7A5, 30~160\uC790). \uBCC0\uD6A8\uAC00 \uC5C6\uC73C\uBA74 \uC9C0\uAE08 \uD750\uB984\uC774 \uD55C\uB3D9\uC548 \uC774\uC5B4\uC9C4\uB2E4\uB294 \uB73B\uC73C\uB85C \uC501\uB2C8\uB2E4.
 - situation: \uBCF8\uAD18 \uD574\uC124\uACFC \uC6B4\uC138\uBCC4 \uD480\uC774\uB85C \uBCF8 \uC9C0\uAE08 \uC0C1\uD669\uC744 \uC9C8\uBB38\uC5D0 \uB300\uC785(2~3\uBB38\uC7A5, 80~220\uC790).
 - quote: \uBCC0\uD6A8 \uD6A8\uC0AC \uC6D0\uBB38 \uD55C \uAD6C\uC808.
 - position: quote\uC758 \uB73B\uC744 \uC27D\uAC8C \uD480\uACE0 \uC9C0\uAE08 \uB0B4\uAC00 \uC120 \uC790\uB9AC\uC5D0 \uB300\uC785(2~3\uBB38\uC7A5, 60~220\uC790). \uBCC0\uD6A8\uAC00 \uC5C6\uC73C\uBA74 \uC6C0\uC9C1\uC774\uB294 \uD6A8\uAC00 \uC5C6\uC5B4 \uC9C0\uAE08 \uD750\uB984\uC774 \uC774\uC5B4\uC9C4\uB2E4\uB294 \uB73B\uC73C\uB85C \uC501\uB2C8\uB2E4.
@@ -1976,6 +1992,7 @@ var AI_SCHEMA = {
   type: "object",
   properties: {
     answer: { type: "string" },
+    change: { type: "string" },
     situation: { type: "string" },
     quote: { type: "string" },
     position: { type: "string" },
@@ -1990,7 +2007,7 @@ var AI_SCHEMA = {
     timingIndex: { type: "integer" },
     caution: { type: "string" }
   },
-  required: ["answer", "situation", "quote", "position", "flow", "actions", "choices", "timingIndex", "caution"],
+  required: ["answer", "change", "situation", "quote", "position", "flow", "actions", "choices", "timingIndex", "caution"],
   additionalProperties: false
 };
 function buildUserMessage(ctx) {
@@ -2016,7 +2033,7 @@ function buildUserMessage(ctx) {
   ];
   return lines.join("\n");
 }
-var BANNED = ["\uBC18\uB4DC\uC2DC", "\uBB34\uC870\uAC74", "100%", "\uD2C0\uB9BC\uC5C6\uC774", "\uC7A5\uB2F4"];
+var BANNED = ["\uBC18\uB4DC\uC2DC", "\uBB34\uC870\uAC74", "100%", "\uD2C0\uB9BC\uC5C6\uC774"];
 var BANNED_MARKS = /[·→⇒⟶—–]/;
 var HANJA = /[\u4e00-\u9fff]/;
 var PAREN_HANJA = /\([^)]*[\u4e00-\u9fff][^)]*\)/g;
@@ -2036,6 +2053,7 @@ function validateReading(a, ctx) {
     if (typeof s !== "string" || len(s.trim()) < min || len(s) > max) issues.push(`${name}\uC758 \uAE38\uC774\uAC00 ${min}~${max}\uC790\uB97C \uBC97\uC5B4\uB0AC\uC5B4\uC694`);
   };
   bound("answer", a.answer, 8, 80);
+  bound("change", a.change ?? "", 20, 200);
   bound("situation", a.situation, 40, 280);
   bound("position", a.position, 30, 280);
   bound("flow", a.flow, 15, 200);
@@ -2049,7 +2067,7 @@ function validateReading(a, ctx) {
     if (len(q) < 2 || !ctx.changing.some((c) => strip(c.hanja).includes(q))) issues.push("quote\uAC00 \uBCC0\uD6A8 \uD6A8\uC0AC \uC6D0\uBB38\uACFC \uB2E4\uB985\uB2C8\uB2E4. \uC6D0\uBB38\uC5D0\uC11C \uAE00\uC790 \uADF8\uB300\uB85C \uC62E\uAE30\uC138\uC694");
   } else if (a.quote?.trim()) issues.push("\uBCC0\uD6A8\uAC00 \uC5C6\uC73C\uB2C8 quote\uB294 \uBE48 \uBB38\uC790\uC5F4\uC774\uC5B4\uC57C \uD574\uC694");
   if (!Number.isInteger(a.timingIndex) || a.timingIndex < -1 || a.timingIndex >= ctx.yukhyo.timing.length) issues.push("timingIndex\uAC00 \uD6C4\uBCF4 \uBC94\uC704\uB97C \uBC97\uC5B4\uB0AC\uC5B4\uC694");
-  const prose = [a.answer, a.situation, a.position, a.flow, ...a.actions ?? [], a.choices?.go ?? "", a.choices?.wait ?? "", a.caution].join("\n");
+  const prose = [a.answer, a.change ?? "", a.situation, a.position, a.flow, ...a.actions ?? [], a.choices?.go ?? "", a.choices?.wait ?? "", a.caution].join("\n");
   const others = HEXAGRAMS.map((h) => h.name).filter((n) => !ctx.allowedNames.includes(n) && prose.includes(n));
   if (others.length) issues.push(`\uC790\uB8CC\uC5D0 \uC5C6\uB294 \uAD18 \uC774\uB984\uC744 \uC37C\uC5B4\uC694: ${others.join(", ")}`);
   const allowedLines = new Set(ctx.changing.flatMap((c) => [c.name, c.title]));
@@ -2081,6 +2099,7 @@ function fallbackReading(ctx) {
   while (uniq.length < 3) uniq.push(firstSentence(ctx.primary.categoryText));
   return {
     answer: firstSentence(ctx.primary.categoryText),
+    change: c && r ? `${c.name}\uAC00 \uBCC0\uD574 ${r.name}\uC758 \uD750\uB984\uC73C\uB85C \uBC14\uB00C\uC5B4\uC694. ${r.categoryText}` : "\uBCC0\uD558\uB294 \uD6A8\uAC00 \uC5C6\uC5B4\uC694. \uC9C0\uAE08\uC758 \uD750\uB984\uC774 \uD55C\uB3D9\uC548 \uADF8\uB300\uB85C \uC774\uC5B4\uC838\uC694.",
     situation: ctx.primary.summary,
     quote: c ? c.hanja : "",
     position: c ? `${c.text} ${ctx.category.label}\uC73C\uB85C \uBCF4\uBA74 ${c.stage}` : "\uC6C0\uC9C1\uC774\uB294 \uD6A8\uAC00 \uC5C6\uC5B4\uC694. \uC9C0\uAE08 \uB193\uC778 \uC790\uB9AC\uC640 \uD750\uB984\uC774 \uB2F9\uBD84\uAC04 \uADF8\uB300\uB85C \uC774\uC5B4\uC9C0\uB2C8, \uBCF8\uAD18\uC758 \uB73B\uC744 \uADF8\uB300\uB85C \uC9C0\uCE68\uC73C\uB85C \uC0BC\uC73C\uC138\uC694.",

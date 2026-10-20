@@ -57,6 +57,7 @@ async function main() {
 
   console.log("[1] AI 풀이 표와 권한 함수를 올립니다");
   await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0008_ai.sql"), "utf8") });
+  await api(token, "POST", `/v1/projects/${ref}/database/query`, { query: readFileSync(join(ROOT, "supabase/migrations/0009_admin_ai.sql"), "utf8") });
   console.log("완료");
 
   console.log("[2] 근거 자료를 묶습니다");

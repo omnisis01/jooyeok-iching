@@ -166,6 +166,12 @@ function AiResult({ result, fallback, timing, expert, sources, onRetry }: { resu
         </div>
       ) : null}
       <p className="text-xl font-bold leading-snug">{result.answer}</p>
+      {result.change ? (
+        <div className="rounded-2xl border-2 border-vermilion/40 bg-vermilion/8 px-4 py-3">
+          <h4 className="text-xs font-bold text-vermilion">어떻게 변하나요</h4>
+          <p className="mt-1 text-[15px] font-semibold leading-relaxed">{result.change}</p>
+        </div>
+      ) : null}
       <Block title="지금 상황">{result.situation}</Block>
       <div>
         <h4 className="text-xs font-bold text-vermilion">내가 선 자리</h4>

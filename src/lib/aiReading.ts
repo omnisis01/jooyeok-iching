@@ -31,6 +31,8 @@ export type AiContext = {
 
 export type AiReading = {
   answer: string;
+  /** 어떻게 변하나요: 지금에서 앞으로 무엇이 어떻게 바뀌는지(변효와 지괘 근거). 예전에 저장한 풀이에는 없을 수 있다 */
+  change?: string;
   situation: string;
   quote: string;
   position: string;
@@ -83,7 +85,7 @@ export function buildContext(x: AiInput): AiContext {
       const lt = getLineText(p.number, i);
       return { index: i, name: LINE_NAMES[i], title: lineTitle(x.lines, i), hanja: lt.hanja, text: lt.text, advice: lt.advice, stage: LINE_STAGE_BY_CATEGORY[cat][i] };
     }),
-    yukhyo: { level: y.verdict.level, title: y.verdict.title, text: y.verdict.text, timing: y.timing },
+    yukhyo: { level: y.verdict.level, title: y.verdict.title, text: y.verdict.text, timing: y.timingPlain },
     allowedNames: [p.name, ...(r ? [r.name] : [])],
   };
 }
@@ -101,13 +103,14 @@ export const AI_SYSTEM = `당신은 주역 점괘를 쉬운 한국어로 풀어 
 - 모든 문장을 "~해요", "~예요", "~세요"로 끝나는 해요체로 씁니다. "~합니다", "~입니다"로 끝내지 않습니다. 처음 보는 사람도 바로 알아듣게, 전문 용어는 풀어서 씁니다.
 - 한자는 quote에만 씁니다. 영어를 쓰지 않습니다.
 - 가운뎃점, 화살표, 줄표, 하이픈 같은 기호를 쓰지 않습니다. 목록 기호나 번호도 문장 안에 넣지 않습니다.
-- "반드시", "무조건", "100%", "틀림없이", "장담" 같은 단정하는 말을 쓰지 않습니다.
+- "반드시", "무조건", "100%", "틀림없이" 같은 단정하는 말을 쓰지 않습니다.
 - 듣기 좋은 말만 하지 않습니다. 자료가 흉하면 흉하다고 부드럽지만 분명하게 말합니다. 좋은 괘라도 조심할 점은 꼭 하나 씁니다.
 - 병명 진단, 약, 투자 종목이나 금액, 법률 판단을 단정하지 않습니다.
 - 매번 같은 틀의 문장을 반복하지 말고, 사용자의 질문에 나온 말을 살려 그 사람의 상황에 대입합니다.
 
 칸별로 쓸 것
 - answer: 질문에 대한 직답 한 문장(15~60자). 방향을 분명히 합니다.
+- change: 어떻게 변하나요. 사람들이 가장 궁금해하는 칸입니다. 지금 상황에서 앞으로 무엇이 어떻게 바뀌는지를 질문에 대입해 씁니다. 어느 효가 변하는지와 지괘가 뜻하는 방향을 근거로, "지금은 ~하지만 ~로 바뀌어요"처럼 변화의 앞뒤가 보이게(1~2문장, 30~160자). 변효가 없으면 지금 흐름이 한동안 이어진다는 뜻으로 씁니다.
 - situation: 본괘 해설과 운세별 풀이로 본 지금 상황을 질문에 대입(2~3문장, 80~220자).
 - quote: 변효 효사 원문 한 구절.
 - position: quote의 뜻을 쉽게 풀고 지금 내가 선 자리에 대입(2~3문장, 60~220자). 변효가 없으면 움직이는 효가 없어 지금 흐름이 이어진다는 뜻으로 씁니다.
@@ -121,6 +124,7 @@ export const AI_SCHEMA = {
   type: "object",
   properties: {
     answer: { type: "string" },
+    change: { type: "string" },
     situation: { type: "string" },
     quote: { type: "string" },
     position: { type: "string" },
@@ -135,7 +139,7 @@ export const AI_SCHEMA = {
     timingIndex: { type: "integer" },
     caution: { type: "string" },
   },
-  required: ["answer", "situation", "quote", "position", "flow", "actions", "choices", "timingIndex", "caution"],
+  required: ["answer", "change", "situation", "quote", "position", "flow", "actions", "choices", "timingIndex", "caution"],
   additionalProperties: false,
 } as const;
 
@@ -165,7 +169,8 @@ export function buildUserMessage(ctx: AiContext): string {
   return lines.join("\n");
 }
 
-const BANNED = ["반드시", "무조건", "100%", "틀림없이", "장담"];
+// "장담하기 어려워요"처럼 조심스럽게 쓰는 말은 허용한다
+const BANNED = ["반드시", "무조건", "100%", "틀림없이"];
 const BANNED_MARKS = /[·→⇒⟶—–]/;
 const HANJA = /[\u4e00-\u9fff]/;
 // "산풍고(山風蠱)"처럼 괄호 안에 한자를 붙이는 것은 허용한다
@@ -198,6 +203,7 @@ export function validateReading(a: AiReading, ctx: AiContext): string[] {
     if (typeof s !== "string" || len(s.trim()) < min || len(s) > max) issues.push(`${name}의 길이가 ${min}~${max}자를 벗어났어요`);
   };
   bound("answer", a.answer, 8, 80);
+  bound("change", a.change ?? "", 20, 200);
   bound("situation", a.situation, 40, 280);
   bound("position", a.position, 30, 280);
   bound("flow", a.flow, 15, 200);
@@ -215,7 +221,7 @@ export function validateReading(a: AiReading, ctx: AiContext): string[] {
 
   if (!Number.isInteger(a.timingIndex) || a.timingIndex < -1 || a.timingIndex >= ctx.yukhyo.timing.length) issues.push("timingIndex가 후보 범위를 벗어났어요");
 
-  const prose = [a.answer, a.situation, a.position, a.flow, ...(a.actions ?? []), a.choices?.go ?? "", a.choices?.wait ?? "", a.caution].join("\n");
+  const prose = [a.answer, a.change ?? "", a.situation, a.position, a.flow, ...(a.actions ?? []), a.choices?.go ?? "", a.choices?.wait ?? "", a.caution].join("\n");
   // 다른 괘 이름을 지어냈는지
   const others = HEXAGRAMS.map((h) => h.name).filter((n) => !ctx.allowedNames.includes(n) && prose.includes(n));
   if (others.length) issues.push(`자료에 없는 괘 이름을 썼어요: ${others.join(", ")}`);
@@ -254,6 +260,7 @@ export function fallbackReading(ctx: AiContext): AiReading {
   while (uniq.length < 3) uniq.push(firstSentence(ctx.primary.categoryText));
   return {
     answer: firstSentence(ctx.primary.categoryText),
+    change: c && r ? `${c.name}가 변해 ${r.name}의 흐름으로 바뀌어요. ${r.categoryText}` : "변하는 효가 없어요. 지금의 흐름이 한동안 그대로 이어져요.",
     situation: ctx.primary.summary,
     quote: c ? c.hanja : "",
     position: c ? `${c.text} ${ctx.category.label}으로 보면 ${c.stage}` : "움직이는 효가 없어요. 지금 놓인 자리와 흐름이 당분간 그대로 이어지니, 본괘의 뜻을 그대로 지침으로 삼으세요.",

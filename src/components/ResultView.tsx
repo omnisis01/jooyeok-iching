@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Check, ChevronDown, Copy, ImageDown, RotateCcw } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, ChevronRight, Copy, ImageDown, RotateCcw } from "lucide-react";
 import { hexagramSymbol } from "@/data/hexagrams";
 import { LINE_NAMES, trigramsOf, type Reading } from "@/lib/iching";
 import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
@@ -49,8 +49,12 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
     setExpanded(true);
     window.setTimeout(() => detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
-  const changeLine =
-    changingLines.length === 1 ? `${iga(LINE_NAMES[changingLines[0]])} 변해` : changingLines.length > 1 ? `움직이는 효 ${changingLines.length}개가 변해` : null;
+  // 변하는 효: 두 개 이상이면 위쪽 효를 중심으로 본다(변효 풀이와 같은 규칙)
+  const focusLine = changingLines.length ? Math.max(...changingLines) : null;
+  const changeLabel = changingLines.length
+    ? `${changingLines.length > 1 ? [...changingLines].sort((a, b) => a - b).map((i) => LINE_NAMES[i]).slice(0, -1).join(", ") + ", " : ""}${iga(LINE_NAMES[focusLine!])} 변해요`
+    : null;
+  const resultingCatText = resulting ? categoryReading(resulting.number, cat.key) : null;
 
   // 결과가 나오면 이 기기에 기록한다 (같은 결과는 한 번만)
   useEffect(() => {
@@ -102,20 +106,40 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
         <h2 className="mt-1 text-4xl font-bold tracking-tight">{primary.name}</h2>
         <p className="mt-2 text-gold-soft">{primary.keyword}</p>
 
-        <div className="mx-auto mt-6 max-w-md rounded-2xl bg-vermilion/8 px-5 py-4">
-          <p className="text-xs font-bold text-vermilion">{cat.label}으로 보면</p>
-          <p className="mt-1.5 text-lg font-semibold leading-relaxed">{catText}</p>
-        </div>
-        <p className="mt-4 text-[15px] leading-relaxed text-foreground/80">
-          {changeLine && resulting ? (
+        {/* 지금, 변하는 효, 앞으로: 보는 사람에게 가장 중요한 "어떻게 변하나"를 한 줄기로 보여 준다 */}
+        <div className="mx-auto mt-6 max-w-md space-y-2 text-left">
+          <div className="rounded-2xl bg-background px-5 py-4">
+            <p className="text-xs font-bold text-muted">지금, {cat.label}으로 보면</p>
+            <p className="mt-1.5 text-lg font-semibold leading-relaxed">{catText}</p>
+          </div>
+          {resulting && focusLine !== null ? (
             <>
-              {changeLine} <b className="text-foreground">{resulting.name}</b>
-              {josa(resulting.name, "으로", "로")} 이어져요. {resulting.keyword}
+              <div className="flex items-center gap-3 rounded-2xl border-2 border-vermilion/40 bg-vermilion/8 px-4 py-3">
+                <div className="flex shrink-0 items-center gap-1">
+                  <HexagramFigure lines={primary.lines} changing={changingLines} size={34} className="text-gold-soft" />
+                  <ChevronRight size={16} className="text-vermilion" aria-hidden />
+                  <HexagramFigure lines={resulting.lines} changing={changingLines} changingColor="var(--jade)" size={34} className="text-foreground/30" />
+                </div>
+                <div>
+                  <p className="font-bold text-vermilion">{changeLabel}</p>
+                  <p className="mt-0.5 text-sm leading-relaxed text-foreground/80">
+                    {cat.label}으로 보면, {LINE_STAGE_BY_CATEGORY[cat.key][focusLine]}
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-2xl bg-jade/10 px-5 py-4">
+                <p className="text-xs font-bold text-jade">
+                  앞으로, {resulting.name}
+                  {josa(resulting.name, "으로", "로")} 변하면
+                </p>
+                <p className="mt-1.5 text-lg font-semibold leading-relaxed">{resultingCatText}</p>
+                <p className="mt-1 text-sm text-muted">{resulting.keyword}</p>
+              </div>
             </>
           ) : (
-            "움직이는 효가 없어 지금의 흐름이 그대로 이어져요"
+            <p className="rounded-2xl bg-background px-5 py-3 text-[15px] leading-relaxed text-foreground/80">변하는 효가 없어요. 지금의 흐름이 한동안 그대로 이어져요.</p>
           )}
-        </p>
+        </div>
 
         <div className="mt-6 flex flex-col items-center gap-3">
           {!expanded ? (
