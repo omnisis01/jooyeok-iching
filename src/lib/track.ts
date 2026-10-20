@@ -5,13 +5,13 @@ import { cloudEnabled, supabase } from "./supabase";
 export type EventName =
   | "app_open" | "cast_start" | "cast_done" | "quota_exhausted" | "login_prompt" | "login_link_sent" | "login_done"
   | "share_image" | "share_coupon" | "push_on" | "push_off" | "deep_view" | "deep_buy_click" | "guide_open"
-  | "wheel_open" | "daily_card" | "pro_click" | "ai_open";
+  | "wheel_open" | "daily_card" | "pro_click" | "ai_open" | "review_submit" | "inquiry_submit";
 
 const ANON_KEY = "jooyeok-master-anon-id";
 let userId: string | null = null;
 const once = new Set<string>();
 
-function anonId(): string | null {
+export function anonId(): string | null {
   try {
     let v = localStorage.getItem(ANON_KEY);
     if (!v) {

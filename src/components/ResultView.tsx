@@ -22,6 +22,7 @@ import FlowOverview from "./FlowOverview";
 import InteractiveHexagram from "./InteractiveHexagram";
 import DeepReading from "./DeepReading";
 import AiReadingCard from "./AiReadingCard";
+import ReviewPrompt from "./ReviewPrompt";
 import AdSlot from "./AdSlot";
 import { makeId, saveRecord } from "@/lib/history";
 import { iga, josa } from "@/lib/josa";
@@ -304,6 +305,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
           </div>
         </motion.div>
       ) : null}
+      {saveToHistory ? <ReviewPrompt reading={reading} /> : null}
       <AdSlot className="mt-2" />
       <ShareCardModal
         job={shareOpen ? { render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading), renderStory: () => renderStoryCard(reading), storyFileName: storyFileName("나의괘", reading.primary) } : null}

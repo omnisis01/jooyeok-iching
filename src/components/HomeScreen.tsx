@@ -12,6 +12,7 @@ import HexagramFigure from "./HexagramFigure";
 import HexagramWheel from "./HexagramWheel";
 import ResultView from "./ResultView";
 import AccountCard from "./AccountCard";
+import FeaturedReviews from "./FeaturedReviews";
 import PremiumCard from "./PremiumCard";
 import YukhyoResult from "./YukhyoResult";
 import { FREE_HISTORY_LIMIT, fetchPremiumUntil, paymentsEnabled } from "@/lib/premium";
@@ -227,6 +228,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       </section>
 
 
+      <FeaturedReviews />
       <AccountCard />
       <PremiumCard />
       <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />

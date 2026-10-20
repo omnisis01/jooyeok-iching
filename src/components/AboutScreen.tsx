@@ -1,6 +1,7 @@
 // 알아보기 화면: 주역과 음양, 8괘, 점치는 방법 설명
 import Taegeuk from "./Taegeuk";
 import MethodGuide from "./MethodGuide";
+import InquiryForm from "./InquiryForm";
 import { ThemeSetting } from "./ThemeToggle";
 import { GuaHyoBody } from "./GuaHyoExplainer";
 import { TRIGRAMS } from "@/lib/iching";
@@ -53,6 +54,8 @@ export default function AboutScreen() {
         <MethodGuide method="yarrow" />
         <MethodGuide method="yukhyo" />
       </section>
+
+      <InquiryForm />
 
       <p className="px-2 pb-2 text-center text-xs leading-relaxed text-muted">
         이 앱의 해설은 통행본 주역을 바탕으로 쉽게 풀어 쓴 것입니다. 삶의 중요한 선택은 언제나 여러분의 몫입니다.

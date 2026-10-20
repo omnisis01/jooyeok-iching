@@ -5,6 +5,15 @@ import { useEffect, useState } from "react";
 import { ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
 import { fetchAdminDashboard, fetchIsAdmin, type AdminDashboard } from "@/lib/admin";
 import { cloudEnabled } from "@/lib/supabase";
+import { InquiriesPanel, PaymentsPanel, ReviewsPanel } from "./AdminPanels";
+
+type Tab = "stats" | "inquiries" | "payments" | "reviews";
+const TABS: [Tab, string][] = [
+  ["stats", "현황"],
+  ["inquiries", "문의"],
+  ["payments", "결제"],
+  ["reviews", "후기"],
+];
 
 // 하루 표에 보일 지표: [기록 이름, 제목, 사람 수로 셀지]
 const COLUMNS: [string, string, boolean][] = [
@@ -33,6 +42,7 @@ function aiCostKrw(rows: AdminDashboard["ai_month_models"]): number {
 
 export default function AdminScreen() {
   const [admin, setAdmin] = useState<boolean | null>(null);
+  const [tab, setTab] = useState<Tab>("stats");
   const [data, setData] = useState<AdminDashboard | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -102,69 +112,87 @@ export default function AdminScreen() {
         {error ? <p className="mt-3 text-sm text-vermilion">{error}</p> : null}
       </section>
 
-      {data ? (
+      <div className="flex gap-1 overflow-x-auto rounded-full bg-card p-1 text-sm font-semibold shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+        {TABS.map(([k, label]) => (
+          <button key={k} onClick={() => setTab(k)} className={`flex-1 whitespace-nowrap rounded-full px-3 py-2 ${tab === k ? "bg-foreground text-card" : "text-muted"}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "stats" ? (
         <>
-          <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <Stat label="전체 가입자" value={`${data.users}명`} sub={`오늘 +${data.users_today}`} />
-            <Stat label="Pro 이용 중" value={`${data.pro}명`} />
-            <Stat label="아침 알림 구독" value={`${data.push_subs}개`} />
-            <Stat label="건별 결제" value={`${data.unlocks}건`} sub={`오늘 ${data.unlocks_today}건`} />
-            <Stat label="결제 금액" value={won(data.paid_total)} sub={`오늘 ${won(data.paid_today)}`} />
-            <Stat label="AI 풀이" value={`${data.ai_total}건`} sub={`오늘 ${data.ai_today}건`} />
-            <Stat label="이번 달 AI 비용(추정)" value={won(aiCostKrw(data.ai_month_models ?? []))} sub={`${(data.ai_month_models ?? []).reduce((a, r) => a + r.n, 0)}건`} />
-            <Stat label="기준일" value={data.today} sub="한국 시간" />
-          </section>
+        {data ? (
+          <>
+            <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <Stat label="전체 가입자" value={`${data.users}명`} sub={`오늘 +${data.users_today}`} />
+              <Stat label="Pro 이용 중" value={`${data.pro}명`} />
+              <Stat label="아침 알림 구독" value={`${data.push_subs}개`} />
+              <Stat label="건별 결제" value={`${data.unlocks}건`} sub={`오늘 ${data.unlocks_today}건`} />
+              <Stat label="결제 금액" value={won(data.paid_total)} sub={`오늘 ${won(data.paid_today)}`} />
+              <Stat label="AI 풀이" value={`${data.ai_total}건`} sub={`오늘 ${data.ai_today}건`} />
+              <Stat label="이번 달 AI 비용(추정)" value={won(aiCostKrw(data.ai_month_models ?? []))} sub={`${(data.ai_month_models ?? []).reduce((a, r) => a + r.n, 0)}건`} />
+              <Stat label="기준일" value={data.today} sub="한국 시간" />
+            </section>
 
-          <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-            <p className="font-bold">최근 14일 사용 기록</p>
-            <p className="mt-1 text-xs text-muted">방문, 횟수 소진, 로그인, 유료 카드 노출은 사람 수, 나머지는 횟수예요. AI 대체는 AI 대신 기본 풀이가 나간 횟수예요(차감 없음).</p>
-            {days.length ? (
-              <div className="mt-3 overflow-x-auto">
-                <table className="w-full min-w-[680px] text-right text-sm">
-                  <thead>
-                    <tr className="text-xs text-muted">
-                      <th className="py-2 text-left font-semibold">날짜</th>
-                      {COLUMNS.map(([k, t]) => (
-                        <th key={k} className="px-2 py-2 font-semibold">
-                          {t}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {days.map((d) => (
-                      <tr key={d} className="border-t border-border">
-                        <td className="py-2 text-left font-semibold">{d.slice(5)}</td>
-                        {COLUMNS.map(([k, , people]) => {
-                          const v = byDay.get(d)?.[k];
-                          return (
-                            <td key={k} className="px-2 py-2 tabular-nums">
-                              {v ? (people ? v.people : v.n) : 0}
-                            </td>
-                          );
-                        })}
+            <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+              <p className="font-bold">최근 14일 사용 기록</p>
+              <p className="mt-1 text-xs text-muted">방문, 횟수 소진, 로그인, 유료 카드 노출은 사람 수, 나머지는 횟수예요. AI 대체는 AI 대신 기본 풀이가 나간 횟수예요(차감 없음).</p>
+              {days.length ? (
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[680px] text-right text-sm">
+                    <thead>
+                      <tr className="text-xs text-muted">
+                        <th className="py-2 text-left font-semibold">날짜</th>
+                        {COLUMNS.map(([k, t]) => (
+                          <th key={k} className="px-2 py-2 font-semibold">
+                            {t}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="mt-3 text-sm text-muted">아직 기록이 없어요.</p>
-            )}
-          </section>
-        </>
-      ) : null}
+                    </thead>
+                    <tbody>
+                      {days.map((d) => (
+                        <tr key={d} className="border-t border-border">
+                          <td className="py-2 text-left font-semibold">{d.slice(5)}</td>
+                          {COLUMNS.map(([k, , people]) => {
+                            const v = byDay.get(d)?.[k];
+                            return (
+                              <td key={k} className="px-2 py-2 tabular-nums">
+                                {v ? (people ? v.people : v.n) : 0}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted">아직 기록이 없어요.</p>
+              )}
+            </section>
+          </>
+        ) : null}
 
-      {supabaseRef ? (
-        <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-          <p className="font-bold">바로 가기</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Shortcut href={`https://supabase.com/dashboard/project/${supabaseRef}/auth/users`} label="가입자 목록 (Supabase)" />
-            <Shortcut href={`https://supabase.com/dashboard/project/${supabaseRef}/editor`} label="데이터 표 (Supabase)" />
-            <Shortcut href="https://github.com/omnisis01/jooyeok-iching/actions" label="배포 상태 (GitHub)" />
-          </div>
-        </section>
-      ) : null}
+        {supabaseRef ? (
+          <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+            <p className="font-bold">바로 가기</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Shortcut href={`https://supabase.com/dashboard/project/${supabaseRef}/auth/users`} label="가입자 목록 (Supabase)" />
+              <Shortcut href={`https://supabase.com/dashboard/project/${supabaseRef}/editor`} label="데이터 표 (Supabase)" />
+              <Shortcut href="https://github.com/omnisis01/jooyeok-iching/actions" label="배포 상태 (GitHub)" />
+            </div>
+          </section>
+        ) : null}
+        </>
+      ) : tab === "inquiries" ? (
+        <InquiriesPanel />
+      ) : tab === "payments" ? (
+        <PaymentsPanel />
+      ) : (
+        <ReviewsPanel />
+      )}
     </div>
   );
 }
