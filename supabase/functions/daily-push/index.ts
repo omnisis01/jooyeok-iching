@@ -72,6 +72,27 @@ Deno.serve(async (req) => {
       await supabase.from("reminders").update({ sent_at: new Date().toISOString() }).eq("user_id", r.user_id).eq("reading_key", r.reading_key);
     }
     if (reminded) await supabase.from("events").insert({ name: "reminder_sent", props: { n: reminded } });
+
+    // 결과 확인: AI 점사풀이를 받은 지 7일 된 사람에게 "어떻게 됐나요?"를 한 번 묻는다
+    const weekAgo = new Date(kstNow().getTime() - 7 * 86400e3).toISOString().slice(0, 10);
+    const { data: asks } = await supabase.from("ai_readings").select("user_id, reading_key, question").eq("day", weekAgo).is("asked_at", null).is("outcome", null).limit(500);
+    let asked = 0;
+    for (const r of asks ?? []) {
+      const { data: mine } = await supabase.from("push_subscriptions").select("endpoint, keys").eq("user_id", r.user_id).lt("fail_count", 5);
+      if (!mine?.length) continue;
+      const body = r.question ? `“${r.question}” 하고 물었던 풀이, 그 뒤 어떻게 됐나요? 한 번만 눌러 알려 주시면 풀이가 더 좋아져요.` : "일주일 전에 받은 AI 점사풀이, 그 뒤 어떻게 됐나요? 한 번만 눌러 알려 주세요.";
+      const op = JSON.stringify({ title: "지난번 질문, 어떻게 됐나요?", body, url: `./?from=outcome&open=${encodeURIComponent(r.reading_key)}#home`, tag: `outcome-${r.reading_key}`, reason: "outcome" });
+      for (const s of mine) {
+        try {
+          await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, op, { TTL: 60 * 60 * 12 });
+          asked++;
+        } catch {
+          // 죽은 구독은 본 발송에서 정리한다
+        }
+      }
+      await supabase.from("ai_readings").update({ asked_at: new Date().toISOString() }).eq("user_id", r.user_id).eq("reading_key", r.reading_key);
+    }
+    if (asked) await supabase.from("events").insert({ name: "outcome_asked", props: { n: asked } });
   }
 
   const hex = dailyHexagram(kstDateString());

@@ -32,6 +32,7 @@ const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 
 // 100만 토큰당 달러(입력, 출력). 비용 추정용
 const PRICE: Record<string, [number, number]> = { "claude-haiku-5-5": [0.1, 0.5], "claude-sonnet-5-5": [2, 10], "claude-opus-5-5": [4, 20] };
+// 미등록 모델은 Opus 값으로 넉넉히 센다
 const KRW_PER_USD = 1400;
 function aiCostKrw(rows: AdminDashboard["ai_month_models"]): number {
   return Math.round(rows.reduce((sum, r) => {
@@ -131,6 +132,11 @@ export default function AdminScreen() {
               <Stat label="건별 결제" value={`${data.unlocks}건`} sub={`오늘 ${data.unlocks_today}건`} />
               <Stat label="결제 금액" value={won(data.paid_total)} sub={`오늘 ${won(data.paid_today)}`} />
               <Stat label="AI 풀이" value={`${data.ai_total}건`} sub={`오늘 ${data.ai_today}건`} />
+            <Stat
+              label="맞았어요 비율"
+              value={data.ai_outcomes && data.ai_outcomes.hit + data.ai_outcomes.miss > 0 ? `${Math.round((100 * data.ai_outcomes.hit) / (data.ai_outcomes.hit + data.ai_outcomes.miss))}%` : "아직 없음"}
+              sub={data.ai_outcomes ? `맞음 ${data.ai_outcomes.hit}, 아님 ${data.ai_outcomes.miss}, 모름 ${data.ai_outcomes.unsure}` : undefined}
+            />
               <Stat label="이번 달 AI 비용(추정)" value={won(aiCostKrw(data.ai_month_models ?? []))} sub={`${(data.ai_month_models ?? []).reduce((a, r) => a + r.n, 0)}건`} />
               <Stat label="기준일" value={data.today} sub="한국 시간" />
             </section>

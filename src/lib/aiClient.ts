@@ -31,11 +31,13 @@ async function session() {
 }
 
 /** 이미 만든 풀이(다시 열 때). 없으면 null */
-export async function savedAiReading(reading: Reading): Promise<{ result: AiReading; followup: AiFollowup | null } | null> {
+export type AiOutcome = "hit" | "miss" | "unsure";
+
+export async function savedAiReading(reading: Reading): Promise<{ result: AiReading; followup: AiFollowup | null; outcome: AiOutcome | null } | null> {
   const s = await session();
   if (!s) return null;
-  const { data } = await supabase().from("ai_readings").select("result, followup").eq("user_id", s.user.id).eq("reading_key", aiReadingKey(aiInputOf(reading))).maybeSingle();
-  return data ? { result: data.result as AiReading, followup: (data.followup as AiFollowup | null) ?? null } : null;
+  const { data } = await supabase().from("ai_readings").select("result, followup, outcome").eq("user_id", s.user.id).eq("reading_key", aiReadingKey(aiInputOf(reading))).maybeSingle();
+  return data ? { result: data.result as AiReading, followup: (data.followup as AiFollowup | null) ?? null, outcome: (data.outcome as AiOutcome | null) ?? null } : null;
 }
 
 /** 이 계정이 AI 점사풀이를 받은 결과들의 열쇠(기록 목록의 AI 표시용) */
@@ -88,4 +90,10 @@ export async function requestAiReading(reading: Reading): Promise<AiResponse> {
 export async function setReminder(date: string, readingKey: string, question: string | null, hexName: string): Promise<void> {
   const { error } = await supabase().rpc("set_reminder", { p_date: date, p_key: readingKey, p_question: question, p_hex: hexName });
   if (error) throw new Error(error.message.includes("login") ? "먼저 로그인해 주세요" : error.message.includes("date") ? "지난 날짜에는 알림을 걸 수 없어요" : "알림을 걸지 못했어요");
+}
+
+/** 그 뒤 어떻게 됐는지(맞았어요, 아니에요, 아직 몰라요) */
+export async function setOutcome(reading: Reading, outcome: AiOutcome): Promise<void> {
+  const { error } = await supabase().rpc("set_outcome", { p_key: aiReadingKey(aiInputOf(reading)), p_outcome: outcome });
+  if (error) throw new Error("저장하지 못했어요");
 }

@@ -12,7 +12,7 @@ import { getSession, onAuthChange } from "@/lib/cloudSync";
 import { cloudEnabled } from "@/lib/supabase";
 import { UNLOCK_PRICE_KRW, readingKey, startUnlock, unlockEnabled } from "@/lib/unlock";
 import { currentSubscription, pushEnabled, pushSupported, subscribePush } from "@/lib/push";
-import { requestFollowup, setReminder } from "@/lib/aiClient";
+import { requestFollowup, setOutcome, setReminder, type AiOutcome } from "@/lib/aiClient";
 import { MessageCircleQuestion } from "lucide-react";
 import { Bell } from "lucide-react";
 import { categoryOf } from "@/lib/categories";
@@ -29,7 +29,7 @@ const PREVIEW = ["한 줄 답", "어떻게 변하나요", "내가 선 자리(효
 type View =
   | { kind: "idle" }
   | { kind: "loading" }
-  | { kind: "done"; result: AiReading; fallback: boolean; followup: AiFollowup | null }
+  | { kind: "done"; result: AiReading; fallback: boolean; followup: AiFollowup | null; saved: boolean; outcome: AiOutcome | null }
   | { kind: "need_purchase" }
   | { kind: "safety" }
   | { kind: "error"; message: string };
@@ -55,7 +55,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
       const saved = await savedAiReading(reading);
       if (!alive) return;
       if (saved) {
-        setView({ kind: "done", result: saved.result, fallback: false, followup: saved.followup });
+        setView({ kind: "done", result: saved.result, fallback: false, followup: saved.followup, saved: true, outcome: saved.outcome });
         return;
       }
       setCan(await aiEntitlement(reading));
@@ -82,7 +82,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
     setView({ kind: "loading" });
     try {
       const r = await requestAiReading(reading);
-      if (r.status === "done" || r.status === "fallback") setView({ kind: "done", result: r.result, fallback: r.status === "fallback", followup: r.followup ?? null });
+      if (r.status === "done" || r.status === "fallback") setView({ kind: "done", result: r.result, fallback: r.status === "fallback", followup: r.followup ?? null, saved: false, outcome: null });
       else setView({ kind: r.status });
     } catch (e) {
       setView({ kind: "error", message: e instanceof Error ? e.message : "AI 점사풀이를 불러오지 못했어요" });
@@ -138,6 +138,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
             }
           />
           {!view.fallback ? <FollowupBox reading={reading} saved={view.followup} onDone={(f) => setView({ ...view, followup: f })} /> : null}
+          {view.saved ? <OutcomeRow reading={reading} outcome={view.outcome} onSet={(o) => setView({ ...view, outcome: o })} /> : null}
           {!view.fallback ? (
             <button onClick={() => setShareOpen(true)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
               <ImageDown size={18} /> AI 점사풀이 이미지로 저장하기
@@ -389,6 +390,34 @@ function FollowupBox({ reading, saved, onDone }: { reading: Reading; saved: AiFo
         </div>
       ) : null}
       {error ? <p className="mt-2 text-xs text-vermilion">{error}</p> : null}
+    </div>
+  );
+}
+
+/** 다시 열어 본 풀이에서 "그 뒤 어떻게 됐나요?"를 한 번 묻는다. 맞았다는 답이 쌓이면 홍보 근거가 된다 */
+function OutcomeRow({ reading, outcome, onSet }: { reading: Reading; outcome: AiOutcome | null; onSet: (o: AiOutcome) => void }) {
+  const [busy, setBusy] = useState(false);
+  if (outcome) return <p className="mt-4 text-center text-xs text-muted">{outcome === "hit" ? "맞았다고 알려 주셨어요. 고마워요." : outcome === "miss" ? "아니었다고 알려 주셨어요. 풀이를 더 다듬을게요." : "아직 모른다고 알려 주셨어요. 때가 되면 다시 봐 주세요."}</p>;
+  const pick = async (o: AiOutcome) => {
+    setBusy(true);
+    try {
+      await setOutcome(reading, o);
+      track("outcome_set", { outcome: o });
+      onSet(o);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="mt-4 rounded-2xl bg-background p-4 text-center">
+      <p className="text-sm font-bold">이 풀이, 그 뒤 어떻게 됐나요?</p>
+      <div className="mt-2 flex justify-center gap-2">
+        {([["hit", "맞았어요"], ["miss", "아니에요"], ["unsure", "아직 몰라요"]] as [AiOutcome, string][]).map(([o, l]) => (
+          <button key={o} disabled={busy} onClick={() => pick(o)} className="rounded-full bg-card px-4 py-2 text-sm font-semibold shadow-sm transition hover:bg-border/60 disabled:opacity-50">
+            {l}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@ export type AdminDashboard = {
   ai_total: number;
   ai_today: number;
   ai_month_models: { model: string; n: number; in_tok: number; out_tok: number }[];
+  ai_outcomes?: { hit: number; miss: number; unsure: number };
   days: { day: string; name: string; n: number; people: number }[];
 };
 

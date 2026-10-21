@@ -53,6 +53,21 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
 
   const { today, hour } = useToday();
 
+  // 알림(결과 확인)에서 ?open=열쇠 로 들어오면 그 기록을 바로 연다
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const key = p.get("open");
+    if (!key) return;
+    const t = window.setTimeout(() => {
+      const rec = loadHistory().find((r) => r.type === "iching" && readingKey(readingFromRecord(r)) === key);
+      if (rec) setViewing(rec);
+      p.delete("open");
+      p.delete("from");
+      window.history.replaceState(null, "", `${window.location.pathname}${p.size ? "?" + p : ""}${window.location.hash}`);
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, []);
+
   // 건별 결제창에서 돌아왔으면 승인하고, 그 결과 기록을 바로 연다
   useEffect(() => {
     const back = unlockReturn();
