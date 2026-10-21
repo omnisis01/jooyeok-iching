@@ -2,12 +2,12 @@
 import type { Reading } from "./iching";
 import { kstDateString } from "./clock";
 import { cloudEnabled, supabase } from "./supabase";
-import { aiReadingKey, type AiInput, type AiReading } from "./aiReading";
+import { aiReadingKey, type AiFollowup, type AiInput, type AiReading } from "./aiReading";
 
 export type AiEntitlement = "admin" | "pro" | "unlock" | "trial" | null;
 
 export type AiResponse =
-  | { status: "done" | "fallback"; result: AiReading; reason?: string }
+  | { status: "done" | "fallback"; result: AiReading; reason?: string; followup?: AiFollowup | null }
   | { status: "need_purchase" }
   | { status: "safety" };
 
@@ -31,11 +31,35 @@ async function session() {
 }
 
 /** 이미 만든 풀이(다시 열 때). 없으면 null */
-export async function savedAiReading(reading: Reading): Promise<AiReading | null> {
+export async function savedAiReading(reading: Reading): Promise<{ result: AiReading; followup: AiFollowup | null } | null> {
   const s = await session();
   if (!s) return null;
-  const { data } = await supabase().from("ai_readings").select("result").eq("user_id", s.user.id).eq("reading_key", aiReadingKey(aiInputOf(reading))).maybeSingle();
-  return (data?.result as AiReading | undefined) ?? null;
+  const { data } = await supabase().from("ai_readings").select("result, followup").eq("user_id", s.user.id).eq("reading_key", aiReadingKey(aiInputOf(reading))).maybeSingle();
+  return data ? { result: data.result as AiReading, followup: (data.followup as AiFollowup | null) ?? null } : null;
+}
+
+/** 이 계정이 AI 점사풀이를 받은 결과들의 열쇠(기록 목록의 AI 표시용) */
+export async function aiReadingKeys(): Promise<Set<string>> {
+  const s = await session();
+  if (!s) return new Set();
+  const { data } = await supabase().from("ai_readings").select("reading_key").eq("user_id", s.user.id).limit(500);
+  return new Set((data ?? []).map((r) => r.reading_key as string));
+}
+
+export type FollowupResponse = { status: "followup"; followup: AiFollowup } | { status: "followup_fallback" } | { status: "safety" };
+
+/** 같은 괘로 한 번 더 묻기(결과 하나에 1회) */
+export async function requestFollowup(reading: Reading, question: string): Promise<FollowupResponse> {
+  const s = await session();
+  if (!s) throw new Error("먼저 로그인해 주세요");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/ai-reading`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${s.access_token}`, apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "", "Content-Type": "application/json" },
+    body: JSON.stringify({ input: aiInputOf(reading), followup: question }),
+  });
+  const json = (await res.json().catch(() => ({}))) as FollowupResponse & { error?: string };
+  if (!res.ok) throw new Error(json.error || "답을 불러오지 못했어요. 잠시 후 다시 시도해 주세요");
+  return json;
 }
 
 /** 버튼 문구를 고르기 위한 권한 확인(만들지는 않는다) */

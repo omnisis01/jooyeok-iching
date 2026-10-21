@@ -6,13 +6,14 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { ImageDown, Lock, RefreshCw, Sparkles } from "lucide-react";
 import type { Reading } from "@/lib/iching";
-import { buildContext, needsExpertNote, type AiReading } from "@/lib/aiReading";
+import { buildContext, needsExpertNote, type AiFollowup, type AiReading } from "@/lib/aiReading";
 import { aiEntitlement, aiInputOf, requestAiReading, savedAiReading, type AiEntitlement } from "@/lib/aiClient";
 import { getSession, onAuthChange } from "@/lib/cloudSync";
 import { cloudEnabled } from "@/lib/supabase";
 import { UNLOCK_PRICE_KRW, readingKey, startUnlock, unlockEnabled } from "@/lib/unlock";
 import { currentSubscription, pushEnabled, pushSupported, subscribePush } from "@/lib/push";
-import { setReminder } from "@/lib/aiClient";
+import { requestFollowup, setReminder } from "@/lib/aiClient";
+import { MessageCircleQuestion } from "lucide-react";
 import { Bell } from "lucide-react";
 import { categoryOf } from "@/lib/categories";
 import { track } from "@/lib/track";
@@ -28,7 +29,7 @@ const PREVIEW = ["한 줄 답", "어떻게 변하나요", "내가 선 자리(효
 type View =
   | { kind: "idle" }
   | { kind: "loading" }
-  | { kind: "done"; result: AiReading; fallback: boolean }
+  | { kind: "done"; result: AiReading; fallback: boolean; followup: AiFollowup | null }
   | { kind: "need_purchase" }
   | { kind: "safety" }
   | { kind: "error"; message: string };
@@ -54,7 +55,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
       const saved = await savedAiReading(reading);
       if (!alive) return;
       if (saved) {
-        setView({ kind: "done", result: saved, fallback: false });
+        setView({ kind: "done", result: saved.result, fallback: false, followup: saved.followup });
         return;
       }
       setCan(await aiEntitlement(reading));
@@ -81,7 +82,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
     setView({ kind: "loading" });
     try {
       const r = await requestAiReading(reading);
-      if (r.status === "done" || r.status === "fallback") setView({ kind: "done", result: r.result, fallback: r.status === "fallback" });
+      if (r.status === "done" || r.status === "fallback") setView({ kind: "done", result: r.result, fallback: r.status === "fallback", followup: r.followup ?? null });
       else setView({ kind: r.status });
     } catch (e) {
       setView({ kind: "error", message: e instanceof Error ? e.message : "AI 점사풀이를 불러오지 못했어요" });
@@ -136,6 +137,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
               ) : null
             }
           />
+          {!view.fallback ? <FollowupBox reading={reading} saved={view.followup} onDone={(f) => setView({ ...view, followup: f })} /> : null}
           {!view.fallback ? (
             <button onClick={() => setShareOpen(true)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
               <ImageDown size={18} /> AI 점사풀이 이미지로 저장하기
@@ -324,6 +326,69 @@ function ReminderButton({ date, readingKey: key, question, hexName }: { date: st
         <Bell size={13} /> {label} 아침에 알림 받기
       </button>
       {error ? <p className="mt-1 text-xs text-vermilion">{error}</p> : null}
+    </div>
+  );
+}
+
+/** 같은 괘로 한 번 더 묻기. 다시 뽑지 않고 앞선 풀이에서 한 걸음 더 */
+function FollowupBox({ reading, saved, onDone }: { reading: Reading; saved: AiFollowup | null; onDone: (f: AiFollowup) => void }) {
+  const [q, setQ] = useState("");
+  const [state, setState] = useState<"idle" | "busy" | "error" | "fallback" | "safety">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  if (saved) {
+    return (
+      <div className="mt-5 rounded-2xl bg-background p-4">
+        <p className="flex items-center gap-1.5 text-xs font-bold text-muted">
+          <MessageCircleQuestion size={14} /> 이어서 물었어요
+        </p>
+        <p className="mt-1 font-semibold">&ldquo;{saved.question}&rdquo;</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-foreground/90">{saved.answer}</p>
+        <p className="mt-2 rounded-xl bg-card px-3 py-2 text-[15px] leading-relaxed">{saved.action}</p>
+      </div>
+    );
+  }
+
+  const ask = async () => {
+    setState("busy");
+    setError(null);
+    try {
+      const r = await requestFollowup(reading, q.trim());
+      if (r.status === "followup") onDone(r.followup);
+      else setState(r.status === "safety" ? "safety" : "fallback");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "답을 불러오지 못했어요");
+      setState("error");
+    }
+  };
+
+  return (
+    <div className="mt-5 rounded-2xl bg-background p-4">
+      <p className="flex items-center gap-1.5 text-sm font-bold">
+        <MessageCircleQuestion size={16} className="text-vermilion" /> 이어서 한 번 더 묻기
+        <span className="text-xs font-normal text-muted">(이 괘로 1회)</span>
+      </p>
+      <p className="mt-1 text-xs leading-relaxed text-muted">다시 뽑지 않고, 지금 괘 안에서 한 걸음 더 물어봐요. 예: 그럼 언제 연락하는 게 좋을까요?</p>
+      {state === "safety" ? (
+        <p className="mt-3 text-sm leading-relaxed">많이 힘드신가요? <b>자살예방상담전화 109</b>(24시간)에서 이야기를 들어 드려요.</p>
+      ) : state === "fallback" ? (
+        <p className="mt-3 text-sm text-muted">지금은 이어서 답하기 어려워요. 잠시 뒤 다시 눌러 주세요. 횟수는 차감되지 않았어요.</p>
+      ) : null}
+      {state !== "safety" ? (
+        <div className="mt-3 flex gap-2">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value.slice(0, 60))}
+            maxLength={60}
+            placeholder="한 가지만 더 물어보세요"
+            className="min-w-0 flex-1 rounded-full bg-card px-4 py-2.5 text-sm outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
+          />
+          <button onClick={ask} disabled={state === "busy" || q.trim().length < 2} className="shrink-0 rounded-full bg-foreground px-4 py-2.5 text-sm font-bold text-card disabled:opacity-40">
+            {state === "busy" ? "답하는 중…" : "묻기"}
+          </button>
+        </div>
+      ) : null}
+      {error ? <p className="mt-2 text-xs text-vermilion">{error}</p> : null}
     </div>
   );
 }

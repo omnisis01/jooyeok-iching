@@ -1,14 +1,25 @@
 // Claude 호출, 검증, 한 번 다시 쓰기. ai-reading(서비스)과 ai-eval(품질 시험)이 함께 쓴다
 import Anthropic from "npm:@anthropic-ai/sdk";
-import { AI_SCHEMA, AI_SYSTEM, buildUserMessage, validateReading } from "./aiReading.js";
+import { AI_SCHEMA, AI_SYSTEM, FOLLOWUP_SCHEMA, FOLLOWUP_SYSTEM, buildFollowupMessage, buildUserMessage, validateFollowup, validateReading } from "./aiReading.js";
 
 export type GenerateResult =
   | { ok: true; result: unknown; attempts: number; inTok: number; outTok: number; issues: string[] }
   | { ok: false; reason: string; attempts: number; inTok: number; outTok: number; issues: string[]; refusalCategory?: string | null };
 
-export async function generate(ctx: Parameters<typeof buildUserMessage>[0], model: string, apiKey: string, maxAttempts = 2, onRetry?: (issues: string[]) => void): Promise<GenerateResult> {
+type Ctx = Parameters<typeof buildUserMessage>[0];
+
+async function runLoop(
+  system: string,
+  schema: unknown,
+  userText: string,
+  validate: (parsed: unknown) => string[],
+  model: string,
+  apiKey: string,
+  maxAttempts: number,
+  onRetry?: (issues: string[]) => void,
+): Promise<GenerateResult> {
   const client = new Anthropic({ apiKey, maxRetries: 1, timeout: 45_000 });
-  const messages: Anthropic.MessageParam[] = [{ role: "user", content: buildUserMessage(ctx) }];
+  const messages: Anthropic.MessageParam[] = [{ role: "user", content: userText }];
   let inTok = 0;
   let outTok = 0;
   let issues: string[] = [];
@@ -18,9 +29,9 @@ export async function generate(ctx: Parameters<typeof buildUserMessage>[0], mode
       res = await client.messages.create({
         model,
         max_tokens: 4000,
-        system: [{ type: "text", text: AI_SYSTEM, cache_control: { type: "ephemeral" } }],
+        system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
         messages,
-        output_config: { effort: "low", format: { type: "json_schema", schema: AI_SCHEMA } },
+        output_config: { effort: "low", format: { type: "json_schema", schema } },
       });
     } catch (e) {
       const status = e instanceof Anthropic.APIError ? e.status : "network";
@@ -36,7 +47,7 @@ export async function generate(ctx: Parameters<typeof buildUserMessage>[0], mode
     } catch {
       parsed = null;
     }
-    issues = parsed ? validateReading(parsed as Parameters<typeof validateReading>[0], ctx) : ["정해진 형식(JSON)으로 쓰지 않았어요"];
+    issues = parsed ? validate(parsed) : ["정해진 형식(JSON)으로 쓰지 않았어요"];
     if (!issues.length) return { ok: true, result: parsed, attempts: attempt + 1, inTok, outTok, issues };
     if (attempt + 1 < maxAttempts) {
       onRetry?.(issues);
@@ -45,4 +56,13 @@ export async function generate(ctx: Parameters<typeof buildUserMessage>[0], mode
     }
   }
   return { ok: false, reason: "validation", attempts: maxAttempts, inTok, outTok, issues };
+}
+
+export function generate(ctx: Ctx, model: string, apiKey: string, maxAttempts = 2, onRetry?: (issues: string[]) => void): Promise<GenerateResult> {
+  return runLoop(AI_SYSTEM, AI_SCHEMA, buildUserMessage(ctx), (p) => validateReading(p as Parameters<typeof validateReading>[0], ctx), model, apiKey, maxAttempts, onRetry);
+}
+
+/** 같은 괘로 한 번 더 묻기 */
+export function generateFollowup(ctx: Ctx, prev: Parameters<typeof buildFollowupMessage>[1], question: string, model: string, apiKey: string, onRetry?: (issues: string[]) => void): Promise<GenerateResult> {
+  return runLoop(FOLLOWUP_SYSTEM, FOLLOWUP_SCHEMA, buildFollowupMessage(ctx, prev, question), (p) => validateFollowup(p as Parameters<typeof validateFollowup>[0], ctx), model, apiKey, 2, onRetry);
 }

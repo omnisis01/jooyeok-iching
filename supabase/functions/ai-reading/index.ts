@@ -3,7 +3,7 @@
 // 비밀값: ANTHROPIC_API_KEY (없으면 대체 풀이만 나간다). 선택: AI_MODEL, AI_DAILY_CAP
 import { CORS, adminClient, json, requireUser } from "../_shared/toss.ts";
 import { aiReadingKey, buildContext, fallbackReading, isSelfHarm, isValidInput, needsExpertNote } from "../_shared/aiReading.js";
-import { generate } from "../_shared/aiGenerate.ts";
+import { generate, generateFollowup } from "../_shared/aiGenerate.ts";
 
 const MODEL = Deno.env.get("AI_MODEL") ?? "claude-haiku-5-5";
 // 전체 사용자 합계 하루 상한. 넘으면 그날은 대체 풀이만 낸다(비용 폭주 방지)
@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
   const user = await requireUser(req);
   if (!user) return json({ error: "unauthorized" }, 401);
 
-  const body = (await req.json().catch(() => ({}))) as { input?: unknown };
+  const body = (await req.json().catch(() => ({}))) as { input?: unknown; followup?: unknown };
   const input = body.input as Parameters<typeof isValidInput>[0];
   if (!input || !isValidInput(input)) return json({ error: "결과 정보가 올바르지 않아요" }, 400);
 
@@ -30,8 +30,32 @@ Deno.serve(async (req) => {
     sources: [`${ctx.primary.name} 괘 해설`, ...ctx.changing.map((c: { name: string }) => `${c.name} 효사`), ...(ctx.resulting ? [`${ctx.resulting.name} 괘 해설`] : []), "육효 판단"],
   };
 
-  const { data: saved } = await db.from("ai_readings").select("result").eq("user_id", user.id).eq("reading_key", key).maybeSingle();
-  if (saved) return json({ status: "done", saved: true, result: saved.result, ...meta });
+  const { data: saved } = await db.from("ai_readings").select("result, followup, model").eq("user_id", user.id).eq("reading_key", key).maybeSingle();
+
+  // 이어서 묻기: 이미 받은 풀이가 있을 때 한 번만
+  if (typeof body.followup === "string") {
+    const q = body.followup.trim().slice(0, 60);
+    if (!saved) return json({ error: "먼저 AI 점사풀이를 받아 주세요" }, 400);
+    if (saved.followup) return json({ status: "followup", followup: saved.followup, saved: true });
+    if (q.length < 2) return json({ error: "질문을 적어 주세요" }, 400);
+    if (isSelfHarm(q)) {
+      await log("ai_safety");
+      return json({ status: "safety" });
+    }
+    const apiKey2 = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!apiKey2) return json({ status: "followup_fallback" });
+    const g = await generateFollowup(ctx, saved.result as Parameters<typeof generateFollowup>[1], q, MODEL, apiKey2);
+    if (!g.ok) {
+      await log("ai_followup_fallback", { reason: g.reason });
+      return json({ status: "followup_fallback" });
+    }
+    const followup = { question: q, ...(g.result as { answer: string; action: string }) };
+    await db.from("ai_readings").update({ followup }).eq("user_id", user.id).eq("reading_key", key);
+    await log("ai_followup", { model: MODEL, retries: g.attempts - 1, in_tok: g.inTok, out_tok: g.outTok });
+    return json({ status: "followup", followup, saved: false });
+  }
+
+  if (saved) return json({ status: "done", saved: true, result: saved.result, followup: saved.followup ?? null, ...meta });
 
   if (isSelfHarm(ctx.question)) {
     await log("ai_safety");

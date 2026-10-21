@@ -9,6 +9,7 @@ import { clearReturnParams } from "@/lib/premium";
 import { readingKey } from "@/lib/unlock";
 import type { Tab } from "./AppShell";
 import HexagramFigure from "./HexagramFigure";
+import { aiReadingKeys } from "@/lib/aiClient";
 import HexagramWheel from "./HexagramWheel";
 import ResultView from "./ResultView";
 import AccountCard from "./AccountCard";
@@ -29,6 +30,21 @@ import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
 export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   const payOn = usePaymentsOn();
+  // AI 점사풀이를 받은 결과의 열쇠(기록 목록에 AI 표시)
+  const [aiKeys, setAiKeys] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    if (!cloudEnabled) return;
+    let alive = true;
+    const load = () => aiReadingKeys().then((k) => alive && setAiKeys(k)).catch(() => {});
+    load();
+    const off = onAuthChange(() => load());
+    window.addEventListener("history-changed", load);
+    return () => {
+      alive = false;
+      off();
+      window.removeEventListener("history-changed", load);
+    };
+  }, []);
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -198,6 +214,9 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
                     <p className="truncate text-sm font-semibold">
                       {r.type === "iching" ? readingFromRecord(r).primary.name : `${r.hexName}, ${r.categoryLabel}`}
                       {r.type === "yukhyo" ? <span className="ml-1.5 text-xs font-bold text-vermilion">{r.level}</span> : null}
+                      {r.type === "iching" && aiKeys.has(`${r.lines}-${r.changing.join("")}-${r.at.slice(0, 16)}`) ? (
+                        <span className="ml-1.5 rounded bg-gold/15 px-1 py-0.5 align-middle text-[10px] font-bold text-gold-soft">AI</span>
+                      ) : null}
                     </p>
                     <p className="truncate text-xs text-muted">
                       {formatAt(r.at)}

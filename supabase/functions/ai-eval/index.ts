@@ -3,7 +3,7 @@
 // 같은 입력을 모델별로 만들어 검증 결과와 토큰 수를 돌려준다
 import { CORS, json } from "../_shared/toss.ts";
 import { buildContext, fallbackReading, isValidInput } from "../_shared/aiReading.js";
-import { generate } from "../_shared/aiGenerate.ts";
+import { generate, generateFollowup } from "../_shared/aiGenerate.ts";
 
 const ALLOWED = new Set(["claude-haiku-5-5", "claude-sonnet-5-5", "claude-opus-5-5"]);
 
@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
   const auth = req.headers.get("Authorization") ?? "";
   const evalToken = Deno.env.get("AI_EVAL_TOKEN");
   if (!evalToken || evalToken.length < 32 || auth !== `Bearer ${evalToken}`) return json({ error: "unauthorized" }, 401);
-  const body = (await req.json().catch(() => ({}))) as { input?: unknown; model?: string };
+  const body = (await req.json().catch(() => ({}))) as { input?: unknown; model?: string; followup?: string; prev?: unknown };
   const input = body.input as Parameters<typeof isValidInput>[0];
   if (!input || !isValidInput(input) || !body.model || !ALLOWED.has(body.model)) return json({ error: "bad input" }, 400);
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
@@ -20,6 +20,10 @@ Deno.serve(async (req) => {
   const ctx = buildContext(input);
   const started = Date.now();
   const retries: string[][] = [];
+  if (typeof body.followup === "string" && body.prev) {
+    const f = await generateFollowup(ctx, body.prev as Parameters<typeof generateFollowup>[1], body.followup, body.model, apiKey, (i) => retries.push(i));
+    return json({ ...f, retries, ms: Date.now() - started });
+  }
   const g = await generate(ctx, body.model, apiKey, 2, (i) => retries.push(i));
   return json({ ...g, retries, ms: Date.now() - started, timing: ctx.yukhyo.timing, fallback: g.ok ? null : fallbackReading(ctx), primary: ctx.primary.name, resulting: ctx.resulting?.name ?? null });
 });
