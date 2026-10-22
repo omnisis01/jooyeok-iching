@@ -135,7 +135,7 @@ export async function renderYukhyoCard(r: YukhyoResult): Promise<Blob> {
   const H = Math.min(H_MAX, Math.max(1350, y + 150));
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 22);
-  ctx.fillText("천문주역, 하늘에 묻다", W / 2, H - 96);
+  ctx.fillText("천문주역, 하늘에 묻고, 괘로 답을 듣다", W / 2, H - 96);
   ctx.fillStyle = C.gold;
   ctx.font = font(600, 24);
   ctx.fillText(SITE_LABEL, W / 2, H - 58);
