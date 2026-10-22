@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 40 320 320"><defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1230"/><stop offset="1" stop-color="#2a3a6e"/></linearGradient>
+    <symbol id="cloud" viewBox="0 0 160 110"><path d="M20 70 a22 22 0 0 1 22-22 a28 28 0 0 1 54-6 a24 24 0 0 1 36 20 a18 18 0 0 1 -2 36 H38 a18 18 0 0 1 -18-28z"/></symbol>
+    <clipPath id="box"><rect x="60" y="40" width="320" height="320" rx="56"/></clipPath>
+  </defs>
+  <g clip-path="url(#box)">
+    <rect x="60" y="40" width="320" height="320" fill="url(#night)"/>
+    <g fill="#f1e9da"><circle cx="120" cy="90" r="2.5"/><circle cx="200" cy="70" r="1.8"/><circle cx="340" cy="100" r="2"/><circle cx="150" cy="150" r="1.5"/><circle cx="350" cy="190" r="1.5"/><circle cx="100" cy="210" r="2"/></g>
+    <circle cx="290" cy="140" r="56" fill="#f2c94c"/>
+    <circle cx="312" cy="124" r="50" fill="url(#night)"/>
+    <use href="#cloud" x="40" y="200" width="240" height="165" fill="#3e4f8c"/>
+    <use href="#cloud" x="190" y="250" width="220" height="150" fill="#4a5c9c"/>
+    <use href="#cloud" x="-10" y="280" width="190" height="130" fill="#34457f"/>
+    <g fill="#f1e9da">
+      <rect x="150" y="270" width="80" height="9" rx="3"/><rect x="150" y="287" width="80" height="9" rx="3"/><rect x="150" y="304" width="80" height="9" rx="3"/>
+    </g>
+  </g>
+  <rect x="60" y="40" width="320" height="320" rx="56" fill="none" stroke="#c9a44a" stroke-width="3"/>
+  <text x="430" y="200" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="800" font-size="118" fill="currentColor" letter-spacing="-2">하늘주역</text>
+  <text x="434" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#b9862b" letter-spacing="6">하늘에 묻고, 괘가 답하다</text>
+  </svg>
