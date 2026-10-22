@@ -476,4 +476,4 @@
 - [x] 확정 로고 E2: 노을 배경, 초승달, 왼쪽 위 북두칠성, 兌괘(☱ 기쁨), 민화 구름. store/logo/logo-E2-minhwa.svg, icon-E2.svg, icon-E2-maskable.svg
 - [x] 앱 아이콘 v3 교체: public/icon-v3.svg, icon-v3-512/192.png, icon-v3-maskable-512.png(안전 영역 80%), apple-touch-icon-v3.png. 매니페스트, layout, sw.js 알림 아이콘 연결. 옛 v2와 v1 아이콘 삭제
 - [x] 스토어: store/store-icon-1024.png(Play 아이콘), store/feature-graphic-1024x500.png 다시 제작
-- [ ] 대표: 스토어 스크린샷(store/screen-*.png)은 옛 이름이 보이므로 배포 뒤 다시 캡처 필요
+- [x] 스토어 스크린샷 5장 새 이름으로 다시 캡처(실제 사이트, 1080x1920, 다크). store/screens-sheet.png에 모아 봄
