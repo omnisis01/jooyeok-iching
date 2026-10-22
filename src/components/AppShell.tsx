@@ -31,7 +31,7 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
 ];
 
 const TITLES: Record<Tab, string> = {
-  home: "천문주역",
+  home: "하늘주역",
   divine: "하늘에 묻기",
   hexagrams: "64괘",
   about: "주역 알아보기",
@@ -102,9 +102,9 @@ export default function AppShell() {
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-border bg-card/90 px-4 py-6 backdrop-blur lg:flex">
         <button onClick={() => go("home")} className="flex items-center gap-2 px-2 text-lg font-bold">
           <Taegeuk size={28} />
-          천문주역
+          하늘주역
         </button>
-        <p className="mt-1 px-2 text-xs text-vermilion">하늘에 묻고, 괘로 답을 듣다</p>
+        <p className="mt-1 px-2 text-xs text-vermilion">하늘에 묻고, 괘가 답하다</p>
         <ul className="mt-8 space-y-1">
           {TABS.map((t) => {
             const active = tab === t.key;
@@ -135,7 +135,7 @@ export default function AppShell() {
         <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-3 pt-4 backdrop-blur lg:hidden">
           <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />
-            천문주역
+            하늘주역
           </button>
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-muted sm:inline">{dateLabel}</span>

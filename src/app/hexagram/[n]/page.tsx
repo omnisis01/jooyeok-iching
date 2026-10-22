@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps<"/hexagram/[n]">): 
     title,
     description,
     alternates: { canonical: `${SITE_URL}hexagram/${hex.number}/` },
-    openGraph: { title, description, url: `${SITE_URL}hexagram/${hex.number}/`, siteName: "천문주역", locale: "ko_KR", type: "article" },
+    openGraph: { title, description, url: `${SITE_URL}hexagram/${hex.number}/`, siteName: "하늘주역", locale: "ko_KR", type: "article" },
   };
 }
 
@@ -47,7 +47,7 @@ export default async function HexagramPage({ params }: PageProps<"/hexagram/[n]"
     headline: `${hex.name} ${hex.hanja}, 주역 제${hex.number}괘`,
     description: hex.summary,
     inLanguage: "ko",
-    author: { "@type": "Organization", name: "천문주역" },
+    author: { "@type": "Organization", name: "하늘주역" },
     mainEntityOfPage: `${SITE_URL}hexagram/${hex.number}/`,
   };
 
@@ -58,7 +58,7 @@ export default async function HexagramPage({ params }: PageProps<"/hexagram/[n]"
         <nav className="flex items-center justify-between text-sm">
           <a href="../../" className="inline-flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />
-            천문주역
+            하늘주역
           </a>
           <a href="../" className="text-muted underline">64괘 목록</a>
         </nav>

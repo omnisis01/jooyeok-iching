@@ -1,7 +1,7 @@
 {
-  "name": "천문주역",
-  "short_name": "천문주역",
-  "description": "하늘에 묻고, 괘로 답을 듣다",
+  "name": "하늘주역",
+  "short_name": "하늘주역",
+  "description": "하늘에 묻고, 괘가 답하다",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

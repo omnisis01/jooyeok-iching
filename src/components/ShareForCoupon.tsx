@@ -7,7 +7,7 @@ import { SITE_URL } from "@/lib/shareCard";
 import { grantShareCoupon, quotaState, SHARE_COUPONS_PER_DAY } from "@/lib/quota";
 import { track } from "@/lib/track";
 
-const SHARE_TEXT = "천문주역에서 하늘에 물어봤어요. 3천년 효사 원문으로 답해 줘요. 같이 하나 물어봐요.";
+const SHARE_TEXT = "하늘주역에서 하늘에 물어봤어요. 3천년 효사 원문으로 답해 줘요. 같이 하나 물어봐요.";
 
 type Props = {
   /** 쿠폰을 받은 뒤 할 일 (예: 바로 다시 뽑기) */
@@ -28,7 +28,7 @@ export default function ShareForCoupon({ onGranted, className, label = "친구�
       let shared = false;
       if (typeof navigator.share === "function") {
         try {
-          await navigator.share({ title: "천문주역", text: SHARE_TEXT, url: SITE_URL });
+          await navigator.share({ title: "하늘주역", text: SHARE_TEXT, url: SITE_URL });
           shared = true;
         } catch (e) {
           if (e instanceof DOMException && e.name === "AbortError") {

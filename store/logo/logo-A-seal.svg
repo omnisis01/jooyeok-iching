@@ -3,10 +3,9 @@
   <g transform="translate(60 60)">
     <rect width="280" height="280" rx="34" fill="#d8452b"/>
     <rect x="16" y="16" width="248" height="248" rx="24" fill="none" stroke="#f5f0e8" stroke-width="5" opacity="0.9"/>
-    <text x="140" y="118" text-anchor="middle" font-family='"Noto Serif KR","Source Han Serif K","AppleMyungjo","Songti SC",serif' font-weight="700" font-size="104" fill="#f5f0e8">天</text>
-    <text x="140" y="236" text-anchor="middle" font-family='"Noto Serif KR","Source Han Serif K","AppleMyungjo","Songti SC",serif' font-weight="700" font-size="104" fill="#f5f0e8">問</text>
+    <text x="140" y="212" text-anchor="middle" font-family='"Noto Serif KR","Source Han Serif K","AppleMyungjo","Songti SC",serif' font-weight="700" font-size="190" fill="#f5f0e8">天</text>
   </g>
-  <text x="390" y="200" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="800" font-size="118" fill="currentColor" letter-spacing="-2">천문주역</text>
-  <text x="394" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#b9862b" letter-spacing="6">하늘에 묻고, 괘로 답을 듣다</text>
-  <text x="396" y="318" font-family='"Noto Serif KR","Source Han Serif K","AppleMyungjo","Songti SC",serif' font-weight="500" font-size="30" fill="currentColor" opacity="0.55" letter-spacing="8">天問周易</text>
+  <text x="390" y="200" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="800" font-size="118" fill="currentColor" letter-spacing="-2">하늘주역</text>
+  <text x="394" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#b9862b" letter-spacing="6">하늘에 묻고, 괘가 답하다</text>
+  <text x="396" y="318" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="600" font-size="28" fill="currentColor" opacity="0.5" letter-spacing="10">SKY I CHING</text>
 </svg>

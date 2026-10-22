@@ -85,7 +85,7 @@ function InquiryItem({ q, onDone }: { q: Inquiry; onDone: () => void }) {
       setBusy(false);
     }
   };
-  const mailto = q.email ? `mailto:${q.email}?subject=${encodeURIComponent("[천문주역] 문의 답변")}&body=${encodeURIComponent(`${reply}\n\n----- 보내 주신 문의 -----\n${q.message}`)}` : null;
+  const mailto = q.email ? `mailto:${q.email}?subject=${encodeURIComponent("[하늘주역] 문의 답변")}&body=${encodeURIComponent(`${reply}\n\n----- 보내 주신 문의 -----\n${q.message}`)}` : null;
   return (
     <div className="rounded-2xl bg-background p-4 text-sm leading-relaxed">
       <p className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">

@@ -109,7 +109,7 @@ export function pushCronSql(supabaseUrl) {
 }
 
 async function main() {
-  console.log("천문주역 Supabase 자동 설정을 시작합니다.");
+  console.log("하늘주역 Supabase 자동 설정을 시작합니다.");
 
   // 0. 토큰
   let token = process.env.SUPABASE_ACCESS_TOKEN;
