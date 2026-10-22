@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="60 40 320 320"><defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1230"/><stop offset="1" stop-color="#26376f"/></linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1438"/><stop offset="0.6" stop-color="#4a2c5e"/><stop offset="1" stop-color="#c8793a"/></linearGradient>
     <clipPath id="box"><rect x="60" y="40" width="320" height="320" rx="56"/></clipPath>
-    <g id="mc" fill="#2c3b6e" stroke="#8a9ad0" stroke-width="3" stroke-linejoin="round"><path d="M0 60 a20 20 0 0 1 24-22 a26 26 0 0 1 48-10 a22 22 0 0 1 40 14 a18 18 0 0 1 8 18 H0z"/><path d="M22 50 a14 14 0 0 1 20-10 M60 36 a16 16 0 0 1 24 6 M96 48 a12 12 0 0 1 16 6" fill="none" stroke="#8a9ad0" stroke-width="2.5" stroke-linecap="round"/></g>
+    <g id="mc" fill="#5a3a52" stroke="#e5a876" stroke-width="3" stroke-linejoin="round"><path d="M0 60 a20 20 0 0 1 24-22 a26 26 0 0 1 48-10 a22 22 0 0 1 40 14 a18 18 0 0 1 8 18 H0z"/><path d="M22 50 a14 14 0 0 1 20-10 M60 36 a16 16 0 0 1 24 6 M96 48 a12 12 0 0 1 16 6" fill="none" stroke="#e5a876" stroke-width="2.5" stroke-linecap="round"/></g>
   </defs>
   <g clip-path="url(#box)">
     <rect x="60" y="40" width="320" height="320" fill="url(#g)"/>
     <g fill="#f1e9da"><circle cx="110" cy="80" r="2.5"/><circle cx="190" cy="66" r="1.8"/><circle cx="350" cy="90" r="2"/><circle cx="120" cy="160" r="1.6"/><circle cx="340" cy="200" r="1.6"/></g>
-    <circle cx="275" cy="135" r="52" fill="#f2c94c"/><circle cx="296" cy="120" r="46" fill="url(#g)"/>
+    <circle cx="275" cy="135" r="52" fill="#f2c94c"/><circle cx="296" cy="120" r="46" fill="#1a1d4a"/>
     <g fill="#f1e9da">
       <rect x="140" y="226" width="64" height="15" rx="5"/><rect x="226" y="226" width="64" height="15" rx="5"/>
       <rect x="140" y="256" width="150" height="15" rx="5"/>
