@@ -104,7 +104,7 @@ export default function AppShell() {
           <Taegeuk size={28} />
           하늘주역
         </button>
-        <p className="mt-1 px-2 text-xs text-vermilion">하늘에 묻고, 괘가 답하다</p>
+        <p className="mt-1 px-2 text-xs text-vermilion">하늘에 묻고, 주역으로 답하다</p>
         <ul className="mt-8 space-y-1">
           {TABS.map((t) => {
             const active = tab === t.key;

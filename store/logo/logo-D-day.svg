@@ -17,6 +17,5 @@
   </g>
   <rect x="60" y="40" width="320" height="320" rx="56" fill="none" stroke="#9cc3e2" stroke-width="3"/>
   <text x="430" y="200" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="800" font-size="118" fill="currentColor" letter-spacing="-2">하늘주역</text>
-  <text x="434" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#3a7fb5" letter-spacing="6">하늘에 묻고, 괘가 답하다</text>
-  <text x="436" y="318" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="600" font-size="28" fill="currentColor" opacity="0.5" letter-spacing="10">SKY I CHING</text>
+  <text x="434" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#3a7fb5" letter-spacing="6">하늘에 묻고, 주역으로 답하다</text>
 </svg>

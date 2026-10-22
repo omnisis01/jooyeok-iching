@@ -61,7 +61,7 @@ function footer(ctx: CanvasRenderingContext2D) {
   ctx.textAlign = "center";
   ctx.fillStyle = D.muted;
   ctx.font = font(400, 24);
-  ctx.fillText("하늘주역, 하늘에 묻고, 괘가 답하다", SW / 2, SAFE_BOTTOM - 70);
+  ctx.fillText("하늘주역, 하늘에 묻고, 주역으로 답하다", SW / 2, SAFE_BOTTOM - 70);
   ctx.fillStyle = D.gold;
   ctx.font = font(700, 28);
   ctx.fillText(SITE_LABEL, SW / 2, SAFE_BOTTOM - 28);

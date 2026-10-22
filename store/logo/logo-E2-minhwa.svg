@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1438"/><stop offset="0.6" stop-color="#4a2c5e"/><stop offset="1" stop-color="#c8793a"/></linearGradient>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="360"><stop offset="0" stop-color="#0d1438"/><stop offset="0.6" stop-color="#4a2c5e"/><stop offset="1" stop-color="#c8793a"/></linearGradient>
     <clipPath id="box"><rect x="60" y="40" width="320" height="320" rx="56"/></clipPath>
     <g id="mc" fill="#5a3a52" stroke="#e5a876" stroke-width="3" stroke-linejoin="round"><path d="M0 60 a20 20 0 0 1 24-22 a26 26 0 0 1 48-10 a22 22 0 0 1 40 14 a18 18 0 0 1 8 18 H0z"/><path d="M22 50 a14 14 0 0 1 20-10 M60 36 a16 16 0 0 1 24 6 M96 48 a12 12 0 0 1 16 6" fill="none" stroke="#e5a876" stroke-width="2.5" stroke-linecap="round"/></g>
   </defs>
   <g clip-path="url(#box)">
     <rect x="60" y="40" width="320" height="320" fill="url(#g)"/>
-    <g fill="#f1e9da"><circle cx="110" cy="80" r="2.5"/><circle cx="190" cy="66" r="1.8"/><circle cx="350" cy="90" r="2"/><circle cx="120" cy="160" r="1.6"/><circle cx="340" cy="200" r="1.6"/></g>
-    <circle cx="275" cy="135" r="52" fill="#f2c94c"/><circle cx="296" cy="120" r="46" fill="#1a1d4a"/>
+    <g opacity="0.95"><polyline points="92,116 108,104 124,100 140,102 164,94 166,118 142,124 140,102" fill="none" stroke="#f1e9da" stroke-width="1" opacity="0.45"/><g fill="#f1e9da"><circle cx="92" cy="116" r="2.6"/><circle cx="108" cy="104" r="2.1"/><circle cx="124" cy="100" r="2.1"/><circle cx="140" cy="102" r="2.1"/><circle cx="164" cy="94" r="2.6"/><circle cx="166" cy="118" r="2.6"/><circle cx="142" cy="124" r="2.1"/></g></g>
+    <circle cx="275" cy="135" r="52" fill="#f2c94c"/><circle cx="296" cy="120" r="46" fill="url(#g)"/>
     <g fill="#f1e9da">
       <rect x="140" y="226" width="64" height="15" rx="5"/><rect x="226" y="226" width="64" height="15" rx="5"/>
       <rect x="140" y="256" width="150" height="15" rx="5"/>
@@ -19,6 +19,5 @@
   </g>
   <rect x="60" y="40" width="320" height="320" rx="56" fill="none" stroke="#c9a44a" stroke-width="3"/>
   <text x="430" y="200" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="800" font-size="118" fill="currentColor" letter-spacing="-2">하늘주역</text>
-  <text x="434" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#b9862b" letter-spacing="6">하늘에 묻고, 괘가 답하다</text>
-  <text x="436" y="318" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="600" font-size="28" fill="currentColor" opacity="0.5" letter-spacing="10">SKY I CHING</text>
+  <text x="434" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#b9862b" letter-spacing="6">하늘에 묻고, 주역으로 답하다</text>
 </svg>

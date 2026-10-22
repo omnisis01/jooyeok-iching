@@ -470,3 +470,10 @@
 - [x] 하늘 배경 시안 3개 추가: D 낮하늘(파란 하늘, 붉은 해, 뭉게구름 위 ☰), E 밤하늘(남색, 초승달, 별, 구름), F 전통 구름문(한지 바탕, 붉은 해 안 ☰, 금색 운문). preview-sky.png
 - [x] E 변형 4개(왜색 줄임: 붉은 해 원과 일본풍 구름 제거, 효는 음양 섞인 뜻 좋은 괘만): E1 일월오봉도풍(해·달 함께, 離 ☲ 밝음·지혜), E2 민화 구름(兌 ☱ 기쁨·소통), E3 離괘의 끊긴 자리에 달, E4 노을 하늘(離). preview-sky-E.png
 - [x] 대표 선택: E2 민화 구름(兌괘) + E4 노을 배경. 구름은 자주·살구빛으로 맞춤. preview-E2.png. 다음: 이 방향으로 앱 아이콘·스플래시·스토어 이미지
+
+## 2026-10-22 78차: 로고 확정, 아이콘·스토어 이미지
+- [x] 부제 "괘가 답하다" → "주역으로 답하다"(앱, 매니페스트, 카드 그림, 로고). 로고의 SKY I CHING 삭제(보류)
+- [x] 확정 로고 E2: 노을 배경, 초승달, 왼쪽 위 북두칠성, 兌괘(☱ 기쁨), 민화 구름. store/logo/logo-E2-minhwa.svg, icon-E2.svg, icon-E2-maskable.svg
+- [x] 앱 아이콘 v3 교체: public/icon-v3.svg, icon-v3-512/192.png, icon-v3-maskable-512.png(안전 영역 80%), apple-touch-icon-v3.png. 매니페스트, layout, sw.js 알림 아이콘 연결. 옛 v2와 v1 아이콘 삭제
+- [x] 스토어: store/store-icon-1024.png(Play 아이콘), store/feature-graphic-1024x500.png 다시 제작
+- [ ] 대표: 스토어 스크린샷(store/screen-*.png)은 옛 이름이 보이므로 배포 뒤 다시 캡처 필요
