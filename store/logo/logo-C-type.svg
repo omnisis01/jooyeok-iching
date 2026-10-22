@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400">
+  <text x="70" y="250" font-family='"Noto Serif KR","Source Han Serif K","AppleMyungjo","Songti SC",serif' font-weight="700" font-size="230" fill="#b9862b" letter-spacing="-6">天問</text>
+  <text x="560" y="150" font-family='"Noto Serif KR","Source Han Serif K","AppleMyungjo","Songti SC",serif' font-weight="500" font-size="78" fill="currentColor" opacity="0.6" letter-spacing="10">周易</text>
+  <rect x="560" y="176" width="300" height="4" fill="#d8452b"/>
+  <text x="560" y="250" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="800" font-size="84" fill="currentColor" letter-spacing="-1">천문주역</text>
+  <text x="564" y="310" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="36" fill="#b9862b" letter-spacing="6">하늘에 묻다</text>
+</svg>

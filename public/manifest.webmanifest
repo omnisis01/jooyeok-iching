@@ -1,7 +1,7 @@
 {
-  "name": "나만의 정통주역운세",
-  "short_name": "주역운세",
-  "description": "3천년 역사의 데이터 기반 점사풀이",
+  "name": "천문주역",
+  "short_name": "천문주역",
+  "description": "하늘에 묻다",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

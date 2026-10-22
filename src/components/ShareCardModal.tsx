@@ -113,7 +113,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
     track("share_image", { via: "send", format });
     const file = new File([blob], fileName, { type: "image/png" });
     try {
-      await navigator.share({ files: [file], title: "나만의 정통주역운세", text: reading.text });
+      await navigator.share({ files: [file], title: "천문주역", text: reading.text });
       setStatus({ text: "보냈어요", ok: true });
     } catch (e) {
       if (!(e instanceof DOMException && e.name === "AbortError")) setStatus({ text: "보내지 못했어요. 잠시 후 다시 시도해 주세요", ok: false });

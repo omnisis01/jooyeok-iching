@@ -61,7 +61,7 @@ function footer(ctx: CanvasRenderingContext2D) {
   ctx.textAlign = "center";
   ctx.fillStyle = D.muted;
   ctx.font = font(400, 24);
-  ctx.fillText("나만의 정통주역운세, 3천년 역사의 데이터 기반 점사풀이", SW / 2, SAFE_BOTTOM - 70);
+  ctx.fillText("천문주역, 하늘에 묻다", SW / 2, SAFE_BOTTOM - 70);
   ctx.fillStyle = D.gold;
   ctx.font = font(700, 28);
   ctx.fillText(SITE_LABEL, SW / 2, SAFE_BOTTOM - 28);
@@ -107,7 +107,7 @@ export async function renderStoryCard(reading: Reading): Promise<Blob> {
   const { primary, resulting, changingLines, period, periodDate } = reading;
   const [canvas, ctx] = makeCanvas();
   background(ctx);
-  header(ctx, "나만의 정통주역운세", reading.castAt ? formatCastAt(reading.castAt) : new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
+  header(ctx, "천문주역", reading.castAt ? formatCastAt(reading.castAt) : new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
 
   let y = SAFE_TOP + 130;
   const flowH = drawFlow(ctx, reading, SW / 2, y, resulting ? 230 : 300, resulting ? 22 : 28, resulting ? 16 : 18, { primary: D.gold, resulting: D.jade, text: D.ink, muted: D.muted, changing: D.vermilion }, 1.05);

@@ -151,7 +151,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
       <div className="px-1 pt-2 lg:col-span-2">
-        <p className="text-xs font-bold text-vermilion">3천년 역사의 데이터 기반 점사풀이</p>
+        <p className="text-xs font-bold text-vermilion">하늘에 묻다</p>
         <p className="mt-1 min-h-5 text-sm text-muted">{greeting}</p>
         <h1 className="mt-1 text-[26px] font-extrabold leading-tight">
           {day ? `오늘은 ${day.label.replace("일", "")} 날,` : "오늘은"}
@@ -172,8 +172,8 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         <div className="pointer-events-none absolute -right-24 -top-12 opacity-25">
           <HexagramWheel size={260} />
         </div>
-        <p className="text-sm text-card/70">주역 64괘 점</p>
-        <p className="mt-2 text-2xl font-extrabold">나만의 주역 괘와 효 뽑기</p>
+        <p className="text-sm text-card/70">주역 64괘와 384효</p>
+        <p className="mt-2 text-2xl font-extrabold">주역으로 하늘의 뜻을 묻기</p>
         <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80 md:max-w-[70%]">동전, 산통, 산가지 중 마음에 드는 방법으로 괘를 뽑고 오늘의 조언을 받아 보세요.</p>
         <span className="mt-5 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold">

@@ -44,7 +44,7 @@ async function api(token, method, path, body) {
 }
 
 async function main() {
-  console.log("나만의 정통주역운세 로그인 메일 발송 서버(SMTP) 설정을 시작합니다.");
+  console.log("천문주역 로그인 메일 발송 서버(SMTP) 설정을 시작합니다.");
   console.log("Gmail을 쓰려면: Google 계정 > 보안 > 2단계 인증 켜기 > 앱 비밀번호 만들기(16자리). 그 비밀번호를 아래에 넣습니다.\n");
   const token = (await getSupabaseToken());
   if (!token) fail("토큰이 비어 있습니다.");
@@ -70,7 +70,7 @@ async function main() {
   const pass = await ask("4) 앱 비밀번호 16자리 (화면에 안 보임, 띄어쓰기 있어도 됨): ", true);
   if (!pass) fail("비밀번호가 비어 있습니다.");
   const sender = (await ask(`5) 보내는 사람 주소 (그냥 Enter) [${user}]: `)) || user;
-  const senderName = (await ask("6) 보내는 사람 이름 (그냥 Enter) [나만의 정통주역운세]: ")) || "나만의 정통주역운세";
+  const senderName = (await ask("6) 보내는 사람 이름 (그냥 Enter) [천문주역]: ")) || "천문주역";
 
   const projects = await api(token, "GET", "/v1/projects");
   const project = projects.find((p) => p.name === PROJECT_NAME);
@@ -86,8 +86,8 @@ async function main() {
     smtp_sender_name: senderName,
     smtp_max_frequency: 30,
     rate_limit_email_sent: 60,
-    mailer_subjects_magic_link: "나만의 정통주역운세 로그인 링크예요",
-    mailer_subjects_confirmation: "나만의 정통주역운세 로그인 링크예요",
+    mailer_subjects_magic_link: "천문주역 로그인 링크예요",
+    mailer_subjects_confirmation: "천문주역 로그인 링크예요",
     // 처음 가입하는 사람과 다시 로그인하는 사람 모두 같은 한국어 메일을 받는다
     mailer_templates_magic_link_content: readFileSync(join(ROOT, "supabase/templates/login-mail.html"), "utf8"),
     mailer_templates_confirmation_content: readFileSync(join(ROOT, "supabase/templates/login-mail.html"), "utf8"),

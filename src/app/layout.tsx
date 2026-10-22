@@ -7,10 +7,10 @@ import "./globals.css";
 const BASE = process.env.GITHUB_PAGES === "true" ? "/jooyeok-iching" : "";
 
 export const metadata: Metadata = {
-  title: "나만의 정통주역운세, 3천년 역사의 데이터 기반 점사풀이",
-  description: "주역 64괘와 육효로 오늘의 운을 묻습니다. 동전, 산통, 산가지로 괘를 뽑고 쉬운 말로 풀어낸 조언을 받아 보세요.",
-  applicationName: "나만의 정통주역운세",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "주역운세" },
+  title: "천문주역, 하늘에 묻다",
+  description: "주역 64괘와 384효로 하늘의 뜻을 묻습니다. 산통을 흔들어 괘를 뽑고, AI가 내 질문에 맞춰 효사 원문으로 풀어 드려요.",
+  applicationName: "천문주역",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "천문주역" },
   manifest: `${BASE}/manifest.webmanifest`,
   icons: { icon: `${BASE}/icon-v2.svg`, apple: `${BASE}/apple-touch-icon-v2.png` },
 };
