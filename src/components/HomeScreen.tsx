@@ -174,10 +174,10 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </div>
         <p className="text-sm text-card/70">주역 64괘와 384효</p>
         <p className="mt-2 text-2xl font-extrabold">주역으로 하늘의 뜻을 묻기</p>
-        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80 md:max-w-[70%]">동전, 산통, 산가지 중 마음에 드는 방법으로 괘를 뽑고 오늘의 조언을 받아 보세요.</p>
+        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80 md:max-w-[70%]">동전, 산통, 산가지 중 마음에 드는 방법으로 괘를 뽑고 하늘의 뜻을 들어 보세요.</p>
         <span className="mt-5 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold">
-            시작하기 <ChevronRight size={16} />
+            하늘에 묻기 <ChevronRight size={16} />
           </span>
           <QuotaBadge />
         </span>
@@ -216,7 +216,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
           ) : null}
         </div>
         {history.length === 0 ? (
-          <p className="mt-2 text-sm text-muted">아직 기록이 없어요. 점을 치면 이 기기에 알아서 저장해 둬요.</p>
+          <p className="mt-2 text-sm text-muted">아직 하늘에 물은 적이 없어요. 괘를 뽑으면 이 기기에 알아서 저장해 둬요.</p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
             {shown.map((r) => (

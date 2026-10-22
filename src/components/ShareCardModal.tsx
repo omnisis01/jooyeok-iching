@@ -189,7 +189,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
               )}
               {!url ? (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  {error ? <p className="p-6 text-center text-sm text-vermilion">{error}</p> : <p className="text-sm text-muted">이미지를 만드는 중…</p>}
+                  {error ? <p className="p-6 text-center text-sm text-vermilion">{error}</p> : <p className="text-sm text-muted">괘를 그림에 담는 중…</p>}
                 </div>
               ) : null}
             </div>

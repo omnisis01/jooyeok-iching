@@ -22,7 +22,7 @@ import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
 import ShareCardModal from "./ShareCardModal";
 import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
-const STEPS = ["괘사를 읽는 중", "효사를 읽는 중", "질문에 맞추는 중", "쉬운 말로 다듬는 중"];
+const STEPS = ["하늘의 뜻을 묻는 중", "괘사와 효사를 읽는 중", "질문에 맞추는 중", "쉬운 말로 다듬는 중"];
 // 받기 전에 어떤 내용을 받는지 미리 보여 준다
 const PREVIEW = ["한 줄 답", "어떻게 변하나요", "내가 선 자리(효사 원문)", "앞으로의 흐름", "할 일 3가지", "하면과 미루면", "육효로 본 때", "조심할 점"];
 
@@ -385,7 +385,7 @@ function FollowupBox({ reading, saved, onDone }: { reading: Reading; saved: AiFo
             className="min-w-0 flex-1 rounded-full bg-card px-4 py-2.5 text-sm outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
           />
           <button onClick={ask} disabled={state === "busy" || q.trim().length < 2} className="shrink-0 rounded-full bg-foreground px-4 py-2.5 text-sm font-bold text-card disabled:opacity-40">
-            {state === "busy" ? "답하는 중…" : "묻기"}
+            {state === "busy" ? "주역이 답하는 중…" : "묻기"}
           </button>
         </div>
       ) : null}

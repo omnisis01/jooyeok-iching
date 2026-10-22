@@ -73,7 +73,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
           이메일로 로그인하고 하루 {FREE_PER_DAY}번 보기
         </button>
       ) : null}
-      <ShareForCoupon className="mt-3" label="친구에게 공유하고 한 번 더 뽑기" />
+      <ShareForCoupon className="mt-3" label="친구에게 알리고 한 번 더 묻기" />
       {payOn ? (
         <button onClick={() => { track("pro_click", { where: "quota" }); onGoPremium?.(); }} className="mt-3 w-full rounded-full bg-vermilion px-5 py-3 text-sm font-bold text-card transition hover:brightness-105">
           Pro로 횟수 제한 없이 보기

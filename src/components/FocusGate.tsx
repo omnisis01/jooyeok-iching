@@ -85,7 +85,7 @@ export default function FocusGate({ action, topic, question, onReady }: Props) {
         }}
         className="mt-6 w-full rounded-full bg-vermilion py-4 text-lg font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
       >
-        {seconds < 3 ? "마음을 모으는 중" : "집중했어요, 시작하기"}
+        {seconds < 3 ? "마음을 모으는 중" : "집중했어요, 하늘에 묻기"}
       </button>
     </motion.div>
   );
