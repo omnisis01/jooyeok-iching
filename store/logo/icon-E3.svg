@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 40 320 320"><defs>
+    <radialGradient id="g" cx="0.5" cy="0.45" r="0.7"><stop offset="0" stop-color="#22306a"/><stop offset="1" stop-color="#0a1028"/></radialGradient>
+    <clipPath id="box"><rect x="60" y="40" width="320" height="320" rx="56"/></clipPath>
+  </defs>
+  <g clip-path="url(#box)">
+    <rect x="60" y="40" width="320" height="320" fill="url(#g)"/>
+    <g fill="#f1e9da"><circle cx="100" cy="90" r="2"/><circle cx="330" cy="80" r="2.4"/><circle cx="350" cy="300" r="1.8"/><circle cx="90" cy="280" r="1.6"/><circle cx="300" cy="330" r="1.5"/></g>
+    <g fill="#f1e9da">
+      <rect x="120" y="140" width="200" height="22" rx="7"/>
+      <rect x="120" y="190" width="76" height="22" rx="7"/><rect x="244" y="190" width="76" height="22" rx="7"/>
+      <rect x="120" y="240" width="200" height="22" rx="7"/>
+    </g>
+    <circle cx="220" cy="201" r="22" fill="#f2c94c"/><circle cx="229" cy="194" r="19" fill="url(#g)"/>
+  </g>
+  <rect x="60" y="40" width="320" height="320" rx="56" fill="none" stroke="#c9a44a" stroke-width="3"/>
+</svg>

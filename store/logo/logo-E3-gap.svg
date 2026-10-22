@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400">
+  <defs>
+    <radialGradient id="g" cx="0.5" cy="0.45" r="0.7"><stop offset="0" stop-color="#22306a"/><stop offset="1" stop-color="#0a1028"/></radialGradient>
+    <clipPath id="box"><rect x="60" y="40" width="320" height="320" rx="56"/></clipPath>
+  </defs>
+  <g clip-path="url(#box)">
+    <rect x="60" y="40" width="320" height="320" fill="url(#g)"/>
+    <g fill="#f1e9da"><circle cx="100" cy="90" r="2"/><circle cx="330" cy="80" r="2.4"/><circle cx="350" cy="300" r="1.8"/><circle cx="90" cy="280" r="1.6"/><circle cx="300" cy="330" r="1.5"/></g>
+    <g fill="#f1e9da">
+      <rect x="120" y="140" width="200" height="22" rx="7"/>
+      <rect x="120" y="190" width="76" height="22" rx="7"/><rect x="244" y="190" width="76" height="22" rx="7"/>
+      <rect x="120" y="240" width="200" height="22" rx="7"/>
+    </g>
+    <circle cx="220" cy="201" r="22" fill="#f2c94c"/><circle cx="229" cy="194" r="19" fill="url(#g)"/>
+  </g>
+  <rect x="60" y="40" width="320" height="320" rx="56" fill="none" stroke="#c9a44a" stroke-width="3"/>
+  <text x="430" y="200" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="800" font-size="118" fill="currentColor" letter-spacing="-2">하늘주역</text>
+  <text x="434" y="268" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="500" font-size="40" fill="#b9862b" letter-spacing="6">하늘에 묻고, 괘가 답하다</text>
+  <text x="436" y="318" font-family='"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif' font-weight="600" font-size="28" fill="currentColor" opacity="0.5" letter-spacing="10">SKY I CHING</text>
+</svg>
