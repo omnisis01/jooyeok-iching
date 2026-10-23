@@ -2,6 +2,8 @@
 // Pro이거나 건별 결제로 열었을 때만 펼쳐진다. 결제가 꺼져 있으면 카드 자체를 보이지 않는다
 "use client";
 
+import { kstDateString } from "@/lib/clock";
+
 import { useEffect, useState } from "react";
 import { ChevronDown, Lock, Sparkles } from "lucide-react";
 import type { Reading } from "@/lib/iching";
@@ -97,7 +99,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
             <h4 className="text-sm font-bold text-muted">육효로 다시 읽으면</h4>
             <div className="mt-2">
               <YukhyoResult
-                result={analyzeYukhyo({ lines: reading.primary.lines, changingLines: reading.changingLines, category: cat.key, date: (reading.castAt ?? new Date().toISOString()).slice(0, 10), castAt: reading.castAt })}
+                result={analyzeYukhyo({ lines: reading.primary.lines, changingLines: reading.changingLines, category: cat.key, date: kstDateString(reading.castAt ? Date.parse(reading.castAt) : Date.now()), castAt: reading.castAt })}
                 onRestart={() => setOpen(false)}
                 saveToHistory={false}
                 embedded

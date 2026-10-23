@@ -1,9 +1,13 @@
 // 점치기 전체 흐름: 질문 입력·방법 선택 → 점 뽑기 → 결과
 "use client";
 
+import { kstDateString } from "@/lib/clock";
+
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Coins, HelpCircle, Landmark, Lock, Sprout } from "lucide-react";
+import { ArrowLeft, Coins, HelpCircle, Landmark, Lock, Sprout, Compass } from "lucide-react";
+import YukhyoResult from "./YukhyoResult";
+import { analyzeYukhyo } from "@/lib/yukhyo";
 import type { Reading } from "@/lib/iching";
 import CoinCasting from "./CoinCasting";
 import SantongCasting from "./SantongCasting";
@@ -19,7 +23,7 @@ import { consumeCast, quotaState, refreshServerQuota } from "@/lib/quota";
 import { track } from "@/lib/track";
 import { fetchIsAdmin } from "@/lib/admin";
 
-type Stage = "setup" | "focus" | Method | "result";
+type Stage = "setup" | "focus" | Method | "result" | "yukhyo";
 
 export default function DivinationFlow() {
   const [stage, setStage] = useState<Stage>("setup");
@@ -47,6 +51,8 @@ export default function DivinationFlow() {
     };
   }, []);
   const yarrowOpen = quota.premium || admin;
+  // 육효점: 동전으로 뽑은 뒤 육효(세효·응효·용신·시기)로 바로 판단한다. Pro와 관리자만
+  const [yukhyoMode, setYukhyoMode] = useState(false);
   const isFirstRender = useRef(true);
 
   // 단계가 바뀔 때 섹션 상단으로 스크롤해 결과가 잘리지 않게 한다 (첫 렌더는 제외)
@@ -58,7 +64,8 @@ export default function DivinationFlow() {
     document.getElementById("divine")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [stage]);
 
-  const start = (method: Method) => {
+  const start = (method: Method, yukhyo = false) => {
+    setYukhyoMode(yukhyo);
     setPending(method);
     setStage("focus");
     track("cast_start", { kind: "iching", method, category });
@@ -80,7 +87,7 @@ export default function DivinationFlow() {
     consumeCast();
     track("cast_done", { kind: "iching", method: r.method, category, changing: r.changingLines.length });
     setReading({ ...r, category, question: question.trim() || undefined, context: context.trim() || undefined, period, periodDate: period === "date" ? periodDate : undefined });
-    setStage("result");
+    setStage(yukhyoMode ? "yukhyo" : "result");
   };
 
   const restart = () => {
@@ -198,7 +205,7 @@ export default function DivinationFlow() {
                 onClick={() => start("santong")}
               />
             </div>
-            <div className={`mt-3 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
+            <div className={`mt-3 grid gap-3 sm:grid-cols-2 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
               <MethodCard
                 icon={yarrowOpen ? <Sprout size={26} /> : <HelpCircle size={26} />}
                 title="시초점"
@@ -209,6 +216,17 @@ export default function DivinationFlow() {
                 locked={!yarrowOpen}
                 wide
                 onClick={() => (yarrowOpen ? start("yarrow") : (window.location.hash = "home"))}
+              />
+              <MethodCard
+                icon={yarrowOpen ? <Compass size={26} /> : <HelpCircle size={26} />}
+                title="육효점"
+                sub="동전 세 개 + 육효"
+                desc="동전으로 뽑은 괘에 날짜의 기운을 얹어, 되는지 안 되는지와 언제쯤인지를 짚어요. 날짜와 성패가 궁금한 질문에 알맞아요."
+                time={yarrowOpen ? "약 1분, 길·평·흉으로 답해요" : "Pro 구매 시 바로 쓸 수 있어요"}
+                badge={yarrowOpen ? (admin && !quota.premium ? "관리자" : "Pro") : "Pro 전용"}
+                locked={!yarrowOpen}
+                wide
+                onClick={() => (yarrowOpen ? start("coin", true) : (window.location.hash = "home"))}
               />
             </div>
           </motion.div>
@@ -244,6 +262,22 @@ export default function DivinationFlow() {
             ) : (
               <YarrowCasting onComplete={complete} />
             )}
+          </motion.div>
+        ) : null}
+
+        {stage === "yukhyo" && reading ? (
+          <motion.div key="yukhyo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
+            <YukhyoResult
+              result={analyzeYukhyo({
+                lines: reading.primary.lines,
+                changingLines: reading.changingLines,
+                category,
+                date: kstDateString(reading.castAt ? Date.parse(reading.castAt) : Date.now()),
+                question: reading.question,
+                castAt: reading.castAt,
+              })}
+              onRestart={restart}
+            />
           </motion.div>
         ) : null}
 

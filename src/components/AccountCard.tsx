@@ -6,7 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { Bell, BellOff, Cloud, LogOut, Mail, RefreshCw, ShieldCheck } from "lucide-react";
 import { cloudEnabled } from "@/lib/supabase";
 import { fetchIsAdmin } from "@/lib/admin";
-import { getSession, onAuthChange, pushOne, sendMagicLink, signOut, syncAll } from "@/lib/cloudSync";
+import { getSession, onAuthChange, pushOne, sendMagicLink, signInWithKakao, signOut, syncAll } from "@/lib/cloudSync";
 import { currentSubscription, pushEnabled, pushSupported, subscribePush, unsubscribePush } from "@/lib/push";
 import { loadHistory } from "@/lib/history";
 import { track } from "@/lib/track";
@@ -159,8 +159,22 @@ export default function AccountCard() {
       ) : (
         <>
           <p className="mt-1 text-sm text-muted">이메일만 넣으면 비밀번호 없이 로그인 링크를 보내 드려요. 로그인하면 무료 점치기 기회가 하루 1번에서 3번으로 늘고, 기록이 여러 기기에서 이어집니다.</p>
+          <button
+            disabled={busy}
+            onClick={() =>
+              run(async () => {
+                track("login_prompt", { where: "kakao" });
+                await signInWithKakao();
+                return "카카오로 이동해요…";
+              })
+            }
+            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#FEE500] py-3 text-sm font-bold text-[#191919] disabled:opacity-50"
+          >
+            <KakaoMark /> 카카오로 3초 만에 시작하기
+          </button>
+          <p className="mt-3 text-center text-xs text-muted">또는 이메일로</p>
           <form
-            className="mt-3 flex gap-2"
+            className="mt-2 flex gap-2"
             onSubmit={(e) => {
               e.preventDefault();
               if (!email.includes("@")) {
@@ -189,5 +203,14 @@ export default function AccountCard() {
       )}
       {status ? <p className="mt-3 text-xs text-vermilion">{status}</p> : null}
     </section>
+  );
+}
+
+// 카카오 말풍선 모양(공식 심볼을 단순화한 것)
+function KakaoMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#191919" d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72l-1.1 4.06c-.08.3.26.55.52.38l4.78-3.17c.37.04.75.06 1.14.06 5.52 0 10-3.58 10-8.05S17.52 3 12 3z" />
+    </svg>
   );
 }
