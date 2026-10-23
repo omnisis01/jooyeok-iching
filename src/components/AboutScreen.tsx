@@ -2,15 +2,13 @@
 import Taegeuk from "./Taegeuk";
 import MethodGuide from "./MethodGuide";
 import InquiryForm from "./InquiryForm";
-import { ThemeSetting } from "./ThemeToggle";
+import FeaturedReviews from "./FeaturedReviews";
 import { GuaHyoBody } from "./GuaHyoExplainer";
 import { TRIGRAMS } from "@/lib/iching";
 
 export default function AboutScreen() {
   return (
     <div className="space-y-4">
-      <ThemeSetting />
-
       <section className="rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
         <div className="flex items-center gap-4">
           <Taegeuk size={72} className="animate-spin-slow" />
@@ -55,7 +53,10 @@ export default function AboutScreen() {
         <MethodGuide method="yukhyo" />
       </section>
 
-      <InquiryForm />
+      <FeaturedReviews />
+      <section id="inquiry" className="scroll-mt-24">
+        <InquiryForm />
+      </section>
 
       <p className="px-2 pb-2 text-center text-xs leading-relaxed text-muted">
         이 앱의 해설은 통행본 주역을 바탕으로 쉽게 풀어 쓴 것입니다. 삶의 중요한 선택은 언제나 여러분의 몫입니다.

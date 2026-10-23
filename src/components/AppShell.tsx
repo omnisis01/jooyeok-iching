@@ -3,12 +3,13 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { BookOpen, Grid3x3, Home, Sparkles } from "lucide-react";
+import { Grid3x3, Home, Menu, Settings, Sparkles } from "lucide-react";
 import AdminScreen from "./AdminScreen";
 import { resetAdmin } from "@/lib/admin";
 import Taegeuk from "./Taegeuk";
 import ThemeToggle from "./ThemeToggle";
 import TextSizeToggle from "./TextSizeToggle";
+import SettingsSheet, { openSettings } from "./SettingsSheet";
 import { useToday } from "@/lib/useToday";
 import { syncClock } from "@/lib/clock";
 import { attachServerQuota, refreshServerQuota } from "@/lib/quota";
@@ -27,14 +28,14 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: "home", label: "홈", icon: <Home size={22} /> },
   { key: "divine", label: "묻기", icon: <Sparkles size={22} /> },
   { key: "hexagrams", label: "64괘", icon: <Grid3x3 size={22} /> },
-  { key: "about", label: "알아보기", icon: <BookOpen size={22} /> },
+  { key: "about", label: "더보기", icon: <Menu size={22} /> },
 ];
 
 const TITLES: Record<Tab, string> = {
   home: "하늘주역",
   divine: "하늘에 묻기",
   hexagrams: "64괘",
-  about: "주역 알아보기",
+  about: "더보기",
   admin: "관리자 모드",
 };
 
@@ -139,8 +140,9 @@ export default function AppShell() {
           </button>
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-muted sm:inline">{dateLabel}</span>
-            <TextSizeToggle />
-            <ThemeToggle />
+            <button onClick={openSettings} className="rounded-full bg-card p-2 text-foreground/80 shadow-[0_2px_10px_rgba(31,29,26,0.08)]" aria-label="설정">
+              <Settings size={20} />
+            </button>
           </div>
         </header>
 
@@ -186,6 +188,7 @@ export default function AppShell() {
         </nav>
       </div>
       <GuaHyoGuide />
+      <SettingsSheet go={go} />
     </div>
   );
 }

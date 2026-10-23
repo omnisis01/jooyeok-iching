@@ -1,6 +1,8 @@
 // 오늘 남은 무료 횟수를 보여주고, 다 쓰면 공유 쿠폰이나 Pro로 안내하는 카드
 "use client";
 
+import { openSettings } from "./SettingsSheet";
+
 import { useEffect, useState } from "react";
 import { Ticket } from "lucide-react";
 import { FREE_PER_DAY, FREE_PER_DAY_GUEST, SHARE_COUPONS_PER_DAY, quotaState, type QuotaState } from "@/lib/quota";
@@ -65,8 +67,7 @@ export default function QuotaGate({ onGoPremium }: { onGoPremium?: () => void })
         <button
           onClick={() => {
             track("login_prompt", { where: "quota" });
-            window.location.hash = "home";
-            window.setTimeout(() => document.getElementById("account")?.scrollIntoView({ behavior: "smooth", block: "center" }), 350);
+            openSettings();
           }}
           className="mt-5 w-full rounded-full bg-foreground px-5 py-3 text-sm font-bold text-card transition hover:opacity-90"
         >

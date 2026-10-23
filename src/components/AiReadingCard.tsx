@@ -16,6 +16,7 @@ import { requestFollowup, setOutcome, setReminder, type AiOutcome } from "@/lib/
 import { MessageCircleQuestion } from "lucide-react";
 import { Bell } from "lucide-react";
 import { QUESTION_EXAMPLES, categoryOf } from "@/lib/categories";
+import { openSettings } from "./SettingsSheet";
 import { track } from "@/lib/track";
 import { SITE_URL } from "@/lib/shareCard";
 import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
@@ -207,10 +208,7 @@ export default function AiReadingCard({ reading, onQuestion }: { reading: Readin
         <div className="mt-4">
           {loggedIn === false ? (
             <button
-              onClick={() => {
-                window.location.hash = "home";
-                window.setTimeout(() => document.getElementById("account")?.scrollIntoView({ behavior: "smooth", block: "center" }), 350);
-              }}
+              onClick={openSettings}
               className="w-full rounded-full bg-foreground py-3 font-bold text-card"
             >
               로그인하고 AI 점사 분석 한 번 무료로 받기

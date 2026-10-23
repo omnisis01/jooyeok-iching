@@ -12,8 +12,6 @@ import HexagramFigure from "./HexagramFigure";
 import { aiReadingKeys } from "@/lib/aiClient";
 import HexagramWheel from "./HexagramWheel";
 import ResultView from "./ResultView";
-import AccountCard from "./AccountCard";
-import FeaturedReviews from "./FeaturedReviews";
 import PremiumCard from "./PremiumCard";
 import YukhyoResult from "./YukhyoResult";
 import { FREE_HISTORY_LIMIT, fetchPremiumUntil, paymentsEnabled } from "@/lib/premium";
@@ -150,16 +148,6 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
 
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
-      <div className="px-1 pt-2 lg:col-span-2">
-        <p className="text-xs font-bold text-vermilion">하늘에 묻고, 주역으로 답하다</p>
-        <p className="mt-1 min-h-5 text-sm text-muted">{greeting}</p>
-        <h1 className="mt-1 text-[26px] font-extrabold leading-tight">
-          {day ? `오늘은 ${day.label.replace("일", "")} 날,` : "오늘은"}
-          <br />
-          어떤 괘가 나올까요
-        </h1>
-      </div>
-
       {unlockMessage ? <p className="rounded-2xl bg-card px-4 py-3 text-center text-sm font-semibold text-gold-soft">{unlockMessage}</p> : null}
 
       {/* 점치기 입구 */}
@@ -172,9 +160,9 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         <div className="pointer-events-none absolute -right-24 -top-12 opacity-25">
           <HexagramWheel size={260} />
         </div>
-        <p className="text-sm text-card/70">주역 64괘와 384효</p>
-        <p className="mt-2 text-2xl font-extrabold">주역으로 하늘의 뜻을 묻기</p>
-        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80 md:max-w-[70%]">동전, 산통, 산가지 중 마음에 드는 방법으로 괘를 뽑고 하늘의 뜻을 들어 보세요.</p>
+        <p className="min-h-5 text-sm text-card/70">{day ? `오늘은 ${day.label.replace("일", "")} 날` : ""}{greeting ? `, ${greeting}` : ""}</p>
+        <p className="mt-2 text-2xl font-extrabold">오늘, 하늘에 무엇을 물을까요</p>
+        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80 md:max-w-[70%]">궁금한 일 하나를 적고 괘를 뽑으면, 내 질문에 맞춘 AI 점사 분석이 바로 나와요.</p>
         <span className="mt-5 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold">
             하늘에 묻기 <ChevronRight size={16} />
@@ -183,27 +171,10 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         </span>
       </motion.button>
 
-      <div className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-        <div className="flex items-center justify-between">
-          <p className="font-bold">64괘</p>
-          <button onClick={() => go("about")} className="text-sm text-muted hover:text-foreground">
-            주역이란
-          </button>
-        </div>
-        <div className="mt-3 flex justify-center">
-          <HexagramWheel size={340} className="h-auto w-full max-w-[340px]" />
-        </div>
-        <div className="mt-2 flex justify-center">
-          <button onClick={() => go("hexagrams")} className="inline-flex items-center gap-1 rounded-full bg-background px-4 py-2 text-sm font-semibold transition hover:bg-border/60">
-            64괘 둘러보기 <ChevronRight size={15} />
-          </button>
-        </div>
-      </div>
-
       {/* 나의 점 기록 */}
       <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
         <div className="flex items-center justify-between">
-          <p className="font-bold">나의 점 기록</p>
+          <p className="font-bold">내가 물은 것</p>
           {history.length ? (
             <button
               onClick={() => {
@@ -227,15 +198,15 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">
-                      {r.type === "iching" ? readingFromRecord(r).primary.name : `${r.hexName}, ${r.categoryLabel}`}
+                      {r.type === "iching" ? r.question || `${categoryOf(r.category).label} (질문 없음)` : `${r.hexName}, ${r.categoryLabel}`}
                       {r.type === "yukhyo" ? <span className="ml-1.5 text-xs font-bold text-vermilion">{r.level}</span> : null}
                       {r.type === "iching" && aiKeys.has(`${r.lines}-${r.changing.join("")}-${r.at.slice(0, 16)}`) ? (
                         <span className="ml-1.5 rounded bg-gold/15 px-1 py-0.5 align-middle text-[10px] font-bold text-gold-soft">AI</span>
                       ) : null}
                     </p>
                     <p className="truncate text-xs text-muted">
+                      {r.type === "iching" ? `${readingFromRecord(r).primary.name}${readingFromRecord(r).resulting ? ` → ${readingFromRecord(r).resulting!.name}` : ""}, ` : r.question ? `“${r.question}”, ` : ""}
                       {formatAt(r.at)}
-                      {r.type === "iching" ? ` ${categoryOf(r.category).label} ${r.method === "coin" ? "척전법" : r.method === "yarrow" ? "시초점" : "산통점"}` : r.question ? ` “${r.question}”` : ""}
                     </p>
                   </div>
                   <ChevronRight size={16} className="shrink-0 text-muted" />
@@ -265,29 +236,13 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       </section>
 
 
-      <FeaturedReviews />
-      <AccountCard />
       <PremiumCard />
-      <Card title="64괘 둘러보기" desc="괘마다 뜻과 조언, 효사를 볼 수 있어요" onClick={() => go("hexagrams")} accent="bg-gold/15 text-gold" badge="사전" />
 
       <p className="px-2 text-center text-xs leading-relaxed text-muted lg:col-span-2">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
     </div>
   );
 }
 
-function Card({ title, desc, onClick, accent, badge }: { title: string; desc: string; onClick: () => void; accent: string; badge: string }) {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileTap={{ scale: 0.98 }}
-      className="flex w-full flex-col items-start rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)]"
-    >
-      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${accent}`}>{badge}</span>
-      <span className="mt-3 text-lg font-bold">{title}</span>
-      <span className="mt-1 text-xs leading-relaxed text-muted">{desc}</span>
-    </motion.button>
-  );
-}
 
 function YukhyoSummary({ record }: { record: Extract<HistoryRecord, { type: "yukhyo" }> }) {
   return (
