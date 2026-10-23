@@ -25,7 +25,7 @@ import InteractiveHexagram from "./InteractiveHexagram";
 import DeepReading from "./DeepReading";
 import AiReadingCard from "./AiReadingCard";
 import AdSlot from "./AdSlot";
-import { makeId, saveRecord } from "@/lib/history";
+import { makeId, saveRecord, updateRecordQuestion } from "@/lib/history";
 import { iga, josa } from "@/lib/josa";
 
 type Props = {
@@ -36,8 +36,15 @@ type Props = {
   saveToHistory?: boolean;
 };
 
-export default function ResultView({ reading, onRestart, restartLabel = "다른 질문 하기", saveToHistory = true }: Props) {
+export default function ResultView({ reading: source, onRestart, restartLabel = "다른 질문 하기", saveToHistory = true }: Props) {
+  // 질문 없이 뽑았다가 AI 분석 전에 적으면 여기서 붙인다. 괘는 그대로, 풀이만 질문에 맞춘다
+  const [lateQuestion, setLateQuestion] = useState<{ for: Reading; q: string } | null>(null);
+  const reading = lateQuestion && lateQuestion.for === source ? { ...source, question: lateQuestion.q } : source;
   const { primary, resulting, changingLines, question, method, period, periodDate, castAt } = reading;
+  const addQuestion = (q: string) => {
+    setLateQuestion({ for: source, q });
+    updateRecordQuestion(source, q);
+  };
   const cat = categoryOf(reading.category);
   const catText = categoryReading(primary.number, cat.key);
   const advice = adaptAdvice(primary.advice, period, periodDate);
@@ -62,7 +69,7 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
   useEffect(() => {
     if (!saveToHistory) return;
     const at = castAt ? new Date(castAt) : new Date();
-    const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join(""), question]);
+    const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join("")]);
     saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, context: reading.context, period, periodDate, category: cat.key });
   }, [saveToHistory, method, primary.lines, changingLines, question, reading.context, period, periodDate, cat.key, castAt]);
 
@@ -94,23 +101,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
     }
   };
 
-  return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
-      {/* 첫 화면: 한 장 요약 */}
-      <section className="break-keep rounded-3xl bg-card px-6 pb-7 pt-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-        <p className="text-xs text-muted">
-          {cat.label}, {question ? `“${question}” ` : ""}
-          {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
-        </p>
-        {castAt ? <p className="mt-0.5 text-[11px] text-muted">뽑은 시각 {formatCastAt(castAt)}</p> : null}
-        <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15, duration: 0.5 }} className="mt-6 flex justify-center text-gold-soft">
-          <HexagramFigure lines={primary.lines} changing={changingLines} size={116} title={primary.name} />
-        </motion.div>
-        <p className="mt-5 font-serif text-sm tracking-wide text-muted">{primary.hanja}</p>
-        <h2 className="mt-1 text-4xl font-bold tracking-tight">{primary.name}</h2>
-        <p className="mt-2 text-gold-soft">{primary.keyword}</p>
-
-        {/* 지금, 변하는 효, 앞으로: 보는 사람에게 가장 중요한 "어떻게 변하나"를 한 줄기로 보여 준다 */}
+  // 지금, 변하는 효, 앞으로: 보는 사람에게 가장 중요한 "어떻게 변하나"를 한 줄기로 보여 준다
+  const flowBlocks = (
         <div className="mx-auto mt-6 max-w-md space-y-2 text-left">
           <div className="rounded-2xl bg-background px-5 py-4">
             <p className="text-xs font-bold text-muted">지금, {cat.label}으로 보면</p>
@@ -144,10 +136,33 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
             <p className="rounded-2xl bg-background px-5 py-3 text-[15px] leading-relaxed text-foreground/80">변하는 효가 없어요. 지금의 흐름이 한동안 그대로 이어져요.</p>
           )}
         </div>
+  );
 
+  return (
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+      {/* 첫 화면: 한 장 요약 */}
+      <section className="break-keep rounded-3xl bg-card px-6 pb-7 pt-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+        <p className="text-xs text-muted">
+          {cat.label}, {question ? `“${question}” ` : ""}
+          {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
+        </p>
+        {castAt ? <p className="mt-0.5 text-[11px] text-muted">뽑은 시각 {formatCastAt(castAt)}</p> : null}
+        <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15, duration: 0.5 }} className="mt-6 flex justify-center text-gold-soft">
+          <HexagramFigure lines={primary.lines} changing={changingLines} size={cloudEnabled ? 88 : 116} title={primary.name} />
+        </motion.div>
+        <p className="mt-5 font-serif text-sm tracking-wide text-muted">{primary.hanja}</p>
+        <h2 className="mt-1 text-4xl font-bold tracking-tight">{primary.name}</h2>
+        <p className="mt-2 text-gold-soft">{primary.keyword}</p>
+
+        {cloudEnabled && resulting ? (
+          <p className="mx-auto mt-4 max-w-md rounded-2xl bg-background px-4 py-2.5 text-sm text-foreground/85">
+            <span className="font-bold text-vermilion">{changeLabel}</span> <span className="text-muted">→</span> {resulting.name} <span className="text-muted">{resulting.keyword}</span>
+          </p>
+        ) : null}
+        {!cloudEnabled ? flowBlocks : null}
       </section>
 
-      <AiReadingCard reading={reading} />
+      <AiReadingCard reading={reading} onQuestion={addQuestion} />
       {cloudEnabled ? (
         <button
           onClick={() => (expanded ? setExpanded(false) : openDetails())}
@@ -178,6 +193,12 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
 
       {expanded ? (
         <motion.div ref={detailsRef} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="scroll-mt-24 space-y-6">
+          {cloudEnabled ? (
+            <section className="break-keep rounded-3xl bg-card px-6 py-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+              <h3 className="text-center text-sm font-bold text-muted">지금, 변하는 효, 앞으로</h3>
+              {flowBlocks}
+            </section>
+          ) : null}
           {changingLines.length ? <FlowOverview primary={primary} changingLines={changingLines} resulting={resulting} /> : null}
 
           {/* 본괘 */}

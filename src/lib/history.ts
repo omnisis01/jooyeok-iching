@@ -73,6 +73,14 @@ export function saveRecordSilently(record: HistoryRecord) {
   write([record, ...list].sort((a, b) => (a.at < b.at ? 1 : -1)));
 }
 
+/** 결과를 본 뒤에 질문을 붙인다(질문 없이 뽑고 AI 분석 전에 적는 경우). 같은 괘, 같은 시각의 기록을 찾아 바꾼다 */
+export function updateRecordQuestion(reading: Pick<Reading, "primary" | "changingLines" | "castAt">, question: string) {
+  const at = reading.castAt?.slice(0, 16);
+  const list = read().map((r) => (r.type === "iching" && r.lines === reading.primary.lines && r.changing.join("") === reading.changingLines.join("") && (!at || r.at.slice(0, 16) === at) ? { ...r, question } : r));
+  write(list);
+  window.dispatchEvent(new Event("history-changed"));
+}
+
 export function removeRecord(id: string) {
   write(read().filter((r) => r.id !== id));
   window.dispatchEvent(new Event("history-changed"));

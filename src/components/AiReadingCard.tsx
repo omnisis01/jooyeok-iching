@@ -15,7 +15,7 @@ import { currentSubscription, pushEnabled, pushSupported, subscribePush } from "
 import { requestFollowup, setOutcome, setReminder, type AiOutcome } from "@/lib/aiClient";
 import { MessageCircleQuestion } from "lucide-react";
 import { Bell } from "lucide-react";
-import { categoryOf } from "@/lib/categories";
+import { QUESTION_EXAMPLES, categoryOf } from "@/lib/categories";
 import { track } from "@/lib/track";
 import { SITE_URL } from "@/lib/shareCard";
 import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
@@ -34,7 +34,7 @@ type View =
   | { kind: "safety" }
   | { kind: "error"; message: string };
 
-export default function AiReadingCard({ reading }: { reading: Reading }) {
+export default function AiReadingCard({ reading, onQuestion }: { reading: Reading; onQuestion?: (q: string) => void }) {
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [can, setCan] = useState<AiEntitlement>(null);
   const [view, setView] = useState<View>({ kind: "idle" });
@@ -42,6 +42,9 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
   const [shareOpen, setShareOpen] = useState(false);
   // 결과가 열리면 분석을 기본으로 바로 보여 준다(버튼 없이). 한 결과에 한 번만
   const [autoRun, setAutoRun] = useState(false);
+  // 질문 없이 뽑았으면 분석 전에 한 번 묻는다. "분야 전체로 분석"을 누르면 질문 없이 간다
+  const [skipAsk, setSkipAsk] = useState(false);
+  const [draftQ, setDraftQ] = useState("");
   const autoRan = useRef<string | null>(null);
   const payOn = usePaymentsOn();
   const ctx = useMemo(() => buildContext(aiInputOf(reading)), [reading]);
@@ -94,10 +97,20 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
   const runKey = aiReadingKey(aiInputOf(reading));
   useEffect(() => {
     if (!autoRun || view.kind !== "idle" || autoRan.current === runKey) return;
+    if (!ctx.question && !skipAsk) return;
     autoRan.current = runKey;
-    void run();
+    const t = window.setTimeout(() => void run(), 0);
+    return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRun, runKey]);
+  }, [autoRun, runKey, ctx.question, skipAsk]);
+
+  const askQuestion = loggedIn === true && autoRun && !ctx.question && !skipAsk && view.kind === "idle";
+  const examples = QUESTION_EXAMPLES[cat.key] ?? [];
+  const submitQuestion = (q: string) => {
+    const t = q.trim().slice(0, 60);
+    if (t.length < 2) return;
+    onQuestion?.(t);
+  };
 
   if (!cloudEnabled) return null;
 
@@ -202,6 +215,34 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
             >
               로그인하고 AI 점사 분석 한 번 무료로 받기
             </button>
+          ) : askQuestion ? (
+            <div className="rounded-2xl bg-background p-4">
+              <p className="font-bold">질문 없이 뽑으셨네요. 무엇이 궁금했나요?</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted">질문을 적으면 이 괘를 내 상황에 맞춰 풀어요. 괘는 이미 정해졌으니 결과는 바뀌지 않아요.</p>
+              <input
+                value={draftQ}
+                onChange={(e) => setDraftQ(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && submitQuestion(draftQ)}
+                maxLength={60}
+                placeholder={examples[0] ? `예: ${examples[0]}` : "한 줄로 적어 주세요"}
+                className="mt-3 w-full rounded-xl bg-card px-4 py-2.5 text-[15px] outline-none focus:ring-2 focus:ring-vermilion/30"
+              />
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {examples.map((q) => (
+                  <button key={q} onClick={() => setDraftQ(q)} className="rounded-full bg-card px-3 py-1.5 text-xs text-foreground/80 transition hover:bg-border/60">
+                    {q}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3 flex gap-2">
+                <button onClick={() => submitQuestion(draftQ)} disabled={draftQ.trim().length < 2} className="flex-1 rounded-full bg-vermilion py-2.5 text-sm font-bold text-card disabled:opacity-40">
+                  이 질문으로 분석
+                </button>
+                <button onClick={() => setSkipAsk(true)} className="flex-1 rounded-full bg-card py-2.5 text-sm font-semibold">
+                  {cat.label} 전체로 분석
+                </button>
+              </div>
+            </div>
           ) : (
             <button onClick={run} disabled={loggedIn === null} className="w-full rounded-full bg-foreground py-3 font-bold text-card transition hover:opacity-90 disabled:opacity-50">
               {label}
