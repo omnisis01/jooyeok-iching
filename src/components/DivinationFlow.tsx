@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Coins, Landmark, Sprout } from "lucide-react";
+import { ArrowLeft, Coins, HelpCircle, Landmark, Lock, Sprout } from "lucide-react";
 import type { Reading } from "@/lib/iching";
 import CoinCasting from "./CoinCasting";
 import SantongCasting from "./SantongCasting";
@@ -17,6 +17,7 @@ import { CATEGORIES, QUESTION_EXAMPLES, categoryOf, type Category } from "@/lib/
 import QuotaGate, { QuotaBadge, useQuota } from "./QuotaGate";
 import { consumeCast, quotaState, refreshServerQuota } from "@/lib/quota";
 import { track } from "@/lib/track";
+import { fetchIsAdmin } from "@/lib/admin";
 
 type Stage = "setup" | "focus" | Method | "result";
 
@@ -33,6 +34,16 @@ export default function DivinationFlow() {
   const [period, setPeriod] = useState<Period>("today");
   const [periodDate, setPeriodDate] = useState(todayString());
   const quota = useQuota();
+  // 시초점은 Pro와 관리자만. 가장 정교한 방식이라 Pro의 이유가 된다
+  const [admin, setAdmin] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    fetchIsAdmin().then((v) => alive && setAdmin(v));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const yarrowOpen = quota.premium || admin;
   const isFirstRender = useRef(true);
 
   // 단계가 바뀔 때 섹션 상단으로 스크롤해 결과가 잘리지 않게 한다 (첫 렌더는 제외)
@@ -155,27 +166,35 @@ export default function DivinationFlow() {
                 <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
               </div>
             ) : null}
-            <div className={`mt-3 grid gap-3 md:grid-cols-3 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
+            <div className={`mt-3 grid grid-cols-2 gap-3 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
               <MethodCard
-                icon={<Coins size={28} />}
-                title="동전 세 개, 척전법"
-                desc="동전 3개를 6번 던져 점을 칩니다. 가장 널리 쓰이는 방법이고 변하는 효가 여러 개 나올 수 있어요."
+                icon={<Coins size={26} />}
+                title="척전법"
+                sub="동전 세 개"
+                desc="동전 3개를 던져 간단히 괘를 뽑아요. 가볍고 빠른 질문에 알맞아요."
                 time="약 1분"
                 onClick={() => start("coin")}
               />
               <MethodCard
-                icon={<Landmark size={28} />}
-                title="산통 흔들기, 산통점"
-                desc="산통을 흔들어 산가지 3개를 뽑습니다. 아래 괘, 위 괘, 움직이는 효가 차례로 정해지는 우리 전통 방식이에요."
+                icon={<Landmark size={26} />}
+                title="산통법"
+                sub="산통 흔들기"
+                desc="산통을 흔들어 산가지로 괘를 뽑아요. 좀 더 깊이 들여다볼 질문에 알맞아요."
                 time="약 30초"
                 onClick={() => start("santong")}
               />
+            </div>
+            <div className={`mt-3 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
               <MethodCard
-                icon={<Sprout size={28} />}
-                title="산가지 50개, 시초점"
-                desc="산가지 49개를 18번 나누어 셉니다. 주역 원전에 적힌 가장 오래된 정통 방식이에요. 자동으로 진행할 수도 있어요."
-                time="약 3분, 자동 진행도 돼요"
-                onClick={() => start("yarrow")}
+                icon={yarrowOpen ? <Sprout size={26} /> : <HelpCircle size={26} />}
+                title="시초점"
+                sub="산가지 50개"
+                desc="산가지 49개를 18번 나누어 세는, 주역 원전의 가장 오래되고 정교한 방식이에요. 인생의 중요한 질문에 알맞아요."
+                time={yarrowOpen ? "약 3분, 자동 진행도 돼요" : "Pro 구매 시 바로 쓸 수 있어요"}
+                badge={yarrowOpen ? (admin && !quota.premium ? "관리자" : "Pro") : "Pro 전용"}
+                locked={!yarrowOpen}
+                wide
+                onClick={() => (yarrowOpen ? start("yarrow") : (window.location.hash = "home"))}
               />
             </div>
           </motion.div>
@@ -223,18 +242,29 @@ export default function DivinationFlow() {
   );
 }
 
-function MethodCard({ icon, title, desc, time, onClick }: { icon: React.ReactNode; title: string; desc: string; time: string; onClick: () => void }) {
+function MethodCard({ icon, title, sub, desc, time, badge, locked, wide, onClick }: { icon: React.ReactNode; title: string; sub: string; desc: string; time: string; badge?: string; locked?: boolean; wide?: boolean; onClick: () => void }) {
   return (
     <motion.button
       onClick={onClick}
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
-      className="group flex flex-col items-start gap-3 rounded-3xl bg-card p-5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)]"
+      className={`group flex break-keep rounded-3xl bg-card p-4 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)] sm:p-5 ${wide ? "items-center gap-4" : "flex-col items-start gap-2.5"} ${locked ? "opacity-80" : ""}`}
     >
-      <span className="rounded-2xl bg-vermilion/10 p-3 text-vermilion transition group-hover:bg-vermilion group-hover:text-card">{icon}</span>
-      <span className="text-lg font-bold">{title}</span>
-      <span className="text-sm leading-relaxed text-foreground/75">{desc}</span>
-      <span className="text-xs text-muted">{time}</span>
+      <span className={`shrink-0 rounded-2xl p-3 transition ${locked ? "bg-foreground/8 text-muted" : "bg-vermilion/10 text-vermilion group-hover:bg-vermilion group-hover:text-card"}`}>{icon}</span>
+      <span className="min-w-0">
+        <span className="flex flex-wrap items-center gap-1.5">
+          <span className="text-lg font-bold">{title}</span>
+          <span className="text-xs text-muted">{sub}</span>
+          {badge ? (
+            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold ${locked ? "bg-foreground/10 text-foreground/70" : "bg-gold/20 text-gold-soft"}`}>
+              {locked ? <Lock size={10} /> : null}
+              {badge}
+            </span>
+          ) : null}
+        </span>
+        <span className="mt-1.5 block text-sm leading-relaxed text-foreground/75">{desc}</span>
+        <span className={`mt-1.5 block text-xs ${locked ? "font-semibold text-vermilion" : "text-muted"}`}>{time}</span>
+      </span>
     </motion.button>
   );
 }

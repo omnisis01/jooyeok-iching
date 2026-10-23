@@ -46,7 +46,7 @@ export async function renderAiCard(reading: Reading, ai: AiReading, timing: stri
   ctx.textAlign = "center";
   ctx.fillStyle = C.goldSoft;
   ctx.font = font(600, 26);
-  ctx.fillText("하늘주역  AI 점사풀이", W / 2, 110);
+  ctx.fillText("하늘주역  맞춤형 AI 점사 분석", W / 2, 110);
   ctx.fillStyle = C.muted;
   ctx.font = font(400, 24);
   ctx.fillText(`${categoryOf(reading.category).label}${reading.castAt ? `, ${formatCastAt(reading.castAt)}` : ""}`, W / 2, 150);

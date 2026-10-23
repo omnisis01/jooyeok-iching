@@ -550,7 +550,7 @@ export function analyzeYukhyo(input: YukhyoInput): YukhyoResult {
     }
     if (useLine?.isVoid || (hiddenUse && day.voids.includes(hiddenUse.branch))) {
       timing.push(`빈자리를 벗어나는 ${branchLabel(ub)}의 날 이후를 기다리세요.`);
-      timingPlain.push(`지금은 아직 때가 비어 있어요. ${nextDay(ub)}이 지난 뒤를 기다리세요.`);
+      timingPlain.push(`지금은 아직 때가 아니에요. ${nextDay(ub)}이 지나면 움직여도 좋아요.`);
       timingDates.push(iso(ub));
     }
   }

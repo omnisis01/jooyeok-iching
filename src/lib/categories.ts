@@ -161,7 +161,7 @@ export const LINE_STAGE_BY_CATEGORY: Record<Category, [string, string, string, s
 /** 질문 입력 칸 아래 예시. "~할까요, 말까요?"처럼 구체적으로 묻게 이끈다 */
 export const QUESTION_EXAMPLES: Record<Category, string[]> = {
   overall: ["오늘 중요한 약속, 잘 풀릴까요?", "요즘 막힌 일, 언제쯤 풀릴까요?"],
-  wealth: ["이번 달 투자, 들어가도 될까요?", "빌려준 돈 돌려받을 수 있을까요?"],
+  wealth: ["이 주식, 사도 될까요?", "빌려준 돈 돌려받을 수 있을까요?"],
   love: ["그 사람과 다시 이어질까요?", "먼저 연락해도 될까요?"],
   exam: ["다음 주 면접, 붙을까요?", "이번 시험 준비, 이대로 괜찮을까요?"],
   business: ["가게를 열어도 될까요?", "올해 사업을 넓혀도 될까요?"],

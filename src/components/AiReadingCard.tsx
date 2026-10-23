@@ -2,11 +2,11 @@
 // 권한(관리자, Pro 하루 1회, 건별 결제, 첫 1회 체험)은 서버가 정하고, 화면은 버튼 문구만 고른다
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { ImageDown, Lock, RefreshCw, Sparkles } from "lucide-react";
 import type { Reading } from "@/lib/iching";
-import { buildContext, needsExpertNote, type AiFollowup, type AiReading } from "@/lib/aiReading";
+import { aiReadingKey, buildContext, type AiFollowup, type AiReading } from "@/lib/aiReading";
 import { aiEntitlement, aiInputOf, requestAiReading, savedAiReading, type AiEntitlement } from "@/lib/aiClient";
 import { getSession, onAuthChange } from "@/lib/cloudSync";
 import { cloudEnabled } from "@/lib/supabase";
@@ -40,6 +40,9 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
   const [view, setView] = useState<View>({ kind: "idle" });
   const [step, setStep] = useState(0);
   const [shareOpen, setShareOpen] = useState(false);
+  // 결과가 열리면 분석을 기본으로 바로 보여 준다(버튼 없이). 한 결과에 한 번만
+  const [autoRun, setAutoRun] = useState(false);
+  const autoRan = useRef<string | null>(null);
   const payOn = usePaymentsOn();
   const ctx = useMemo(() => buildContext(aiInputOf(reading)), [reading]);
   const cat = categoryOf(reading.category);
@@ -59,6 +62,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
         return;
       }
       setCan(await aiEntitlement(reading));
+      if (alive) setAutoRun(true);
     };
     void check();
     track("ai_open", {}, { oncePerSession: true });
@@ -75,8 +79,6 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
     return () => window.clearInterval(t);
   }, [view.kind]);
 
-  if (!cloudEnabled) return null;
-
   const run = async () => {
     setStep(0);
     setView({ kind: "loading" });
@@ -85,14 +87,24 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
       if (r.status === "done" || r.status === "fallback") setView({ kind: "done", result: r.result, fallback: r.status === "fallback", followup: r.followup ?? null, saved: false, outcome: null });
       else setView({ kind: r.status });
     } catch (e) {
-      setView({ kind: "error", message: e instanceof Error ? e.message : "AI 점사풀이를 불러오지 못했어요" });
+      setView({ kind: "error", message: e instanceof Error ? e.message : "AI 점사 분석을 불러오지 못했어요" });
     }
   };
+
+  const runKey = aiReadingKey(aiInputOf(reading));
+  useEffect(() => {
+    if (!autoRun || view.kind !== "idle" || autoRan.current === runKey) return;
+    autoRan.current = runKey;
+    void run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRun, runKey]);
+
+  if (!cloudEnabled) return null;
 
   const buy = async () => {
     try {
       track("deep_buy_click", { from: "ai" });
-      await startUnlock(reading, `${reading.primary.name} ${cat.label} AI 점사풀이`);
+      await startUnlock(reading, `${reading.primary.name} ${cat.label} AI 점사 분석`);
     } catch (e) {
       setView({ kind: "error", message: e instanceof Error ? e.message : "결제를 시작하지 못했어요" });
     }
@@ -104,7 +116,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
     <section id="ai-reading" className="break-keep scroll-mt-24 rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <div className="flex items-center gap-2">
         <Sparkles size={18} className="text-gold-soft" />
-        <h3 className="font-bold">AI 점사풀이</h3>
+        <h3 className="font-bold">맞춤형 AI 점사 분석</h3>
       </div>
       <p className="mt-1.5 text-sm leading-relaxed text-muted">
         {ctx.question ? <>&ldquo;{ctx.question}&rdquo;에 대해, </> : <>{cat.label}에 대해, </>}
@@ -128,8 +140,6 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
             result={view.result}
             fallback={view.fallback}
             timing={ctx.yukhyo.timing}
-            expert={needsExpertNote(ctx)}
-            sources={sourcesOf(ctx)}
             onRetry={run}
             reminder={
               view.result.timingIndex >= 0 && ctx.yukhyo.timingDates[view.result.timingIndex] ? (
@@ -141,7 +151,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
           {view.saved ? <OutcomeRow reading={reading} outcome={view.outcome} onSet={(o) => setView({ ...view, outcome: o })} /> : null}
           {!view.fallback ? (
             <button onClick={() => setShareOpen(true)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
-              <ImageDown size={18} /> AI 점사풀이 이미지로 저장하기
+              <ImageDown size={18} /> AI 점사 분석 이미지로 저장하기
             </button>
           ) : null}
           <ShareCardModal
@@ -174,7 +184,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
           </p>
           {unlockEnabled && payOn ? (
             <button onClick={buy} className="w-full rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
-              {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기 (AI 점사풀이 포함)
+              {UNLOCK_PRICE_KRW.toLocaleString("ko-KR")}원으로 이 결과 열기 (AI 점사 분석 포함)
             </button>
           ) : (
             <p className="rounded-2xl bg-background px-4 py-3 text-sm text-muted">결제는 곧 열려요. 조금만 기다려 주세요.</p>
@@ -190,7 +200,7 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
               }}
               className="w-full rounded-full bg-foreground py-3 font-bold text-card"
             >
-              로그인하고 AI 점사풀이 한 번 무료로 받기
+              로그인하고 AI 점사 분석 한 번 무료로 받기
             </button>
           ) : (
             <button onClick={run} disabled={loggedIn === null} className="w-full rounded-full bg-foreground py-3 font-bold text-card transition hover:opacity-90 disabled:opacity-50">
@@ -204,18 +214,14 @@ export default function AiReadingCard({ reading }: { reading: Reading }) {
   );
 }
 
-function sourcesOf(ctx: ReturnType<typeof buildContext>): string {
-  return [`${ctx.primary.name} 괘 해설`, ...ctx.changing.map((c) => `${c.name} 효사`), ...(ctx.resulting ? [`${ctx.resulting.name} 괘 해설`] : []), "육효 판단"].join(", ");
-}
-
-function AiResult({ result, fallback, timing, expert, sources, onRetry, reminder }: { result: AiReading; fallback: boolean; timing: string[]; expert: boolean; sources: string; onRetry: () => void; reminder?: React.ReactNode }) {
+function AiResult({ result, fallback, timing, onRetry, reminder }: { result: AiReading; fallback: boolean; timing: string[]; onRetry: () => void; reminder?: React.ReactNode }) {
   const when = result.timingIndex >= 0 ? timing[result.timingIndex] : null;
   const choices = result.choices && (result.choices.go || result.choices.wait) ? result.choices : null;
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-5 space-y-5">
       {fallback ? (
         <div className="flex items-start justify-between gap-3 rounded-2xl bg-background px-4 py-3 text-xs leading-relaxed text-muted">
-          <span>AI 연결이 원활하지 않아 기본 자료로 정리했어요. 잠시 뒤 다시 누르면 AI 점사풀이를 받을 수 있고, 횟수는 차감되지 않았어요.</span>
+          <span>AI 연결이 원활하지 않아 기본 자료로 정리했어요. 잠시 뒤 다시 누르면 AI 점사 분석을 받을 수 있고, 횟수는 차감되지 않았어요.</span>
           <button onClick={onRetry} className="inline-flex shrink-0 items-center gap-1 font-semibold text-foreground">
             <RefreshCw size={12} /> 다시
           </button>
@@ -260,11 +266,6 @@ function AiResult({ result, fallback, timing, expert, sources, onRetry, reminder
       <div className="rounded-2xl bg-vermilion/8 px-4 py-3">
         <h4 className="text-xs font-bold text-vermilion">조심할 점</h4>
         <p className="mt-1 text-[15px] leading-relaxed">{result.caution}</p>
-      </div>
-      <div className="space-y-1 border-t border-border pt-3 text-[11px] leading-relaxed text-muted">
-        <p>이 풀이의 근거: {sources}</p>
-        {expert ? <p>건강, 법률, 돈과 관련된 중요한 결정은 꼭 전문가와 상의하세요.</p> : null}
-        <p>주역 풀이는 스스로를 돌아보는 참고 자료예요. AI가 쓴 글이라 틀린 부분이 있을 수 있어요.</p>
       </div>
     </motion.div>
   );

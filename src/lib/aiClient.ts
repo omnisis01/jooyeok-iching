@@ -82,7 +82,7 @@ export async function requestAiReading(reading: Reading): Promise<AiResponse> {
     body: JSON.stringify({ input: aiInputOf(reading) }),
   });
   const json = (await res.json().catch(() => ({}))) as AiResponse & { error?: string };
-  if (!res.ok) throw new Error(json.error || "AI 점사풀이를 불러오지 못했어요. 잠시 후 다시 시도해 주세요");
+  if (!res.ok) throw new Error(json.error || "AI 점사 분석을 불러오지 못했어요. 잠시 후 다시 시도해 주세요");
   return json;
 }
 

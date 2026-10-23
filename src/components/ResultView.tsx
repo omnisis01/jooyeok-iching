@@ -1,5 +1,5 @@
-// 점괘 결과: 요약 카드(지금, 변하는 효, 앞으로) → AI 점사풀이(이 앱의 풀이) → 그 아래 "원문과 근거 보기"(괘사, 효사, 변효 풀이, 지괘, 육효)
-// 풀이는 AI 점사풀이 하나로 모으고, 예전의 상세 풀이는 그 근거로 펼쳐 보게 한다
+// 점괘 결과: 요약 카드(지금, 변하는 효, 앞으로) → 맞춤형 AI 점사 분석(자동으로 바로 나온다) → 그 아래 "주역 원문 해설 보기"(괘사, 효사, 변효 풀이, 지괘, 육효)
+// 풀이는 AI 분석 하나로 모으고, 예전의 상세 풀이는 그 근거로 펼쳐 보게 한다
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -24,7 +24,6 @@ import FlowOverview from "./FlowOverview";
 import InteractiveHexagram from "./InteractiveHexagram";
 import DeepReading from "./DeepReading";
 import AiReadingCard from "./AiReadingCard";
-import ReviewPrompt from "./ReviewPrompt";
 import AdSlot from "./AdSlot";
 import { makeId, saveRecord } from "@/lib/history";
 import { iga, josa } from "@/lib/josa";
@@ -66,6 +65,8 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
     const id = makeId([at.toISOString().slice(0, 16), method, primary.lines, changingLines.join(""), question]);
     saveRecord({ id, type: "iching", at: at.toISOString(), method, lines: primary.lines, changing: changingLines, question, context: reading.context, period, periodDate, category: cat.key });
   }, [saveToHistory, method, primary.lines, changingLines, question, reading.context, period, periodDate, cat.key, castAt]);
+
+  const sources = [`${primary.name} 괘 해설`, ...changingLines.map((i) => `${lineTitle(primary.lines, i)} 효사`), ...(resulting ? [`${resulting.name} 괘 해설`] : []), "육효 판단"].join(", ");
 
   const copy = async () => {
     const text = [
@@ -144,31 +145,6 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
           )}
         </div>
 
-        <div className="mt-6 flex flex-col items-center gap-3">
-          {cloudEnabled ? (
-            <button
-              onClick={() => document.getElementById("ai-reading")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-              className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-7 py-3.5 font-bold text-card transition hover:opacity-90"
-            >
-              <Sparkles size={18} /> AI 점사풀이 받기
-            </button>
-          ) : !expanded ? (
-            <button onClick={openDetails} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-7 py-3.5 font-bold text-card transition hover:opacity-90">
-              원문과 근거 보기 <ChevronDown size={18} />
-            </button>
-          ) : null}
-          <div className="flex flex-wrap justify-center gap-2">
-            <button
-              onClick={() => setShareOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-vermilion px-5 py-2.5 text-sm font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
-            >
-              <ImageDown size={16} /> 이미지로 저장하기
-            </button>
-            <button onClick={onRestart} className="inline-flex items-center gap-1.5 rounded-full bg-background px-5 py-2.5 text-sm font-semibold transition hover:bg-border/60">
-              <RotateCcw size={16} /> {restartLabel}
-            </button>
-          </div>
-        </div>
       </section>
 
       <AiReadingCard reading={reading} />
@@ -179,11 +155,25 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
           className="flex w-full items-center justify-between rounded-2xl bg-card px-5 py-4 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)]"
         >
           <span>
-            <span className="block font-bold">원문과 근거 보기</span>
-            <span className="mt-0.5 block text-xs text-muted">괘사, 효사 원문, 변효 풀이, 지괘, 육효. 풀이가 어디서 나왔는지 직접 읽어 보세요</span>
+            <span className="block font-bold">주역 원문 해설 보기</span>
+            <span className="mt-0.5 block text-xs text-muted">괘사, 효사 원문, 변효 풀이, 지괘, 육효. 분석이 어디서 나왔는지 직접 읽어 보세요</span>
           </span>
           <ChevronDown size={18} className={`shrink-0 text-muted transition-transform ${expanded ? "rotate-180" : ""}`} />
         </button>
+      ) : null}
+
+      {!expanded ? (
+        <div className="flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => setShareOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full bg-vermilion px-5 py-2.5 text-sm font-semibold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)] transition hover:brightness-105"
+          >
+            <ImageDown size={16} /> 이미지로 저장하기
+          </button>
+          <button onClick={onRestart} className="inline-flex items-center gap-1.5 rounded-full bg-card px-5 py-2.5 text-sm font-semibold shadow-[0_4px_16px_rgba(31,29,26,0.08)] transition hover:bg-border/60">
+            <RotateCcw size={16} /> {restartLabel}
+          </button>
+        </div>
       ) : null}
 
       {expanded ? (
@@ -327,7 +317,6 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
           </div>
         </motion.div>
       ) : null}
-      {saveToHistory ? <ReviewPrompt reading={reading} /> : null}
       <AdSlot className="mt-2" />
       <ShareCardModal
         job={shareOpen ? { render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading), renderStory: () => renderStoryCard(reading), storyFileName: storyFileName("나의괘", reading.primary) } : null}
@@ -335,9 +324,10 @@ export default function ResultView({ reading, onRestart, restartLabel = "다른 
       />
 
       <ShareForCoupon className="mx-auto max-w-sm pt-2" />
-      <p className="text-center text-xs text-muted">
-        주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼고, 중요한 결정은 충분히 생각한 뒤 내려 주세요.
-      </p>
+      <div className="space-y-1 text-center text-[11px] leading-relaxed text-muted">
+        <p>이 분석의 근거: {sources}</p>
+        <p>주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼고, 건강, 법률, 돈과 관련된 중요한 결정은 꼭 전문가와 상의해 주세요.</p>
+      </div>
     </motion.div>
   );
 }

@@ -16,7 +16,7 @@ type Props = {
   label?: string;
 };
 
-export default function ShareForCoupon({ onGranted, className, label = "친구에게 공유하고 한 번 더 뽑기" }: Props) {
+export default function ShareForCoupon({ onGranted, className, label = "친구에게 알리고 한 번 더 묻기" }: Props) {
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const { canShareForCoupon } = quotaState();
