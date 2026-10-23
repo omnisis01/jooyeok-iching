@@ -272,7 +272,7 @@ export default function DivinationFlow() {
                 lines: reading.primary.lines,
                 changingLines: reading.changingLines,
                 category,
-                date: kstDateString(reading.castAt ? Date.parse(reading.castAt) : Date.now()),
+                date: reading.castAt ? kstDateString(Date.parse(reading.castAt)) : todayString(),
                 question: reading.question,
                 castAt: reading.castAt,
               })}

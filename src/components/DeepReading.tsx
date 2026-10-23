@@ -9,7 +9,7 @@ import { ChevronDown, Lock, Sparkles } from "lucide-react";
 import type { Reading } from "@/lib/iching";
 import { CATEGORIES, categoryOf } from "@/lib/categories";
 import { categoryReading } from "@/data/categoryReadings";
-import { analyzeYukhyo } from "@/lib/yukhyo";
+import { analyzeYukhyo, todayString } from "@/lib/yukhyo";
 import { UNLOCK_PRICE_KRW, isUnlockedLocal, isUnlockedRemote, readingKey, startUnlock, unlockEnabled } from "@/lib/unlock";
 import { getSession } from "@/lib/cloudSync";
 import YukhyoResult from "./YukhyoResult";
@@ -99,7 +99,7 @@ export default function DeepReading({ reading }: { reading: Reading }) {
             <h4 className="text-sm font-bold text-muted">육효로 다시 읽으면</h4>
             <div className="mt-2">
               <YukhyoResult
-                result={analyzeYukhyo({ lines: reading.primary.lines, changingLines: reading.changingLines, category: cat.key, date: kstDateString(reading.castAt ? Date.parse(reading.castAt) : Date.now()), castAt: reading.castAt })}
+                result={analyzeYukhyo({ lines: reading.primary.lines, changingLines: reading.changingLines, category: cat.key, date: reading.castAt ? kstDateString(Date.parse(reading.castAt)) : todayString(), castAt: reading.castAt })}
                 onRestart={() => setOpen(false)}
                 saveToHistory={false}
                 embedded
