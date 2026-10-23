@@ -182,3 +182,17 @@ body[data-casting] .guide-fab {
   padding-left: 1.2rem;
   list-style: disc;
 }
+
+/* 넓은 화면의 하늘 배경: 테마에 맞는 하늘만 보이고, 구름은 아주 천천히 흐른다 */
+.sky-night { display: none; }
+.sky-day { display: block; }
+:root[data-theme="dark"] .sky-night { display: block; }
+:root[data-theme="dark"] .sky-day { display: none; }
+@keyframes sky-drift { from { transform: translateX(0); } to { transform: translateX(-40px); } }
+.sky-drift { animation: sky-drift 60s ease-in-out infinite alternate; }
+.sky-drift-slow { animation: sky-drift 95s ease-in-out infinite alternate-reverse; }
+@media (prefers-reduced-motion: reduce) { .sky-drift, .sky-drift-slow { animation: none; } }
+/* 넓은 화면에서는 하늘이 비치도록 바탕을 비우고, 왼쪽 메뉴는 반투명 유리처럼 */
+@media (min-width: 1024px) {
+  .app-backdrop { background-image: none; background-color: transparent; }
+}

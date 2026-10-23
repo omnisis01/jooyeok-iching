@@ -10,6 +10,7 @@ import Taegeuk from "./Taegeuk";
 import ThemeToggle from "./ThemeToggle";
 import TextSizeToggle from "./TextSizeToggle";
 import SettingsSheet, { openSettings } from "./SettingsSheet";
+import SkyBackdrop from "./SkyBackdrop";
 import { useToday } from "@/lib/useToday";
 import { syncClock } from "@/lib/clock";
 import { attachServerQuota, refreshServerQuota } from "@/lib/quota";
@@ -99,8 +100,9 @@ export default function AppShell() {
 
   return (
     <div className="app-backdrop min-h-screen lg:pl-60">
+      <SkyBackdrop />
       {/* 넓은 화면(가로 태블릿, 데스크톱): 왼쪽 메뉴 + 넓은 본문. 좁은 화면: 한 열 + 하단 탭 */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-border bg-card/90 px-4 py-6 backdrop-blur lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-border/60 bg-card/70 px-4 py-6 backdrop-blur-md lg:flex">
         <button onClick={() => go("home")} className="flex items-center gap-2 px-2 text-lg font-bold">
           <Taegeuk size={28} />
           하늘주역
