@@ -32,6 +32,9 @@ export default function DivinationFlow() {
   const [castKey, setCastKey] = useState(0);
   const [pending, setPending] = useState<Method>("coin");
   const [period, setPeriod] = useState<Period>("today");
+  // 분야는 8개만 먼저, 기간은 접어 둔다(대부분 오늘). 화면을 짧게
+  const [moreCats, setMoreCats] = useState(false);
+  const [periodOpen, setPeriodOpen] = useState(false);
   const [periodDate, setPeriodDate] = useState(todayString());
   const quota = useQuota();
   // 시초점은 Pro와 관리자만. 가장 정교한 방식이라 Pro의 이유가 된다
@@ -93,7 +96,7 @@ export default function DivinationFlow() {
           <motion.div key="setup" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
             <p className="font-bold">무엇이 궁금하세요?</p>
             <div className="mt-3 grid grid-cols-4 gap-2">
-              {CATEGORIES.map((c) => (
+              {(moreCats || CATEGORIES.findIndex((c) => c.key === category) >= 8 ? CATEGORIES : CATEGORIES.slice(0, 8)).map((c) => (
                 <button
                   key={c.key}
                   onClick={() => setCategory(c.key)}
@@ -105,6 +108,11 @@ export default function DivinationFlow() {
                 </button>
               ))}
             </div>
+            {!moreCats && CATEGORIES.length > 8 && CATEGORIES.findIndex((c) => c.key === category) < 8 ? (
+              <button onClick={() => setMoreCats(true)} className="mt-2 text-xs font-semibold text-muted hover:text-foreground">
+                분야 더보기 +{CATEGORIES.length - 8}
+              </button>
+            ) : null}
 
             <label htmlFor="question" className="mt-6 block font-bold">
               질문을 적어 주세요 <span className="text-sm font-normal text-muted">(선택)</span>
@@ -135,8 +143,14 @@ export default function DivinationFlow() {
               />
             ) : null}
 
-            <p className="mt-6 font-bold">언제의 일을 묻나요</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <button onClick={() => setPeriodOpen((v) => !v)} aria-expanded={periodOpen} className="mt-6 flex w-full items-center justify-between rounded-2xl bg-card px-4 py-3 text-left shadow-[0_4px_16px_rgba(31,29,26,0.06)]">
+              <span className="font-bold">언제의 일인가요</span>
+              <span className="text-sm font-semibold text-foreground/80">
+                {PERIODS.find((p) => p.key === period)?.label}
+                {period === "date" && periodDate ? ` ${periodDate}` : ""} {periodOpen ? "▴" : "▾"}
+              </span>
+            </button>
+            <div className={`mt-3 flex-wrap gap-2 ${periodOpen ? "flex" : "hidden"}`}>
               {PERIODS.map((p) => (
                 <button
                   key={p.key}
@@ -148,7 +162,7 @@ export default function DivinationFlow() {
                 </button>
               ))}
             </div>
-            {period === "date" ? (
+            {periodOpen && period === "date" ? (
               <input
                 type="date"
                 value={periodDate}
