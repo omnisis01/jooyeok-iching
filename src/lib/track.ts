@@ -5,7 +5,8 @@ import { cloudEnabled, supabase } from "./supabase";
 export type EventName =
   | "app_open" | "cast_start" | "cast_done" | "quota_exhausted" | "login_prompt" | "login_link_sent" | "login_done"
   | "share_image" | "share_coupon" | "push_on" | "push_off" | "deep_view" | "deep_buy_click" | "guide_open"
-  | "wheel_open" | "daily_card" | "pro_click" | "ai_open" | "review_submit" | "inquiry_submit" | "reminder_set" | "outcome_set";
+  | "wheel_open" | "daily_card" | "pro_click" | "ai_open" | "review_submit" | "inquiry_submit" | "reminder_set" | "outcome_set"
+  | "install_prompt" | "install_add" | "install_dismiss" | "ai_question_added";
 
 const ANON_KEY = "jooyeok-master-anon-id";
 let userId: string | null = null;

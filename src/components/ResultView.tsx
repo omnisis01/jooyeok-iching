@@ -27,6 +27,7 @@ import AiReadingCard from "./AiReadingCard";
 import type { AiReading } from "@/lib/aiReading";
 import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
 import AdSlot from "./AdSlot";
+import InstallPrompt from "./InstallPrompt";
 import { makeId, saveRecord, updateRecordQuestion } from "@/lib/history";
 import { iga, josa } from "@/lib/josa";
 
@@ -181,6 +182,7 @@ export default function ResultView({ reading: source, onRestart, restartLabel = 
         </button>
       ) : null}
 
+      <InstallPrompt />
       {!expanded ? (
         <div className="flex flex-wrap justify-center gap-2">
           <button

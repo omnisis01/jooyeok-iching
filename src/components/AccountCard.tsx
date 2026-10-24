@@ -7,18 +7,11 @@ import { Bell, BellOff, Cloud, LogOut, Mail, RefreshCw, ShieldCheck } from "luci
 import { cloudEnabled } from "@/lib/supabase";
 import { fetchIsAdmin } from "@/lib/admin";
 import { getSession, onAuthChange, pushOne, sendMagicLink, signInWithKakao, signOut, syncAll } from "@/lib/cloudSync";
-import { currentSubscription, pushEnabled, pushSupported, subscribePush, unsubscribePush } from "@/lib/push";
+import { currentSubscription, pushEnabled, pushSupported, subscribePush, unsubscribePush, iosSafariTab } from "@/lib/push";
 import { loadHistory } from "@/lib/history";
 import { track } from "@/lib/track";
 
 /** 아이폰 사파리에서 홈 화면 앱이 아닌 탭으로 열었는지 */
-function iosSafariTab(): boolean {
-  if (typeof navigator === "undefined") return false;
-  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  const standalone = (navigator as Navigator & { standalone?: boolean }).standalone === true || window.matchMedia("(display-mode: standalone)").matches;
-  return ios && !standalone;
-}
-
 export default function AccountCard() {
   const [session, setSession] = useState<Session | null>(null);
   const [email, setEmail] = useState("");

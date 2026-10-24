@@ -86,8 +86,18 @@ export default function AppShell() {
   useEffect(() => {
     const sync = () => setTab(tabFromHash());
     sync();
+    // 안드로이드 크롬의 "홈 화면에 추가" 이벤트를 잡아 두었다가 설치 권유 카드에서 쓴다
+    const onInstall = (e: Event) => {
+      e.preventDefault();
+      (window as Window & { __installer?: Event }).__installer = e;
+      window.dispatchEvent(new Event("installer-ready"));
+    };
+    window.addEventListener("beforeinstallprompt", onInstall);
     window.addEventListener("hashchange", sync);
-    return () => window.removeEventListener("hashchange", sync);
+    return () => {
+      window.removeEventListener("hashchange", sync);
+      window.removeEventListener("beforeinstallprompt", onInstall);
+    };
   }, []);
 
   const go = (t: Tab) => {

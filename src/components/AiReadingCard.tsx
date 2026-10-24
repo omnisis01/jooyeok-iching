@@ -113,6 +113,7 @@ export default function AiReadingCard({ reading, onQuestion, onResult }: { readi
   const submitQuestion = (q: string) => {
     const t = q.trim().slice(0, 60);
     if (t.length < 2) return;
+    track("ai_question_added", { category: cat.key });
     onQuestion?.(t);
   };
 

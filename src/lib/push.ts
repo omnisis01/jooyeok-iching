@@ -5,6 +5,18 @@ const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
 export const pushEnabled = cloudEnabled && Boolean(vapidPublicKey);
 
+/** 앱(홈 화면 아이콘)으로 열린 상태인지 */
+export function isStandalone(): boolean {
+  if (typeof window === "undefined") return false;
+  return (navigator as Navigator & { standalone?: boolean }).standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+}
+
+/** 아이폰·아이패드의 사파리 탭(홈 화면 추가 전). 알림은 홈 화면 앱에서만 된다 */
+export function iosSafariTab(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) && !isStandalone();
+}
+
 export function pushSupported(): boolean {
   return typeof window !== "undefined" && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 }
