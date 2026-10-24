@@ -26,7 +26,7 @@ export async function sendMagicLink(email: string): Promise<void> {
 /** 카카오로 로그인. 카카오 화면으로 갔다가 돌아오면 세션이 잡힌다 */
 export async function signInWithKakao(): Promise<void> {
   const redirect = typeof window !== "undefined" ? window.location.origin + window.location.pathname : SITE_URL;
-  const { error } = await supabase().auth.signInWithOAuth({ provider: "kakao", options: { redirectTo: redirect, scopes: "profile_nickname account_email" } });
+  const { error } = await supabase().auth.signInWithOAuth({ provider: "kakao", options: { redirectTo: redirect } });
   if (error) throw new Error(error.message);
 }
 
