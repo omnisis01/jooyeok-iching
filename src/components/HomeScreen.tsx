@@ -10,7 +10,7 @@ import { readingKey } from "@/lib/unlock";
 import type { Tab } from "./AppShell";
 import HexagramFigure from "./HexagramFigure";
 import { aiReadingKeys } from "@/lib/aiClient";
-import HexagramWheel from "./HexagramWheel";
+import { SkyArt, useSky } from "./SkyBackdrop";
 import ResultView from "./ResultView";
 import PremiumCard from "./PremiumCard";
 import YukhyoResult from "./YukhyoResult";
@@ -44,6 +44,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
     };
   }, []);
   const [history, setHistory] = useState<HistoryRecord[]>([]);
+  const sky = useSky();
   const [viewing, setViewing] = useState<HistoryRecord | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [premium, setPremium] = useState(false);
@@ -154,21 +155,24 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       <motion.button
         onClick={() => go("divine")}
         whileTap={{ scale: 0.98 }}
-        className="relative w-full overflow-hidden rounded-3xl bg-foreground p-6 text-left text-card shadow-[0_12px_40px_rgba(31,29,26,0.25)]"
+        className={`relative w-full overflow-hidden rounded-3xl p-6 text-left shadow-[0_12px_40px_rgba(31,29,26,0.25)] ${sky === "day" ? "bg-[#cfe5f5] text-[#1f1d1a]" : "bg-[#1a1d4a] text-[#f1e9da]"}`}
       >
-        {/* 배경 장식: 8괘가 커진 뒤 제목을 가리지 않도록 옅게, 오른쪽으로 더 뺀다 */}
-        <div className="pointer-events-none absolute -right-24 -top-12 opacity-25">
-          <HexagramWheel size={260} />
+        {/* 배경: 하늘주역의 하늘(북두칠성, 달 또는 해). 글이 읽히도록 왼쪽을 살짝 어둡게 */}
+        <div className="pointer-events-none absolute inset-0">
+          {sky ? <SkyArt sky={sky} id="sky-hero" moonX={1250} dipperScale={2.6} clouds={false} /> : null}
+          <div className={`absolute inset-0 ${sky === "day" ? "bg-gradient-to-r from-white/55 via-white/25 to-transparent" : "bg-gradient-to-r from-black/35 via-black/10 to-transparent"}`} />
         </div>
-        <p className="min-h-5 text-sm text-card/70">{day ? `오늘은 ${day.label.replace("일", "")} 날` : ""}{greeting ? `, ${greeting}` : ""}</p>
+        <div className="relative">
+        <p className={`min-h-5 text-sm ${sky === "day" ? "text-[#1f1d1a]/70" : "text-[#f1e9da]/75"}`}>{day ? `오늘은 ${day.label.replace("일", "")} 날` : ""}{greeting ? `, ${greeting}` : ""}</p>
         <p className="mt-2 text-2xl font-extrabold">오늘, 하늘에 무엇을 물을까요</p>
-        <p className="mt-2 max-w-[62%] text-sm leading-relaxed text-card/80 md:max-w-[70%]">궁금한 일 하나를 적고 괘를 뽑으면, 내 질문에 맞춘 AI 점사 분석이 바로 나와요.</p>
+        <p className={`mt-2 max-w-[62%] text-sm leading-relaxed md:max-w-[70%] ${sky === "day" ? "text-[#1f1d1a]/80" : "text-[#f1e9da]/85"}`}>궁금한 일 하나를 적고 괘를 뽑으면, 내 질문에 맞춘 AI 점사 분석이 바로 나와요.</p>
         <span className="mt-5 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold">
+          <span className="inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold text-white">
             하늘에 묻기 <ChevronRight size={16} />
           </span>
           <QuotaBadge />
         </span>
+        </div>
       </motion.button>
 
       {/* 나의 점 기록 */}

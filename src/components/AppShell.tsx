@@ -144,7 +144,7 @@ export default function AppShell() {
         </div>
       </aside>
 
-      <div className="mx-auto min-h-screen w-full max-w-[520px] bg-background sm:shadow-[0_0_60px_rgba(31,29,26,0.08)] lg:max-w-none lg:bg-transparent lg:shadow-none">
+      <div className="mx-auto min-h-screen w-full max-w-[520px] lg:max-w-none">
         <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-2 pt-3 backdrop-blur lg:hidden">
           <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />

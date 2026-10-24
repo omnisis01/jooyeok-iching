@@ -522,3 +522,4 @@
 - [x] Supabase: site_url과 허용 목록에 새 도메인(옛 주소·localhost 유지), 비밀값 SITE_URL 갱신
 - [x] 카카오 앱 대표 도메인 → https://skyjooyeok.com
 - [ ] GitHub 인증서 발급 뒤 HTTPS 강제(백그라운드로 기다리는 중)
+- [x] 정체성: 홈 히어로 배경을 8괘 원판 대신 우리 하늘(북두칠성, 달/해, 시간 따라)로. 폰 화면 위쪽에도 같은 하늘이 옅게 비친다(SkyArt 공용화)
