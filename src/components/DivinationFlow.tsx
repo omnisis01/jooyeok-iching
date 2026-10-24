@@ -249,12 +249,14 @@ export default function DivinationFlow() {
                 <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
               </div>
             ) : (
-              <button
-                onClick={() => setMethodOpen(true)}
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-4 text-lg font-bold text-white shadow-[0_10px_30px_rgba(216,69,43,0.35)] transition hover:brightness-105"
-              >
-                하늘에 묻기 <ChevronRight size={20} />
-              </button>
+              <div className="mt-5 flex justify-center">
+                <button
+                  onClick={() => setMethodOpen(true)}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full bg-vermilion px-8 py-3 text-base font-bold text-white shadow-[0_8px_24px_rgba(216,69,43,0.35)] transition hover:brightness-105"
+                >
+                  하늘에 묻기 <ChevronRight size={18} />
+                </button>
+              </div>
             )}
             <p className="mt-2 text-center text-xs text-muted">{lastMethod ? `지난번처럼 ${METHOD_LABEL[lastMethod]}으로 뽑아요. 버튼을 누른 뒤 바꿀 수 있어요.` : "누르면 뽑는 방법을 고를 수 있어요."}</p>
 
