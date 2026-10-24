@@ -5,12 +5,28 @@
 
 import { useEffect, useState } from "react";
 import { now } from "@/lib/clock";
+import { moonPath, moonPhase, type MoonPhase } from "@/lib/moon";
 
 export type Sky = "day" | "night";
 
 export function skyOf(ms: number): Sky {
   const h = new Date(ms + 9 * 3600e3).getUTCHours();
   return h >= 6 && h < 18 ? "day" : "night";
+}
+
+/** 오늘 달의 모양. 한 시간마다 다시 본다 */
+export function useMoon(): MoonPhase | null {
+  const [moon, setMoon] = useState<MoonPhase | null>(null);
+  useEffect(() => {
+    const tick = () => setMoon(moonPhase(now()));
+    const t0 = window.setTimeout(tick, 0);
+    const t = window.setInterval(tick, 60 * 60 * 1000);
+    return () => {
+      window.clearTimeout(t0);
+      window.clearInterval(t);
+    };
+  }, []);
+  return moon;
 }
 
 /** 지금 하늘. 5분마다 다시 본다 */
@@ -33,7 +49,8 @@ const DIPPER: [number, number, number][] = [[0, 38, 2.6], [16, 26, 2.1], [32, 22
 const STARS: [number, number, number][] = [[120, 90, 1.6], [310, 140, 1.2], [520, 60, 1.4], [700, 180, 1.1], [900, 90, 1.5], [1100, 150, 1.2], [1380, 70, 1.6], [1500, 200, 1.1], [240, 300, 1.2], [640, 320, 1], [1000, 300, 1.3], [1450, 330, 1], [420, 420, 1.1], [1250, 420, 1.2]];
 
 /** 하늘 그림 한 장. id는 한 화면에 여러 장 그릴 때 그라데이션 이름이 겹치지 않게 */
-export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true }: { sky: Sky; id: string; moonX?: number; dipperScale?: number; clouds?: boolean }) {
+/** moon: 달의 위상 0~1(없으면 초승달 모양). 실제 달처럼 차고 기운다 */
+export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true, moon = 0.12 }: { sky: Sky; id: string; moonX?: number; dipperScale?: number; clouds?: boolean; moon?: number }) {
   const g = `${id}-g`;
   return (
     <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1600 900" aria-hidden>
@@ -76,8 +93,9 @@ export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true
               ))}
             </g>
           </g>
-          <circle cx={moonX} cy="200" r="70" fill="#f2c94c" />
-          <circle cx={moonX + 28} cy="180" r="62" fill="#1a1d4a" />
+          {/* 달: 어두운 면은 지구 반사광처럼 희미하게, 밝은 면은 실제 위상대로 */}
+          <circle cx={moonX} cy="200" r="70" fill="#f2c94c" opacity="0.14" />
+          <path d={moonPath(moon, moonX, 200, 70)} fill="#f2c94c" />
           {clouds ? (
             <>
               <g className="sky-drift" fill="#5a3a52" opacity="0.9">
@@ -120,16 +138,17 @@ export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true
 
 export default function SkyBackdrop() {
   const sky = useSky();
+  const moon = useMoon();
   if (!sky) return null;
   return (
     <>
       {/* 넓은 화면: 화면 전체 */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 hidden overflow-hidden lg:block">
-        <SkyArt sky={sky} id="sky-wide" />
+        <SkyArt sky={sky} id="sky-wide" moon={moon?.p} />
       </div>
       {/* 좁은 화면: 위쪽에 옅게 깔리고 바탕색으로 사라진다. 카드 뒤로 별과 달이 비친다 */}
       <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[52vh] overflow-hidden opacity-[0.8] lg:hidden">
-        <SkyArt sky={sky} id="sky-top" moonX={1380} dipperScale={2.6} clouds={false} />
+        <SkyArt sky={sky} id="sky-top" moonX={1380} dipperScale={2.6} clouds={false} moon={moon?.p} />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
       </div>
     </>
