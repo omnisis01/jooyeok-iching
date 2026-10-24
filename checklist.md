@@ -504,3 +504,4 @@
 - [x] 카카오 로그인: cloudSync.signInWithKakao(OAuth, scope 닉네임+이메일), 계정 카드에 노란 "카카오로 3초 만에 시작하기" 버튼, scripts/setup-kakao.mjs(REST API 키·Client Secret을 숨겨 입력해 Supabase 제공자 켬). 대표 할 일은 TODO-owner 9-2
 - [x] 묻기 화면: 시초점 옆에 육효점 카드(Pro 전용, 동전으로 뽑고 육효 판단으로 바로). Pro·관리자만 열림. 육효 날짜는 한국 시간 기준으로(DeepReading도 같이 고침)
 - [x] 넓은 화면 하늘 배경(SkyBackdrop): 한국 시간 6~18시는 낮하늘(해, 구름), 그 밖에는 노을 밤하늘(북두칠성, 초승달, 구름). 테마와 무관, 5분마다 갱신. 왼쪽 메뉴는 반투명. 좁은 화면은 그대로
+- [x] 카카오 콘솔 설정(브라우저로 대신 진행): 앱 하늘주역 생성, 로그인 ON, Redirect URI, 닉네임·이메일 필수 동의, 아이콘, 개인 개발자 비즈 앱 전환. 남은 건 대표의 Client Secret 재발급과 터미널 키 입력
