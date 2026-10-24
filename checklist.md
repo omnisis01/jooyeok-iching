@@ -515,3 +515,10 @@
 - [x] Google Play 문안 초안 store/play-listing.md (앱 이름, 짧은·긴 설명, 데이터 안전 설문, 준비물)
 - [x] 라이트 테마·큰 글씨 점검: 묻기 919px(큰 글씨에서만 살짝 넘침, 기본은 812), 결과·설정 이상 없음
 - [x] TODO-owner 맨 위에 "지금 당장" 4개 정리
+
+## 2026-10-24 83차: skyjooyeok.com 연결
+- [x] 코드: basePath 제거(루트 경로), public/CNAME, SITE_ORIGIN·SITE_URL·카드 주소 표기, 스크립트·create-checkout 기본 주소 교체
+- [x] GitHub Pages 사용자 도메인 skyjooyeok.com, Cloudflare DNS(A 4개 + www CNAME, DNS only)는 대표가 등록. http로 열림 확인, 옛 github.io 주소는 301로 넘어옴
+- [x] Supabase: site_url과 허용 목록에 새 도메인(옛 주소·localhost 유지), 비밀값 SITE_URL 갱신
+- [x] 카카오 앱 대표 도메인 → https://skyjooyeok.com
+- [ ] GitHub 인증서 발급 뒤 HTTPS 강제(백그라운드로 기다리는 중)
