@@ -5,7 +5,23 @@ import { kstDateString } from "@/lib/clock";
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Coins, Compass, HelpCircle, Landmark, Lock, Sprout } from "lucide-react";
+import { ArrowLeft, Briefcase, Coins, Compass, FileSignature, GraduationCap, Heart, HeartPulse, HelpCircle, Home, Landmark, Lock, Plane, Scale, Sparkles, Sprout, Store, Users } from "lucide-react";
+
+// 분야 아이콘: 글 대신 그림으로 고르게
+const CATEGORY_ICON: Record<Category, React.ReactNode> = {
+  overall: <Sparkles size={18} />,
+  wealth: <Coins size={18} />,
+  love: <Heart size={18} />,
+  exam: <GraduationCap size={18} />,
+  business: <Store size={18} />,
+  work: <Briefcase size={18} />,
+  contract: <FileSignature size={18} />,
+  health: <HeartPulse size={18} />,
+  move: <Home size={18} />,
+  travel: <Plane size={18} />,
+  family: <Users size={18} />,
+  lawsuit: <Scale size={18} />,
+};
 import YukhyoResult from "./YukhyoResult";
 import { analyzeYukhyo } from "@/lib/yukhyo";
 import type { Reading } from "@/lib/iching";
@@ -52,7 +68,7 @@ export default function DivinationFlow() {
   }, []);
   const yarrowOpen = quota.premium || admin;
   useEffect(() => {
-    const busy = stage === "focus" || stage === "coin" || stage === "santong" || stage === "yarrow";
+    const busy = stage !== "result";
     document.body.toggleAttribute("data-casting", busy);
     return () => document.body.removeAttribute("data-casting");
   }, [stage]);
@@ -106,102 +122,89 @@ export default function DivinationFlow() {
     <div className="relative">
         {stage === "setup" ? (
           <motion.div key="setup" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            {/* 한 화면에 들어오게: 분야는 한 줄 가로 스크롤, 질문 한 칸, 기간은 접힘, 방법 두 개, Pro 방식은 접힌 한 줄 */}
-            <div className="flex items-center justify-between">
-              <p className="font-bold">무엇이 궁금하세요?</p>
-              <QuotaBadge />
+            {/* 묻기 화면: 글은 적게, 고를 것은 아이콘으로 한눈에. 분야 12개 격자 → 질문 한 칸(기간은 작은 칩) → 방법 두 장 → Pro 한 줄 */}
+            <p className="font-bold">무엇이 궁금하세요?</p>
+            <div className="mt-2 grid grid-cols-6 gap-1.5">
+              {CATEGORIES.map((c) => {
+                const on = category === c.key;
+                return (
+                  <button
+                    key={c.key}
+                    onClick={() => setCategory(c.key)}
+                    aria-pressed={on}
+                    title={c.desc}
+                    className={`flex flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-semibold transition ${on ? "bg-foreground text-card shadow-[0_6px_16px_rgba(31,29,26,0.25)]" : "bg-card text-foreground/80 shadow-[0_2px_10px_rgba(31,29,26,0.06)] hover:bg-border/60"}`}
+                  >
+                    <span className={on ? "text-gold-soft" : "text-vermilion"}>{CATEGORY_ICON[c.key]}</span>
+                    {c.short}
+                  </button>
+                );
+              })}
             </div>
-            <div className="-mx-4 mt-2 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c.key}
-                  onClick={() => setCategory(c.key)}
-                  aria-pressed={category === c.key}
-                  className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold transition ${category === c.key ? "bg-foreground text-card" : "bg-card text-foreground/85 shadow-[0_2px_10px_rgba(31,29,26,0.06)]"}`}
-                >
-                  {c.label}
-                </button>
-              ))}
+
+            <div className="mt-3 flex items-center justify-between">
+              <label htmlFor="question" className="font-bold">
+                질문 <span className="text-sm font-normal text-muted">{categoryOf(category).desc}</span>
+              </label>
+              <button onClick={() => setPeriodOpen((v) => !v)} aria-expanded={periodOpen} className="inline-flex items-center gap-1 rounded-full bg-card px-3 py-1 text-xs font-semibold shadow-[0_2px_10px_rgba(31,29,26,0.06)]">
+                {PERIODS.find((p) => p.key === period)?.label}
+                {period === "date" && periodDate ? ` ${periodDate.slice(5)}` : ""} {periodOpen ? "▴" : "▾"}
+              </button>
             </div>
-            <label htmlFor="question" className="mt-3 block font-bold">
-              질문을 적어 주세요 <span className="text-sm font-normal text-muted">(선택, 구체적일수록 잘 맞아요)</span>
-            </label>
+            {periodOpen ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {PERIODS.map((p) => (
+                  <button
+                    key={p.key}
+                    onClick={() => {
+                      setPeriod(p.key);
+                      if (p.key !== "date") setPeriodOpen(false);
+                    }}
+                    title={p.desc}
+                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${period === p.key ? "bg-foreground text-card" : "bg-card text-foreground shadow-[0_2px_10px_rgba(31,29,26,0.06)] hover:bg-border/60"}`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+                {period === "date" ? (
+                  <input type="date" value={periodDate} onChange={(e) => setPeriodDate(e.target.value)} className="rounded-full bg-card px-3 py-1 text-xs shadow-[0_2px_10px_rgba(31,29,26,0.06)] outline-none" />
+                ) : null}
+              </div>
+            ) : null}
             <input
               id="question"
               value={question}
               onChange={(e) => setQuestion(e.target.value.slice(0, 60))}
               maxLength={60}
               placeholder={`예: ${QUESTION_EXAMPLES[category][0]}`}
-              className="mt-2 w-full rounded-2xl bg-card px-4 py-3 shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
+              className="mt-2 w-full rounded-2xl bg-card px-4 py-3.5 text-[16px] shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
             />
-            <div className="-mx-4 mt-1.5 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {QUESTION_EXAMPLES[category].map((ex) => (
-                <button key={ex} onClick={() => setQuestion(ex)} className="shrink-0 rounded-full bg-card px-3 py-1.5 text-xs text-foreground/80 shadow-[0_2px_10px_rgba(31,29,26,0.06)] transition hover:bg-border/60">
-                  {ex}
-                </button>
-              ))}
-            </div>
             {question.trim() ? (
               <input
                 value={context}
                 onChange={(e) => setContext(e.target.value.slice(0, 80))}
                 maxLength={80}
-                placeholder="지금 상황을 한 줄 더 (선택) 예: 2차 면접, 경쟁률이 높아요"
+                placeholder="지금 상황 한 줄 (선택) 예: 2차 면접, 경쟁률이 높아요"
                 className="mt-2 w-full rounded-2xl bg-card px-4 py-2.5 text-sm shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
               />
-            ) : null}
+            ) : (
+              <button onClick={() => setQuestion(QUESTION_EXAMPLES[category][1] ?? QUESTION_EXAMPLES[category][0])} className="mt-1.5 truncate px-1 text-xs text-muted hover:text-foreground">
+                안 적어도 돼요 · 예시 넣기: {QUESTION_EXAMPLES[category][1] ?? QUESTION_EXAMPLES[category][0]}
+              </button>
+            )}
 
-            <button onClick={() => setPeriodOpen((v) => !v)} aria-expanded={periodOpen} className="mt-3 flex w-full items-center justify-between rounded-2xl bg-card px-4 py-2.5 text-left shadow-[0_4px_16px_rgba(31,29,26,0.06)]">
-              <span className="text-sm font-bold">언제의 일인가요</span>
-              <span className="text-sm font-semibold text-foreground/80">
-                {PERIODS.find((p) => p.key === period)?.label}
-                {period === "date" && periodDate ? ` ${periodDate}` : ""} {periodOpen ? "▴" : "▾"}
-              </span>
-            </button>
-            <div className={`mt-2 flex-wrap gap-2 ${periodOpen ? "flex" : "hidden"}`}>
-              {PERIODS.map((p) => (
-                <button
-                  key={p.key}
-                  onClick={() => setPeriod(p.key)}
-                  title={p.desc}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${period === p.key ? "bg-foreground text-card" : "bg-card text-foreground shadow-[0_4px_16px_rgba(31,29,26,0.06)] hover:bg-border/60"}`}
-                >
-                  {p.label}
-                </button>
-              ))}
+            <div className="mt-3 flex items-center justify-between">
+              <p className="font-bold">어떻게 뽑을까요</p>
+              <QuotaBadge />
             </div>
-            {periodOpen && period === "date" ? (
-              <input
-                type="date"
-                value={periodDate}
-                onChange={(e) => setPeriodDate(e.target.value)}
-                className="mt-2 w-full rounded-2xl bg-card px-4 py-2.5 shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none focus:ring-2 focus:ring-vermilion/30 sm:w-auto"
-              />
-            ) : null}
-
-            <p className="mt-3 font-bold">어떻게 뽑을까요</p>
             {quota.remaining <= 0 ? (
               <div className="mt-2">
                 <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
               </div>
             ) : null}
             <div className={`mt-2 grid grid-cols-2 gap-2 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
-              <MethodCard
-                icon={<Coins size={20} />}
-                title="척전법"
-                sub="동전 세 개"
-                desc="빠른 질문에 · 약 1분"
-                wide
-                onClick={() => start("coin")}
-              />
-              <MethodCard
-                icon={<Landmark size={20} />}
-                title="산통법"
-                sub="산통 흔들기"
-                desc="깊은 질문에 · 약 30초"
-                wide
-                onClick={() => start("santong")}
-              />
+              <MethodCard icon={<Coins size={20} />} title="척전법" sub="동전 세 개" desc="가볍게 · 약 1분" wide onClick={() => start("coin")} />
+              <MethodCard icon={<Landmark size={20} />} title="산통법" sub="산통 흔들기" desc="깊게 · 약 30초" wide onClick={() => start("santong")} />
             </div>
             <button
               onClick={() => setProOpen((v) => !v)}

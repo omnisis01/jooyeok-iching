@@ -41,12 +41,20 @@ export function useQuota(): QuotaState {
 export function QuotaBadge() {
   const q = useQuota();
   if (q.premium) return <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold">Pro, 횟수 제한 없음</span>;
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-background px-3 py-1 text-xs font-bold text-foreground">
-      <Ticket size={12} /> 오늘 남은 무료 점괘 {q.remaining}회
-      {q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY ? <span className="font-normal text-muted">(로그인하면 하루 {FREE_PER_DAY}회)</span> : null}
-    </span>
+  const guestHint = q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY;
+  const inner = (
+    <>
+      <Ticket size={12} /> 무료 {q.remaining}회 남음
+      {guestHint ? <span className="font-normal text-muted">· 로그인하면 {FREE_PER_DAY}회</span> : null}
+    </>
   );
+  if (guestHint)
+    return (
+      <button onClick={openSettings} className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-background px-3 py-1 text-xs font-bold text-foreground">
+        {inner}
+      </button>
+    );
+  return <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-background px-3 py-1 text-xs font-bold text-foreground">{inner}</span>;
 }
 
 /** 횟수를 다 썼을 때 보여주는 안내. 남아 있으면 아무것도 그리지 않는다 */
