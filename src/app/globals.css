@@ -192,3 +192,6 @@ body[data-casting] .guide-fab {
 @media (min-width: 1024px) {
   .app-backdrop { background-image: none; background-color: transparent; }
 }
+
+/* 집중·뽑기 중에는 떠 있는 안내 버튼을 숨긴다 */
+body[data-casting] .guide-fab { display: none; }

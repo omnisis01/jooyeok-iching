@@ -13,7 +13,7 @@ import CoinCasting from "./CoinCasting";
 import SantongCasting from "./SantongCasting";
 import ResultView from "./ResultView";
 import YarrowCasting from "./YarrowCasting";
-import MethodGuide, { type Method } from "./MethodGuide";
+import { type Method } from "./MethodGuide";
 import FocusGate from "./FocusGate";
 import { PERIODS, type Period } from "@/lib/period";
 import { todayString } from "@/lib/yukhyo";
@@ -51,6 +51,11 @@ export default function DivinationFlow() {
     };
   }, []);
   const yarrowOpen = quota.premium || admin;
+  useEffect(() => {
+    const busy = stage === "focus" || stage === "coin" || stage === "santong" || stage === "yarrow";
+    document.body.toggleAttribute("data-casting", busy);
+    return () => document.body.removeAttribute("data-casting");
+  }, [stage]);
   // 육효점: 동전으로 뽑은 뒤 육효(세효·응효·용신·시기)로 바로 판단한다. Pro와 관리자만
   const [yukhyoMode, setYukhyoMode] = useState(false);
   const isFirstRender = useRef(true);
@@ -251,12 +256,13 @@ export default function DivinationFlow() {
 
         {stage === "coin" || stage === "santong" || stage === "yarrow" ? (
           <motion.div key={`cast-${castKey}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            <button onClick={restart} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
-              <ArrowLeft size={16} /> 방법 다시 고르기
-            </button>
-            <p className="mb-4 text-center text-muted">{categoryOf(category).label}을 묻습니다</p>
-            <div className="mb-5">
-              <MethodGuide method={stage} />
+            <div className="mb-2 flex items-center justify-between">
+              <button onClick={restart} className="inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-foreground">
+                <ArrowLeft size={16} /> 방법 다시 고르기
+              </button>
+              <span className="text-xs text-muted">
+                {categoryOf(category).label} · {stage === "coin" ? (yukhyoMode ? "육효점" : "척전법") : stage === "santong" ? "산통법" : "시초점"}
+              </span>
             </div>
             {stage === "coin" ? (
               <CoinCasting onComplete={complete} />

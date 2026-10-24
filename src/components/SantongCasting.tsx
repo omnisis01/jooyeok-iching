@@ -193,7 +193,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
         : `${trigramByNumber(risen).symbol} ${trigramByNumber(risen).name}괘, ${trigramByNumber(risen).nature}`;
 
   return (
-    <div className="santong-stage relative flex break-keep flex-col items-center overflow-hidden rounded-3xl px-4 pb-6 pt-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+    <div className="santong-stage relative flex break-keep flex-col items-center overflow-hidden rounded-3xl px-4 pb-3 pt-3 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <button
         onClick={() => setSound((s) => !s)}
         className="absolute right-3 top-3 rounded-full bg-card/70 p-2 text-muted shadow-sm backdrop-blur"
@@ -202,18 +202,17 @@ export default function SantongCasting({ question, onComplete }: Props) {
         {sound ? <Volume2 size={18} /> : <VolumeX size={18} />}
       </button>
 
-      <p className="px-9 text-sm font-bold text-vermilion">마음속 질문을 떠올리고 통을 흔들어 주세요</p>
-      <p className="mt-1 text-xs text-muted">한 번 뽑을 때마다 하괘, 상괘, 동효가 차례로 결정돼요</p>
+      <p className="px-9 text-sm font-bold text-vermilion">질문을 떠올리고 통을 흔들어 주세요</p>
 
-      {/* 세 번의 뽑기 진행 */}
-      <ol className="mt-4 grid w-full max-w-sm grid-cols-3 gap-2">
+      {/* 세 번의 뽑기 진행: 하괘, 상괘, 동효 */}
+      <ol className="mt-2 grid w-full max-w-sm grid-cols-3 gap-1.5">
         {STEPS.map((s, i) => {
           const v = draws[i];
           const active = i === step;
           return (
             <li
               key={s.key}
-              className={`rounded-2xl px-2 py-2 text-xs leading-snug transition ${v ? "bg-card text-foreground shadow-sm" : active ? "bg-vermilion/10 text-vermilion ring-1 ring-vermilion/30" : "bg-card/40 text-muted"}`}
+              className={`rounded-xl px-2 py-1.5 text-[11px] leading-snug transition ${v ? "bg-card text-foreground shadow-sm" : active ? "bg-vermilion/10 text-vermilion ring-1 ring-vermilion/30" : "bg-card/40 text-muted"}`}
             >
               <span className="block font-bold">{s.label}</span>
               <span className="mt-0.5 block">{v ? resultLabel(i, v) : s.hint}</span>
@@ -224,7 +223,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
 
       <section className="flex w-full flex-col items-center">
         <div
-          className="relative mt-4 w-full max-w-[300px] touch-none select-none"
+          className="relative mt-0 w-full max-w-[180px] touch-none select-none"
           onPointerDown={beginShake}
           onPointerUp={endShake}
           onPointerLeave={endShake}
@@ -234,7 +233,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
           <Tube count={count} step={step} risen={risen} phase={phase} tubeRef={tubeRef} stickRefs={stickRefs} />
         </div>
 
-        <div className="mt-1 flex min-h-[112px] flex-col items-center justify-start">
+        <div className="-mt-1 flex min-h-[84px] flex-col items-center justify-start">
           {phase === "risen" && risen !== null ? (
             <motion.p initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mb-3 text-base font-bold text-vermilion">
               {STEPS[step].label} {risenText}
@@ -247,7 +246,7 @@ export default function SantongCasting({ question, onComplete }: Props) {
           ) : (
             <>
               <button
-                className={`relative grid h-16 w-16 touch-none select-none place-items-center rounded-full border-2 transition ${phase === "shaking" ? "scale-95 border-vermilion bg-vermilion/15" : "border-border bg-card/60"}`}
+                className={`relative grid h-14 w-14 touch-none select-none place-items-center rounded-full border-2 transition ${phase === "shaking" ? "scale-95 border-vermilion bg-vermilion/15" : "border-border bg-card/60"}`}
                 onPointerDown={beginShake}
                 onPointerUp={endShake}
                 onPointerLeave={endShake}
