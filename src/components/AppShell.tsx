@@ -189,7 +189,7 @@ export default function AppShell() {
           </ul>
         </nav>
       </div>
-      <GuaHyoGuide />
+      <GuaHyoGuide hidden={tab === "home" || tab === "about" || tab === "admin"} />
       <SettingsSheet go={go} />
     </div>
   );

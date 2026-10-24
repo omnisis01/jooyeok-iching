@@ -3,7 +3,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Mail, X } from "lucide-react";
+import { Mail, X } from "lucide-react";
 import AccountCard from "./AccountCard";
 import TextSizeToggle from "./TextSizeToggle";
 import ThemeToggle from "./ThemeToggle";
@@ -63,7 +63,6 @@ export default function SettingsSheet({ go }: { go: (t: Tab) => void }) {
             </Row>
           </section>
           <section className="rounded-3xl bg-card p-2 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-            <Link icon={<BookOpen size={16} />} label="주역이란, 괘와 효, 점치는 방법" onClick={() => jump("about")} />
             <Link icon={<Mail size={16} />} label="문의하기" onClick={() => jump("about", "inquiry")} />
           </section>
           <p className="px-2 pb-1 text-center text-xs text-muted">

@@ -14,6 +14,10 @@ export type ShareJob = {
   /** 있으면 세로(9:16, 스토리용) 형식을 고를 수 있다 */
   renderStory?: () => Promise<Blob>;
   storyFileName?: string;
+  /** 있으면 AI 분석 카드 형식도 고를 수 있다 */
+  renderAi?: () => Promise<Blob>;
+  aiFileName?: string;
+  aiText?: string;
 };
 
 type Props = {
@@ -24,7 +28,7 @@ type Props = {
 
 export default function ShareCardModal({ job, onClose }: Props) {
   const reading = job;
-  type Format = "card" | "story";
+  type Format = "card" | "story" | "ai";
   // 두 형식을 열 때 함께 만들어 두고, 탭을 바꾸면 이미 만든 이미지로 바로 넘어간다
   const [images, setImages] = useState<Partial<Record<Format, { blob: Blob; url: string }>>>({});
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +46,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
   };
   const blob = images[format]?.blob ?? null;
   const url = images[format]?.url ?? null;
-  const fileName = format === "story" && reading?.storyFileName ? reading.storyFileName : reading?.fileName ?? "";
+  const fileName = format === "story" && reading?.storyFileName ? reading.storyFileName : format === "ai" && reading?.aiFileName ? reading.aiFileName : reading?.fileName ?? "";
 
   useEffect(() => {
     if (!reading) return;
@@ -66,7 +70,9 @@ export default function ShareCardModal({ job, onClose }: Props) {
           if (!cancelled) setError(e instanceof Error ? e.message : "이미지를 만들지 못했습니다");
         });
     // 기본 카드를 먼저 만들고, 세로 카드는 이어서 만든다
-    void make("card", reading.render).then(() => (reading.renderStory && !cancelled ? make("story", reading.renderStory) : undefined));
+    void make("card", reading.render)
+      .then(() => (reading.renderStory && !cancelled ? make("story", reading.renderStory) : undefined))
+      .then(() => (reading.renderAi && !cancelled ? make("ai", reading.renderAi) : undefined));
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -113,7 +119,7 @@ export default function ShareCardModal({ job, onClose }: Props) {
     track("share_image", { via: "send", format });
     const file = new File([blob], fileName, { type: "image/png" });
     try {
-      await navigator.share({ files: [file], title: "하늘주역", text: reading.text });
+      await navigator.share({ files: [file], title: "하늘주역", text: (format === "ai" && reading.aiText ? reading.aiText : reading.text) });
       setStatus({ text: "보냈어요", ok: true });
     } catch (e) {
       if (!(e instanceof DOMException && e.name === "AbortError")) setStatus({ text: "보내지 못했어요. 잠시 후 다시 시도해 주세요", ok: false });
@@ -123,10 +129,10 @@ export default function ShareCardModal({ job, onClose }: Props) {
   const copyLink = async () => {
     if (!reading) return;
     try {
-      await navigator.clipboard.writeText(reading.text);
+      await navigator.clipboard.writeText((format === "ai" && reading.aiText ? reading.aiText : reading.text));
       setStatus({ text: "결과 글과 링크를 복사했습니다", ok: true });
     } catch {
-      window.prompt("아래 내용을 복사하세요", `${reading.text}\n${SITE_URL}`);
+      window.prompt("아래 내용을 복사하세요", `${(format === "ai" && reading.aiText ? reading.aiText : reading.text)}\n${SITE_URL}`);
     }
   };
 
@@ -158,30 +164,30 @@ export default function ShareCardModal({ job, onClose }: Props) {
               </button>
             </div>
 
-            {reading.renderStory ? (
-              <div className="mt-3 grid grid-cols-2 gap-1 rounded-full bg-background p-1 text-sm font-bold">
-                {(["card", "story"] as const).map((f) => (
+            {reading.renderStory || reading.renderAi ? (
+              <div className={`mt-3 grid gap-1 rounded-full bg-background p-1 text-sm font-bold ${reading.renderStory && reading.renderAi ? "grid-cols-3" : "grid-cols-2"}`}>
+                {(["card", ...(reading.renderStory ? ["story" as const] : []), ...(reading.renderAi ? ["ai" as const] : [])] as Format[]).map((f) => (
                   <button
                     key={f}
                     onClick={() => setFormat(f)}
                     className={`rounded-full py-2 transition ${format === f ? "bg-foreground text-card" : "text-muted"}`}
                     aria-pressed={format === f}
                   >
-                    {f === "card" ? "기본 카드" : "세로 (스토리용)"}
+                    {f === "card" ? "괘 카드" : f === "story" ? "세로 (스토리용)" : "AI 분석"}
                   </button>
                 ))}
               </div>
             ) : null}
             {/* 두 이미지를 겹쳐 두고 투명도만 바꿔 깨짐 없이 넘어간다. 높이를 고정해 화면이 들썩이지 않는다 */}
             <div className="relative mt-4 h-[52vh] max-h-[520px] min-h-[240px] overflow-hidden rounded-2xl bg-background">
-              {(["card", "story"] as const).map((f) =>
+              {(["card", "story", "ai"] as const).map((f) =>
                 images[f] ? (
                   // 캔버스로 만든 blob URL이라 next/image 최적화 대상이 아니다
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     key={f}
                     src={images[f]!.url}
-                    alt={f === "card" ? "결과 카드" : "세로 결과 카드"}
+                    alt={f === "card" ? "결과 카드" : f === "story" ? "세로 결과 카드" : "AI 분석 카드"}
                     className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-300 ${format === f ? "opacity-100" : "pointer-events-none opacity-0"}`}
                     aria-hidden={format !== f}
                   />

@@ -4,7 +4,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ImageDown, Lock, RefreshCw, Sparkles } from "lucide-react";
+import { Lock, RefreshCw, Sparkles } from "lucide-react";
 import type { Reading } from "@/lib/iching";
 import { aiReadingKey, buildContext, type AiFollowup, type AiReading } from "@/lib/aiReading";
 import { aiEntitlement, aiInputOf, requestAiReading, savedAiReading, type AiEntitlement } from "@/lib/aiClient";
@@ -18,9 +18,6 @@ import { Bell } from "lucide-react";
 import { QUESTION_EXAMPLES, categoryOf } from "@/lib/categories";
 import { openSettings } from "./SettingsSheet";
 import { track } from "@/lib/track";
-import { SITE_URL } from "@/lib/shareCard";
-import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
-import ShareCardModal from "./ShareCardModal";
 import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
 const STEPS = ["하늘의 뜻을 묻는 중", "괘사와 효사를 읽는 중", "질문에 맞추는 중", "쉬운 말로 다듬는 중"];
@@ -35,12 +32,11 @@ type View =
   | { kind: "safety" }
   | { kind: "error"; message: string };
 
-export default function AiReadingCard({ reading, onQuestion }: { reading: Reading; onQuestion?: (q: string) => void }) {
+export default function AiReadingCard({ reading, onQuestion, onResult }: { reading: Reading; onQuestion?: (q: string) => void; onResult?: (r: { result: AiReading; timing: string | null } | null) => void }) {
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [can, setCan] = useState<AiEntitlement>(null);
   const [view, setView] = useState<View>({ kind: "idle" });
   const [step, setStep] = useState(0);
-  const [shareOpen, setShareOpen] = useState(false);
   // 결과가 열리면 분석을 기본으로 바로 보여 준다(버튼 없이). 한 결과에 한 번만
   const [autoRun, setAutoRun] = useState(false);
   // 질문 없이 뽑았으면 분석 전에 한 번 묻는다. "분야 전체로 분석"을 누르면 질문 없이 간다
@@ -76,6 +72,13 @@ export default function AiReadingCard({ reading, onQuestion }: { reading: Readin
       off();
     };
   }, [reading]);
+
+  useEffect(() => {
+    if (!onResult) return;
+    if (view.kind === "done" && !view.fallback) onResult({ result: view.result, timing: view.result.timingIndex >= 0 ? (ctx.yukhyo.timing[view.result.timingIndex] ?? null) : null });
+    else onResult(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
 
   useEffect(() => {
     if (view.kind !== "loading") return;
@@ -163,23 +166,6 @@ export default function AiReadingCard({ reading, onQuestion }: { reading: Readin
           />
           {!view.fallback ? <FollowupBox reading={reading} saved={view.followup} onDone={(f) => setView({ ...view, followup: f })} /> : null}
           {view.saved ? <OutcomeRow reading={reading} outcome={view.outcome} onSet={(o) => setView({ ...view, outcome: o })} /> : null}
-          {!view.fallback ? (
-            <button onClick={() => setShareOpen(true)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-3 font-bold text-card shadow-[0_8px_24px_rgba(216,69,43,0.3)]">
-              <ImageDown size={18} /> AI 점사 분석 이미지로 저장하기
-            </button>
-          ) : null}
-          <ShareCardModal
-            job={
-              shareOpen && view.kind === "done"
-                ? {
-                    render: () => renderAiCard(reading, view.result, view.result.timingIndex >= 0 ? (ctx.yukhyo.timing[view.result.timingIndex] ?? null) : null),
-                    fileName: aiCardFileName(reading),
-                    text: `${view.result.answer}\n${SITE_URL}`,
-                  }
-                : null
-            }
-            onClose={() => setShareOpen(false)}
-          />
         </>
       ) : view.kind === "loading" ? (
         <div className="mt-5 flex flex-col items-center gap-3 py-6" aria-live="polite">

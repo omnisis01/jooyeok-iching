@@ -283,7 +283,7 @@ const STEPS = [
   },
 ];
 
-export default function GuaHyoGuide() {
+export default function GuaHyoGuide({ hidden = false }: { hidden?: boolean }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
@@ -336,7 +336,7 @@ export default function GuaHyoGuide() {
   return (
     <>
       {/* 떠 있는 동그란 버튼. 휴대폰에서는 하단 탭 위, 넓은 화면에서는 오른쪽 아래 */}
-      <div className="guide-fab fixed bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] right-4 z-40 flex items-center gap-2 sm:right-[max(1rem,calc(50%-260px+1rem))] lg:bottom-6 lg:right-6">
+      <div className={`guide-fab fixed bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] right-4 z-40 ${hidden ? "hidden" : "flex"} items-center gap-2 sm:right-[max(1rem,calc(50%-260px+1rem))] lg:bottom-6 lg:right-6`}>
         <AnimatePresence>
           {hint && !open ? (
             <motion.span

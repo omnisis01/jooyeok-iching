@@ -11,7 +11,7 @@ import { LINE_NAMES, trigramsOf, type Reading } from "@/lib/iching";
 import { changingLinesRule, getLineText, lineTitle } from "@/data/lineTexts";
 import HexagramFigure from "./HexagramFigure";
 import ShareCardModal from "./ShareCardModal";
-import { renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
+import { SITE_URL, renderShareCard, shareFileName, shareText } from "@/lib/shareCard";
 import { renderStoryCard, storyFileName } from "@/lib/storyCard";
 import { adaptAdvice, adviceHeading, periodLabel } from "@/lib/period";
 import ShareForCoupon from "./ShareForCoupon";
@@ -24,6 +24,8 @@ import FlowOverview from "./FlowOverview";
 import InteractiveHexagram from "./InteractiveHexagram";
 import DeepReading from "./DeepReading";
 import AiReadingCard from "./AiReadingCard";
+import type { AiReading } from "@/lib/aiReading";
+import { aiCardFileName, renderAiCard } from "@/lib/aiCard";
 import AdSlot from "./AdSlot";
 import { makeId, saveRecord, updateRecordQuestion } from "@/lib/history";
 import { iga, josa } from "@/lib/josa";
@@ -51,6 +53,8 @@ export default function ResultView({ reading: source, onRestart, restartLabel = 
   const { lower, upper } = trigramsOf(primary);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  // AI 분석이 나오면 이미지 저장 모달에 "AI 분석" 형식이 추가된다(저장 버튼은 하나)
+  const [ai, setAi] = useState<{ result: AiReading; timing: string | null } | null>(null);
   const [expanded, setExpanded] = useState(false);
   const detailsRef = useRef<HTMLDivElement>(null);
 
@@ -162,7 +166,7 @@ export default function ResultView({ reading: source, onRestart, restartLabel = 
         {!cloudEnabled ? flowBlocks : null}
       </section>
 
-      <AiReadingCard reading={reading} onQuestion={addQuestion} />
+      <AiReadingCard reading={reading} onQuestion={addQuestion} onResult={setAi} />
       {cloudEnabled ? (
         <button
           onClick={() => (expanded ? setExpanded(false) : openDetails())}
@@ -340,7 +344,7 @@ export default function ResultView({ reading: source, onRestart, restartLabel = 
       ) : null}
       <AdSlot className="mt-2" />
       <ShareCardModal
-        job={shareOpen ? { render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading), renderStory: () => renderStoryCard(reading), storyFileName: storyFileName("나의괘", reading.primary) } : null}
+        job={shareOpen ? { ...(ai ? { renderAi: () => renderAiCard(reading, ai.result, ai.timing), aiFileName: aiCardFileName(reading), aiText: `${ai.result.answer}\n${SITE_URL}` } : {}), render: () => renderShareCard(reading), fileName: shareFileName(reading), text: shareText(reading), renderStory: () => renderStoryCard(reading), storyFileName: storyFileName("나의괘", reading.primary) } : null}
         onClose={() => setShareOpen(false)}
       />
 
