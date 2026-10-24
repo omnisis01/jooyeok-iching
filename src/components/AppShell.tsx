@@ -51,6 +51,14 @@ function tabFromHash(): Tab {
 
 export default function AppShell() {
   const [tab, setTab] = useState<Tab>("home");
+  // 맨 위에서는 상단 바를 투명하게 두고(하늘이 그대로 보이게), 스크롤하면 흐린 유리를 깐다
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 8);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
 
   // 기기 시계가 틀려도 "오늘"이 한국 시간으로 맞도록 서버 시각과 한 번 맞춘다
   useEffect(() => {
@@ -141,7 +149,7 @@ export default function AppShell() {
       </aside>
 
       <div className="mx-auto min-h-screen w-full max-w-[520px] lg:max-w-none">
-        <header className="sticky top-0 z-30 flex items-center justify-between bg-gradient-to-b from-background via-background/70 to-transparent px-5 pb-4 pt-3 lg:hidden">
+        <header className={`sticky top-0 z-30 flex items-center justify-between px-5 pb-2 pt-3 transition-colors duration-300 lg:hidden ${scrolled ? "bg-background/70 backdrop-blur-md" : "bg-transparent"}`}>
           <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />
             하늘주역
