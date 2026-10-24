@@ -172,7 +172,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         >
           하늘에 묻기 <ChevronRight size={18} />
         </motion.button>
-        <div className={`mt-2.5 text-xs ${sky === "day" ? "text-[#1f1d1a]/70" : "text-[#f1e9da]/70"}`}>
+        <div className={`mt-2.5 text-sm font-bold ${sky === "day" ? "text-[#1f1d1a]/85" : "text-[#f1e9da]/90"}`}>
           <QuotaBadge plain />
         </div>
         </div>
