@@ -158,7 +158,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       >
         {/* 배경: 하늘주역의 하늘(북두칠성, 달 또는 해). 글이 읽히도록 왼쪽을 살짝 어둡게 */}
         <div className="pointer-events-none absolute inset-0">
-          {sky ? <SkyArt sky={sky} id="sky-hero" moonX={1200} dipperScale={2.6} clouds={false} moon={moon?.p} /> : null}
+          {sky ? <SkyArt sky={sky} id="sky-hero" moonX={1170} moonY={600} moonR={64} dipper={false} clouds={false} moon={moon?.p} /> : null}
           <div className={`absolute inset-0 ${sky === "day" ? "bg-gradient-to-r from-white/55 via-white/25 to-transparent" : "bg-gradient-to-r from-black/35 via-black/10 to-transparent"}`} />
         </div>
         <div className="relative">

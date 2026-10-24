@@ -50,7 +50,7 @@ const STARS: [number, number, number][] = [[120, 90, 1.6], [310, 140, 1.2], [520
 
 /** 하늘 그림 한 장. id는 한 화면에 여러 장 그릴 때 그라데이션 이름이 겹치지 않게 */
 /** moon: 달의 위상 0~1(없으면 초승달 모양). 실제 달처럼 차고 기운다 */
-export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true, moon = 0.12 }: { sky: Sky; id: string; moonX?: number; dipperScale?: number; clouds?: boolean; moon?: number }) {
+export function SkyArt({ sky, id, moonX = 1250, moonY = 200, moonR = 70, dipperScale = 2.2, dipper = true, clouds = true, moon = 0.12 }: { sky: Sky; id: string; moonX?: number; moonY?: number; moonR?: number; dipperScale?: number; dipper?: boolean; clouds?: boolean; moon?: number }) {
   const g = `${id}-g`;
   return (
     <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1600 900" aria-hidden>
@@ -68,7 +68,7 @@ export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true
             <stop offset="1" stopColor="#f5f0e8" />
           </linearGradient>
         )}
-        <radialGradient id={`${id}-glow`} cx={moonX / 1600} cy="0.22" r="0.25">
+        <radialGradient id={`${id}-glow`} cx={moonX / 1600} cy={moonY / 900} r="0.25">
           <stop offset="0" stopColor={sky === "night" ? "#f2c94c" : "#ffe9a8"} stopOpacity={sky === "night" ? 0.35 : 0.9} />
           <stop offset="1" stopColor={sky === "night" ? "#f2c94c" : "#ffe9a8"} stopOpacity="0" />
         </radialGradient>
@@ -85,6 +85,7 @@ export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true
               <circle key={i} cx={x} cy={y} r={r} />
             ))}
           </g>
+          {dipper ? (
           <g transform={`translate(140 150) scale(${dipperScale})`} opacity="0.95">
             <polyline points="0,38 16,26 32,22 48,24 72,16 74,40 50,46 48,24" fill="none" stroke="#f1e9da" strokeWidth="0.8" opacity="0.5" />
             <g fill="#f1e9da">
@@ -93,9 +94,10 @@ export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true
               ))}
             </g>
           </g>
+          ) : null}
           {/* 달: 어두운 면은 지구 반사광처럼 희미하게, 밝은 면은 실제 위상대로 */}
-          <circle cx={moonX} cy="200" r="70" fill="#f2c94c" opacity="0.14" />
-          <path d={moonPath(moon, moonX, 200, 70)} fill="#f2c94c" />
+          <circle cx={moonX} cy={moonY} r={moonR} fill="#f2c94c" opacity="0.14" />
+          <path d={moonPath(moon, moonX, moonY, moonR)} fill="#f2c94c" />
           {clouds ? (
             <>
               <g className="sky-drift" fill="#5a3a52" opacity="0.9">
@@ -114,7 +116,7 @@ export function SkyArt({ sky, id, moonX = 1250, dipperScale = 2.2, clouds = true
         </>
       ) : (
         <>
-          <circle cx={moonX} cy="160" r="54" fill="#f6c35a" opacity="0.95" />
+          <circle cx={moonX} cy={moonY} r={moonR * 0.8} fill="#f6c35a" opacity="0.95" />
           {clouds ? (
             <>
               <g className="sky-drift" fill="#ffffff" opacity="0.9">
