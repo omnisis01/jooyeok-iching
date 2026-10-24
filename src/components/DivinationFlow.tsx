@@ -5,7 +5,12 @@ import { kstDateString } from "@/lib/clock";
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Briefcase, Coins, Compass, FileSignature, GraduationCap, Heart, HeartPulse, Home, Landmark, Lock, Plane, Scale, Sparkles, Sprout, Store, Users } from "lucide-react";
+import { ArrowLeft, Briefcase, ChevronRight, Coins, Compass, FileSignature, GraduationCap, Heart, HeartPulse, Home, Landmark, Lock, Plane, Scale, Sparkles, Sprout, Store, Users } from "lucide-react";
+import { guessCategory } from "@/lib/categoryGuess";
+
+type LastMethod = Method | "yukhyo";
+const LAST_METHOD_KEY = "jooyeok-last-method";
+const METHOD_LABEL: Record<LastMethod, string> = { coin: "척전법", santong: "산통법", yarrow: "시초점", yukhyo: "육효점" };
 
 // 분야 아이콘: 글 대신 그림으로 고르게
 const CATEGORY_ICON: Record<Category, React.ReactNode> = {
@@ -54,6 +59,33 @@ export default function DivinationFlow() {
   const [period, setPeriod] = useState<Period>("today");
   // 기간과 Pro 방식은 접어 둔다(대부분 오늘, 대부분 기본 방식). 화면을 짧게
   const [periodOpen, setPeriodOpen] = useState(false);
+  const [catOpen, setCatOpen] = useState(false);
+  // 사용자가 분야를 직접 골랐으면 자동 짐작을 멈춘다
+  const [catTouched, setCatTouched] = useState(false);
+  const [guessed, setGuessed] = useState(false);
+  const [methodOpen, setMethodOpen] = useState(false);
+  const [lastMethod, setLastMethod] = useState<LastMethod | null>(null);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      try {
+        const v = localStorage.getItem(LAST_METHOD_KEY) as LastMethod | null;
+        if (v && v in METHOD_LABEL) setLastMethod(v);
+      } catch {}
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, []);
+  const onQuestionChange = (v: string) => {
+    setQuestion(v);
+    if (catTouched) return;
+    const g = guessCategory(v);
+    if (g) {
+      setCategory(g);
+      setGuessed(true);
+    } else if (guessed) {
+      setCategory("overall");
+      setGuessed(false);
+    }
+  };
   const [periodDate, setPeriodDate] = useState(todayString());
   const quota = useQuota();
   // 시초점은 Pro와 관리자만. 가장 정교한 방식이라 Pro의 이유가 된다
@@ -85,6 +117,12 @@ export default function DivinationFlow() {
   }, [stage]);
 
   const start = (method: Method, yukhyo = false) => {
+    setMethodOpen(false);
+    const remember: LastMethod = yukhyo ? "yukhyo" : method;
+    setLastMethod(remember);
+    try {
+      localStorage.setItem(LAST_METHOD_KEY, remember);
+    } catch {}
     setYukhyoMode(yukhyo);
     setPending(method);
     setStage("focus");
@@ -114,6 +152,9 @@ export default function DivinationFlow() {
     setReading(null);
     setQuestion("");
     setContext("");
+    setCatTouched(false);
+    setGuessed(false);
+    setCatOpen(false);
     setStage("setup");
   };
 
@@ -121,35 +162,67 @@ export default function DivinationFlow() {
     <div className="relative">
         {stage === "setup" ? (
           <motion.div key="setup" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-            {/* 묻기 화면: 글은 적게, 고를 것은 아이콘으로 한눈에. 분야 12개 격자 → 질문 한 칸(기간은 작은 칩) → 방법 두 장 → Pro 한 줄 */}
-            <p className="font-bold">무엇이 궁금하세요?</p>
-            <div className="mt-2 grid grid-cols-6 gap-1.5">
-              {CATEGORIES.map((c) => {
-                const on = category === c.key;
-                return (
-                  <button
-                    key={c.key}
-                    onClick={() => setCategory(c.key)}
-                    aria-pressed={on}
-                    title={c.desc}
-                    className={`flex flex-col items-center gap-0.5 rounded-2xl py-1.5 text-[11px] font-semibold transition ${on ? "bg-vermilion/12 text-foreground ring-2 ring-vermilion" : "bg-card text-foreground/80 shadow-[0_2px_10px_rgba(31,29,26,0.06)] hover:bg-border/60"}`}
-                  >
-                    <span className="text-vermilion">{CATEGORY_ICON[c.key]}</span>
-                    {c.short}
-                  </button>
-                );
-              })}
-            </div>
+            {/* 묻기 화면은 메시지 하나: "무엇이 궁금하세요?" 질문 칸 + 하늘에 묻기 버튼. 분야는 글에서 짐작해 칩으로, 방법은 버튼 뒤 시트로 */}
+            <h2 className="mt-2 text-center text-2xl font-extrabold">무엇이 궁금하세요?</h2>
+            <p className="mt-1 text-center text-sm text-muted">한 줄로 적어 주세요. 안 적어도 괜찮아요.</p>
+            <textarea
+              id="question"
+              value={question}
+              onChange={(e) => onQuestionChange(e.target.value.slice(0, 60))}
+              maxLength={60}
+              rows={2}
+              placeholder={`예: ${QUESTION_EXAMPLES[category][0]}`}
+              className="mt-4 w-full resize-none rounded-3xl bg-card px-5 py-4 text-[17px] leading-relaxed shadow-[0_6px_30px_rgba(31,29,26,0.08)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
+            />
+            {question.trim() ? (
+              <input
+                value={context}
+                onChange={(e) => setContext(e.target.value.slice(0, 80))}
+                maxLength={80}
+                placeholder="지금 상황 한 줄 (선택) 예: 2차 면접, 경쟁률이 높아요"
+                className="mt-2 w-full rounded-2xl bg-card px-4 py-2.5 text-sm shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
+              />
+            ) : null}
 
-            <div className="mt-2.5 flex items-center justify-between">
-              <label htmlFor="question" className="font-bold">
-                질문 <span className="text-sm font-normal text-muted">{categoryOf(category).desc}</span>
-              </label>
-              <button onClick={() => setPeriodOpen((v) => !v)} aria-expanded={periodOpen} className="inline-flex items-center gap-1 rounded-full bg-card px-3 py-1 text-xs font-semibold shadow-[0_2px_10px_rgba(31,29,26,0.06)]">
-                {PERIODS.find((p) => p.key === period)?.label}
-                {period === "date" && periodDate ? ` ${periodDate.slice(5)}` : ""} {periodOpen ? "▴" : "▾"}
+            {/* 분야와 기간: 칩 두 개. 분야 칩을 누르면 12칸이 펼쳐진다 */}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button onClick={() => setCatOpen((v) => !v)} aria-expanded={catOpen} className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold shadow-[0_2px_10px_rgba(31,29,26,0.06)] ${catOpen ? "bg-foreground text-card" : "bg-card"}`}>
+                <span className={catOpen ? "text-gold-soft" : "text-vermilion"}>{CATEGORY_ICON[category]}</span>
+                {categoryOf(category).label}
+                {guessed && !catTouched ? <span className={`text-[11px] font-normal ${catOpen ? "text-card/70" : "text-muted"}`}>자동</span> : null}
+                <span className="text-[10px]">{catOpen ? "▴" : "▾"}</span>
               </button>
+              <button onClick={() => setPeriodOpen((v) => !v)} aria-expanded={periodOpen} className={`inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-sm font-semibold shadow-[0_2px_10px_rgba(31,29,26,0.06)] ${periodOpen ? "bg-foreground text-card" : "bg-card"}`}>
+                {PERIODS.find((p) => p.key === period)?.label}
+                {period === "date" && periodDate ? ` ${periodDate.slice(5)}` : ""} <span className="text-[10px]">{periodOpen ? "▴" : "▾"}</span>
+              </button>
+              <span className="ml-auto">
+                <QuotaBadge />
+              </span>
             </div>
+            {catOpen ? (
+              <div className="mt-2 grid grid-cols-6 gap-1.5">
+                {CATEGORIES.map((c) => {
+                  const on = category === c.key;
+                  return (
+                    <button
+                      key={c.key}
+                      onClick={() => {
+                        setCategory(c.key);
+                        setCatTouched(true);
+                        setCatOpen(false);
+                      }}
+                      aria-pressed={on}
+                      title={c.desc}
+                      className={`flex flex-col items-center gap-0.5 rounded-2xl py-1.5 text-[11px] font-semibold transition ${on ? "bg-vermilion/12 text-foreground ring-2 ring-vermilion" : "bg-card text-foreground/80 shadow-[0_2px_10px_rgba(31,29,26,0.06)] hover:bg-border/60"}`}
+                    >
+                      <span className="text-vermilion">{CATEGORY_ICON[c.key]}</span>
+                      {c.short}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
             {periodOpen ? (
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {PERIODS.map((p) => (
@@ -170,62 +243,60 @@ export default function DivinationFlow() {
                 ) : null}
               </div>
             ) : null}
-            <input
-              id="question"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value.slice(0, 60))}
-              maxLength={60}
-              placeholder={`예: ${QUESTION_EXAMPLES[category][0]}`}
-              className="mt-1.5 w-full rounded-2xl bg-card px-4 py-2.5 text-[16px] shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
-            />
-            {question.trim() ? (
-              <input
-                value={context}
-                onChange={(e) => setContext(e.target.value.slice(0, 80))}
-                maxLength={80}
-                placeholder="지금 상황 한 줄 (선택) 예: 2차 면접, 경쟁률이 높아요"
-                className="mt-2 w-full rounded-2xl bg-card px-4 py-2.5 text-sm shadow-[0_4px_16px_rgba(31,29,26,0.06)] outline-none placeholder:text-muted/60 focus:ring-2 focus:ring-vermilion/30"
-              />
-            ) : (
-              <button onClick={() => setQuestion(QUESTION_EXAMPLES[category][1] ?? QUESTION_EXAMPLES[category][0])} className="mt-1 truncate px-1 text-[11px] text-muted hover:text-foreground">
-                안 적어도 돼요 · 예시 넣기: {QUESTION_EXAMPLES[category][1] ?? QUESTION_EXAMPLES[category][0]}
-              </button>
-            )}
 
-            <div className="mt-2.5 flex items-center justify-between">
-              <p className="font-bold">어떻게 뽑을까요</p>
-              <QuotaBadge />
-            </div>
             {quota.remaining <= 0 ? (
-              <div className="mt-2">
+              <div className="mt-4">
                 <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
               </div>
+            ) : (
+              <button
+                onClick={() => setMethodOpen(true)}
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-vermilion py-4 text-lg font-bold text-white shadow-[0_10px_30px_rgba(216,69,43,0.35)] transition hover:brightness-105"
+              >
+                하늘에 묻기 <ChevronRight size={20} />
+              </button>
+            )}
+            <p className="mt-2 text-center text-xs text-muted">{lastMethod ? `지난번처럼 ${METHOD_LABEL[lastMethod]}으로 뽑아요. 버튼을 누른 뒤 바꿀 수 있어요.` : "누르면 뽑는 방법을 고를 수 있어요."}</p>
+
+            {/* 방법 선택 시트 */}
+            {methodOpen ? (
+              <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="뽑는 방법">
+                <button aria-label="닫기" onClick={() => setMethodOpen(false)} className="absolute inset-0 bg-black/45" />
+                <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[520px] rounded-t-3xl bg-background px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+                  <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-border" />
+                  <div className="flex items-center justify-between px-1">
+                    <p className="font-bold">어떻게 뽑을까요</p>
+                    <QuotaBadge />
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <MethodCard icon={<Coins size={22} />} title="척전법" sub="동전 세 개" desc="가볍고 빠르게" active={lastMethod === "coin"} onClick={() => start("coin")} />
+                    <MethodCard icon={<Landmark size={22} />} title="산통법" sub="산통 흔들기" desc="깊이 들여다보기" active={lastMethod === "santong"} onClick={() => start("santong")} />
+                  </div>
+                  <div className="mt-2 grid gap-2">
+                    <MethodCard
+                      icon={<Sprout size={22} />}
+                      title="시초점"
+                      sub="산가지 50개"
+                      desc="주역 원전의 가장 오래되고 정교한 방식이에요. 인생의 중요한 질문에 알맞아요."
+                      badge={yarrowOpen ? (admin && !quota.premium ? "관리자" : "Pro") : "Pro 전용"}
+                      locked={!yarrowOpen}
+                      active={lastMethod === "yarrow"}
+                      onClick={() => (yarrowOpen ? start("yarrow") : (window.location.hash = "home"))}
+                    />
+                    <MethodCard
+                      icon={<Compass size={22} />}
+                      title="육효점"
+                      sub="동전 + 육효"
+                      desc="날짜의 기운까지 얹어 되는지와 때를 짚어요."
+                      badge={yarrowOpen ? (admin && !quota.premium ? "관리자" : "Pro") : "Pro 전용"}
+                      locked={!yarrowOpen}
+                      active={lastMethod === "yukhyo"}
+                      onClick={() => (yarrowOpen ? start("coin", true) : (window.location.hash = "home"))}
+                    />
+                  </div>
+                </div>
+              </div>
             ) : null}
-            {/* 네 가지 방식을 한 번에: 기본 둘, Pro 둘(잠기면 자물쇠) */}
-            <div className={`mt-1.5 grid grid-cols-2 gap-1.5 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
-              <MethodCard icon={<Coins size={22} />} title="척전법" sub="동전 세 개" desc="가볍고 빠르게" onClick={() => start("coin")} />
-              <MethodCard icon={<Landmark size={22} />} title="산통법" sub="산통 흔들기" desc="깊이 들여다보기" onClick={() => start("santong")} />
-            </div>
-            <div className={`mt-1.5 grid gap-1.5 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
-              <MethodCard
-                icon={<Sprout size={22} />}
-                title="시초점"
-                sub="산가지 50개"
-                desc="주역 원전의 가장 오래되고 정교한 방식이에요. 인생의 중요한 질문에 알맞아요."
-                badge={yarrowOpen ? (admin && !quota.premium ? "관리자" : "Pro") : "Pro 전용"}
-                locked={!yarrowOpen}
-                onClick={() => (yarrowOpen ? start("yarrow") : (window.location.hash = "home"))}
-              />
-              <MethodCard
-                icon={<Compass size={22} />}
-                title="육효점"
-                sub="동전 + 육효"
-                desc="날짜의 기운까지 얹어 되는지와 때를 짚어요."
-                badge={yarrowOpen ? (admin && !quota.premium ? "관리자" : "Pro") : "Pro 전용"}
-                locked={!yarrowOpen}
-                onClick={() => (yarrowOpen ? start("coin", true) : (window.location.hash = "home"))}
-              />
-            </div>
           </motion.div>
         ) : null}
 
@@ -288,13 +359,13 @@ export default function DivinationFlow() {
   );
 }
 
-function MethodCard({ icon, title, sub, desc, badge, locked, onClick }: { icon: React.ReactNode; title: string; sub: string; desc: string; badge?: string; locked?: boolean; onClick: () => void }) {
+function MethodCard({ icon, title, sub, desc, badge, locked, active, onClick }: { icon: React.ReactNode; title: string; sub: string; desc: string; badge?: string; locked?: boolean; active?: boolean; onClick: () => void }) {
   return (
     <motion.button
       onClick={onClick}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
-      className={`group flex break-keep items-center gap-2.5 rounded-2xl bg-card px-3 py-2 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)] ${locked ? "opacity-75" : ""}`}
+      className={`group flex break-keep items-center gap-2.5 rounded-2xl bg-card px-3 py-2.5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)] ${locked ? "opacity-75" : ""} ${active ? "ring-2 ring-vermilion" : ""}`}
     >
       <span className={`shrink-0 rounded-xl p-2 transition ${locked ? "bg-foreground/8 text-muted" : "bg-vermilion/10 text-vermilion group-hover:bg-vermilion group-hover:text-card"}`}>{icon}</span>
       <span className="min-w-0 flex-1">
