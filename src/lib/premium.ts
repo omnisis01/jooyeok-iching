@@ -14,7 +14,8 @@ export const paymentsTestMode = provider === "toss" && Boolean(tossClientKey?.st
 export const PREMIUM_PRICE_KRW = Number(process.env.NEXT_PUBLIC_PREMIUM_PRICE_KRW || 4900);
 
 export const PREMIUM_BENEFITS = [
-  "점 횟수 제한 없이 언제든 뽑을 수 있어요",
+  "맞춤형 AI 점사 분석을 하루 3회, 첫 분석은 더 깊은 모델로",
+  "점 횟수 제한 없이 언제든 뽑고, 시초점과 육효점도 열려요",
   "모든 결과를 육효로 더 깊이 들여다볼 수 있어요",
   "점 기록을 개수 제한 없이 보관하고, 결과 이미지에 사이트 표시가 빠져요",
 ];

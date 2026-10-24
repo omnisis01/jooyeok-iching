@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps<"/hexagram/[n]">): 
     title,
     description,
     alternates: { canonical: `${SITE_URL}hexagram/${hex.number}/` },
-    openGraph: { title, description, url: `${SITE_URL}hexagram/${hex.number}/`, siteName: "하늘주역", locale: "ko_KR", type: "article" },
+    openGraph: { title, description, url: `${SITE_URL}hexagram/${hex.number}/`, siteName: "하늘주역", locale: "ko_KR", type: "article", images: [{ url: `${SITE_URL}og.png`, width: 1200, height: 630, alt: "하늘주역" }] },
   };
 }
 

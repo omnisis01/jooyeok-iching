@@ -17,15 +17,33 @@ export function onAuthChange(cb: (session: Session | null) => void): () => void 
 }
 
 /** 이메일로 로그인 링크를 보낸다 (비밀번호 없음) */
+/** 로그인 뒤 돌아올 주소. 결과 화면에서 로그인을 눌렀으면 그 결과(?open=열쇠)로, 아니면 보던 탭으로 */
+export const LOGIN_RETURN_KEY = "jooyeok-login-return";
+export function rememberLoginReturn(suffix: string) {
+  try {
+    sessionStorage.setItem(LOGIN_RETURN_KEY, suffix);
+  } catch {}
+}
+function loginRedirect(): string {
+  if (typeof window === "undefined") return SITE_URL;
+  let suffix = window.location.hash;
+  try {
+    const saved = sessionStorage.getItem(LOGIN_RETURN_KEY);
+    if (saved) suffix = saved;
+    sessionStorage.removeItem(LOGIN_RETURN_KEY);
+  } catch {}
+  return window.location.origin + window.location.pathname + suffix;
+}
+
 export async function sendMagicLink(email: string): Promise<void> {
-  const redirect = typeof window !== "undefined" ? window.location.origin + window.location.pathname : SITE_URL;
+  const redirect = loginRedirect();
   const { error } = await supabase().auth.signInWithOtp({ email, options: { emailRedirectTo: redirect } });
   if (error) throw new Error(error.message);
 }
 
 /** 카카오로 로그인. 카카오 화면으로 갔다가 돌아오면 세션이 잡힌다 */
 export async function signInWithKakao(): Promise<void> {
-  const redirect = typeof window !== "undefined" ? window.location.origin + window.location.pathname : SITE_URL;
+  const redirect = loginRedirect();
   const { error } = await supabase().auth.signInWithOAuth({ provider: "kakao", options: { redirectTo: redirect } });
   if (error) throw new Error(error.message);
 }

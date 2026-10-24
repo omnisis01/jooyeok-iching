@@ -73,6 +73,12 @@ export default function AppShell() {
       attachServerQuota(s?.user.id ?? null);
       setTrackUser(s?.user.id ?? null);
       if (was) track("login_done", {}, { oncePerSession: true });
+      // 카카오에서 돌아온 주소의 code는 세션이 잡힌 뒤 지운다
+      if (was && window.location.search.includes("code=")) {
+        const p = new URLSearchParams(window.location.search);
+        p.delete("code");
+        window.history.replaceState(null, "", `${window.location.pathname}${p.size ? "?" + p : ""}${window.location.hash}`);
+      }
     });
     const onVisible = () => document.visibilityState === "visible" && refreshServerQuota();
     document.addEventListener("visibilitychange", onVisible);

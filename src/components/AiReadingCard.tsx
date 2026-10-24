@@ -17,6 +17,7 @@ import { MessageCircleQuestion } from "lucide-react";
 import { Bell } from "lucide-react";
 import { QUESTION_EXAMPLES, categoryOf } from "@/lib/categories";
 import { openSettings } from "./SettingsSheet";
+import { rememberLoginReturn } from "@/lib/cloudSync";
 import { track } from "@/lib/track";
 import { usePaymentsOn } from "@/lib/usePaymentsOn";
 
@@ -128,29 +129,18 @@ export default function AiReadingCard({ reading, onQuestion, onResult }: { readi
     }
   };
 
-  const label = can === "trial" ? "AI 점사풀이 무료로 받아 보기 (첫 1회)" : can === "pro" ? "AI 점사풀이 받기 (Pro, 오늘 1회)" : can === "admin" ? "AI 점사풀이 받기 (관리자)" : "AI 점사풀이 받기";
+  const label = can === "trial" ? "AI 점사풀이 무료로 받아 보기 (첫 1회)" : can === "pro" ? "AI 점사 분석 받기 (Pro)" : can === "admin" ? "AI 점사풀이 받기 (관리자)" : "AI 점사풀이 받기";
 
   return (
-    <section id="ai-reading" className="break-keep scroll-mt-24 rounded-3xl bg-card p-6 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+    <section id="ai-reading" className="break-keep scroll-mt-24 rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
       <div className="flex items-center gap-2">
         <Sparkles size={18} className="text-gold-soft" />
         <h3 className="font-bold">맞춤형 AI 점사 분석</h3>
       </div>
-      <p className="mt-1.5 text-sm leading-relaxed text-muted">
+      <p className="mt-1 text-sm leading-relaxed text-muted">
         {ctx.question ? <>&ldquo;{ctx.question}&rdquo;에 대해, </> : <>{cat.label}에 대해, </>}
-        뽑은 괘의 괘사, 효사, 지괘, 육효 시기를 근거로 풀어요.
+        괘사·효사·지괘·육효 시기를 근거로 풀어요.
       </p>
-      {view.kind !== "done" ? (
-        <>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {PREVIEW.map((t) => (
-              <span key={t} className="rounded-full bg-background px-2.5 py-1 text-xs text-foreground/75">
-                {t}
-              </span>
-            ))}
-          </div>
-        </>
-      ) : null}
 
       {view.kind === "done" ? (
         <>
@@ -195,7 +185,10 @@ export default function AiReadingCard({ reading, onQuestion, onResult }: { readi
         <div className="mt-4">
           {loggedIn === false ? (
             <button
-              onClick={openSettings}
+              onClick={() => {
+                rememberLoginReturn(`?open=${encodeURIComponent(readingKey(reading))}#home`);
+                openSettings();
+              }}
               className="w-full rounded-full bg-foreground py-3 font-bold text-card"
             >
               로그인하고 AI 점사 분석 한 번 무료로 받기
@@ -234,6 +227,13 @@ export default function AiReadingCard({ reading, onQuestion, onResult }: { readi
             </button>
           )}
           {view.kind === "error" ? <p className="mt-2 text-center text-xs text-vermilion">{view.message}</p> : null}
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {PREVIEW.map((t) => (
+              <span key={t} className="rounded-full bg-background px-2.5 py-1 text-xs text-foreground/75">
+                {t}
+              </span>
+            ))}
+          </div>
         </div>
       )}
     </section>

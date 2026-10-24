@@ -6,9 +6,9 @@ import { aiReadingKey, buildContext, fallbackReading, isSelfHarm, isValidInput, 
 import { generate, generateFollowup } from "../_shared/aiGenerate.ts";
 
 const MODEL = Deno.env.get("AI_MODEL") ?? "claude-haiku-5-5";
-// Pro와 관리자는 더 깊은 모델로(1회 약 30원). 같은 기능에 품질 차이를 둬 Pro의 이유를 만든다
+// Pro와 관리자는 더 깊은 모델로(1회 약 30원). Pro는 하루 3회 중 첫 분석만 깊은 모델, 나머지는 기본 모델(BM 결정 2026-10-24)
 const PRO_MODEL = Deno.env.get("AI_MODEL_PRO") ?? "claude-opus-5-5";
-const modelFor = (via: string) => (via === "pro" || via === "admin" ? PRO_MODEL : MODEL);
+const modelFor = (via: string, proToday = 0) => (via === "admin" || (via === "pro" && proToday === 0) ? PRO_MODEL : MODEL);
 // 전체 사용자 합계 하루 상한. 넘으면 그날은 대체 풀이만 낸다(비용 폭주 방지)
 const DAILY_CAP = Number(Deno.env.get("AI_DAILY_CAP") ?? 3000);
 const MAX_ATTEMPTS = 2;
@@ -83,7 +83,12 @@ Deno.serve(async (req) => {
   const { count } = await db.from("ai_readings").select("*", { count: "exact", head: true }).eq("day", new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10));
   if ((count ?? 0) >= DAILY_CAP) return fallback("daily_cap");
 
-  const model = modelFor(via);
+  let proToday = 0;
+  if (via === "pro") {
+    const { count: c } = await db.from("ai_readings").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("via", "pro").eq("day", new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10));
+    proToday = c ?? 0;
+  }
+  const model = modelFor(via, proToday);
   await log("ai_request", { via, model });
   const started = Date.now();
   const g = await generate(ctx, model, apiKey, MAX_ATTEMPTS, (issues) => void log("ai_retry", { issues: issues.length, first: issues[0].slice(0, 60) }));

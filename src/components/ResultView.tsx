@@ -146,26 +146,46 @@ export default function ResultView({ reading: source, onRestart, restartLabel = 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
       {/* 첫 화면: 한 장 요약 */}
-      <section className="break-keep rounded-3xl bg-card px-6 pb-7 pt-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
-        <p className="text-xs text-muted">
-          {cat.label}, {question ? `“${question}” ` : ""}
-          {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
-        </p>
-        {castAt ? <p className="mt-0.5 text-[11px] text-muted">뽑은 시각 {formatCastAt(castAt)}</p> : null}
-        <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15, duration: 0.5 }} className="mt-6 flex justify-center text-gold-soft">
-          <HexagramFigure lines={primary.lines} changing={changingLines} size={cloudEnabled ? 88 : 116} title={primary.name} />
-        </motion.div>
-        <p className="mt-5 font-serif text-sm tracking-wide text-muted">{primary.hanja}</p>
-        <h2 className="mt-1 text-4xl font-bold tracking-tight">{primary.name}</h2>
-        <p className="mt-2 text-gold-soft">{primary.keyword}</p>
-
-        {cloudEnabled && resulting ? (
-          <p className="mx-auto mt-4 max-w-md rounded-2xl bg-background px-4 py-2.5 text-sm text-foreground/85">
-            <span className="font-bold text-vermilion">{changeLabel}</span> <span className="text-muted">→</span> {resulting.name} <span className="text-muted">{resulting.keyword}</span>
+      {cloudEnabled ? (
+        <section className="break-keep rounded-3xl bg-card px-5 py-4 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+          <p className="truncate text-xs text-muted">
+            {cat.label}
+            {question ? `, “${question}”` : ""} · {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
+            {period && period !== "today" ? ` · ${periodLabel(period, periodDate)}` : ""}
+            {castAt ? ` · ${formatCastAt(castAt)}` : ""}
           </p>
-        ) : null}
-        {!cloudEnabled ? flowBlocks : null}
-      </section>
+          <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1, duration: 0.4 }} className="mt-3 flex items-center justify-center gap-4">
+            <div className="text-gold-soft">
+              <HexagramFigure lines={primary.lines} changing={changingLines} size={56} title={primary.name} />
+            </div>
+            <div className="text-left">
+              <p className="font-serif text-xs tracking-wide text-muted">{primary.hanja}</p>
+              <h2 className="text-3xl font-bold leading-tight tracking-tight">{primary.name}</h2>
+              <p className="text-sm text-gold-soft">{primary.keyword}</p>
+            </div>
+          </motion.div>
+          {resulting ? (
+            <p className="mx-auto mt-3 max-w-md rounded-2xl bg-background px-4 py-2 text-sm text-foreground/85">
+              <span className="font-bold text-vermilion">{changeLabel}</span> <span className="text-muted">→</span> {resulting.name} <span className="text-muted">{resulting.keyword}</span>
+            </p>
+          ) : null}
+        </section>
+      ) : (
+        <section className="break-keep rounded-3xl bg-card px-6 pb-7 pt-6 text-center shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+          <p className="text-xs text-muted">
+            {cat.label}, {question ? `“${question}” ` : ""}
+            {period && period !== "today" ? `${periodLabel(period, periodDate)}의 일을 물은 괘` : "오늘의 괘"}, {method === "coin" ? "척전법" : method === "yarrow" ? "시초점" : "산통점"}
+          </p>
+          {castAt ? <p className="mt-0.5 text-[11px] text-muted">뽑은 시각 {formatCastAt(castAt)}</p> : null}
+          <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15, duration: 0.5 }} className="mt-6 flex justify-center text-gold-soft">
+            <HexagramFigure lines={primary.lines} changing={changingLines} size={116} title={primary.name} />
+          </motion.div>
+          <p className="mt-5 font-serif text-sm tracking-wide text-muted">{primary.hanja}</p>
+          <h2 className="mt-1 text-4xl font-bold tracking-tight">{primary.name}</h2>
+          <p className="mt-2 text-gold-soft">{primary.keyword}</p>
+          {flowBlocks}
+        </section>
+      )}
 
       <AiReadingCard reading={reading} onQuestion={addQuestion} onResult={setAi} />
       {cloudEnabled ? (

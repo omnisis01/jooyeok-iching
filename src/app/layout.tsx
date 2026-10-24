@@ -2,13 +2,25 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
 // 하위 경로 페이지(64괘 페이지 등)에서도 아이콘과 매니페스트를 찾도록 절대 경로로 둔다
 const BASE = "";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "하늘주역, 하늘에 묻고, 주역으로 답하다",
   description: "주역 64괘와 384효로 하늘의 뜻을 묻습니다. 산통을 흔들어 괘를 뽑고, AI가 내 질문에 맞춰 효사 원문으로 풀어 드려요.",
+  openGraph: {
+    title: "하늘주역, 하늘에 묻고, 주역으로 답하다",
+    description: "질문을 적고 괘를 뽑으면, 3천년 주역 원문을 근거로 내 질문에 꼭 맞는 AI 점사 분석이 바로 나와요.",
+    url: SITE_URL,
+    siteName: "하늘주역",
+    locale: "ko_KR",
+    type: "website",
+    images: [{ url: `${SITE_URL}og.png`, width: 1200, height: 630, alt: "하늘주역" }],
+  },
+  twitter: { card: "summary_large_image", title: "하늘주역, 하늘에 묻고, 주역으로 답하다", images: [`${SITE_URL}og.png`] },
   applicationName: "하늘주역",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "하늘주역" },
   manifest: `${BASE}/manifest.webmanifest`,
