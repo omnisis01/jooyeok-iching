@@ -521,6 +521,6 @@
 - [x] GitHub Pages 사용자 도메인 skyjooyeok.com, Cloudflare DNS(A 4개 + www CNAME, DNS only)는 대표가 등록. http로 열림 확인, 옛 github.io 주소는 301로 넘어옴
 - [x] Supabase: site_url과 허용 목록에 새 도메인(옛 주소·localhost 유지), 비밀값 SITE_URL 갱신
 - [x] 카카오 앱 대표 도메인 → https://skyjooyeok.com
-- [ ] GitHub 인증서 발급 뒤 HTTPS 강제(백그라운드로 기다리는 중)
+- [x] GitHub 인증서 발급(도메인 다시 저장해 발급 촉발) 뒤 HTTPS 강제 켬
 - [x] 정체성: 홈 히어로 배경을 8괘 원판 대신 우리 하늘(북두칠성, 달/해, 시간 따라)로. 폰 화면 위쪽에도 같은 하늘이 옅게 비친다(SkyArt 공용화)
 - [x] 달 위상 동기화(src/lib/moon.ts): 2000-01-06 삭 기준 삭망월로 계산, 삭·초승달·상현달·차오르는 달·보름달·기우는 달·하현달·그믐달. 하늘 그림의 달이 실제 모양으로, 홈 인사말에 "차오르는 달이 뜬 편안한 저녁이에요"처럼 들어감(밤에만)
