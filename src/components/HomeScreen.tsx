@@ -153,9 +153,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
       {unlockMessage ? <p className="rounded-2xl bg-card px-4 py-3 text-center text-sm font-semibold text-gold-soft">{unlockMessage}</p> : null}
 
       {/* 점치기 입구 */}
-      <motion.button
-        onClick={() => go("divine")}
-        whileTap={{ scale: 0.98 }}
+      <section
         className={`relative w-full overflow-hidden rounded-3xl p-6 text-left shadow-[0_12px_40px_rgba(31,29,26,0.25)] ${sky === "day" ? "bg-[#cfe5f5] text-[#1f1d1a]" : "bg-[#1a1d4a] text-[#f1e9da]"}`}
       >
         {/* 배경: 하늘주역의 하늘(북두칠성, 달 또는 해). 글이 읽히도록 왼쪽을 살짝 어둡게 */}
@@ -168,13 +166,17 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         <p className="mt-2 text-2xl font-extrabold">오늘, 하늘에 무엇을 물을까요</p>
         <p className={`mt-2 max-w-[62%] text-sm leading-relaxed md:max-w-[70%] ${sky === "day" ? "text-[#1f1d1a]/80" : "text-[#f1e9da]/85"}`}>궁금한 일 하나를 적고 괘를 뽑으면, 내 질문에 맞춘 AI 점사 분석이 바로 나와요.</p>
         <span className="mt-5 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-vermilion px-4 py-2 text-sm font-bold text-white">
+          <motion.button
+            onClick={() => go("divine")}
+            whileTap={{ scale: 0.96 }}
+            className="inline-flex items-center gap-1 rounded-full bg-vermilion px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(216,69,43,0.35)] transition hover:brightness-105"
+          >
             하늘에 묻기 <ChevronRight size={16} />
-          </span>
+          </motion.button>
           <QuotaBadge />
         </span>
         </div>
-      </motion.button>
+      </section>
 
       {/* 나의 점 기록 */}
       <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
