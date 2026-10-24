@@ -38,8 +38,25 @@ export function useQuota(): QuotaState {
 }
 
 /** 남은 횟수 한 줄 표시 */
-export function QuotaBadge() {
+export function QuotaBadge({ plain = false }: { plain?: boolean }) {
   const q = useQuota();
+  if (plain) {
+    if (q.premium) return <span className="font-semibold text-gold-soft">Pro, 횟수 제한 없음</span>;
+    const hint = q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY;
+    return (
+      <span>
+        오늘 무료 {q.remaining}회 남음
+        {hint ? (
+          <>
+            {" · "}
+            <button onClick={openSettings} className="underline underline-offset-2">
+              로그인하면 {FREE_PER_DAY}회
+            </button>
+          </>
+        ) : null}
+      </span>
+    );
+  }
   if (q.premium) return <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold">Pro, 횟수 제한 없음</span>;
   const guestHint = q.guest && FREE_PER_DAY_GUEST < FREE_PER_DAY;
   const inner = (

@@ -165,16 +165,16 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
         <p className={`min-h-5 text-sm ${sky === "day" ? "text-[#1f1d1a]/70" : "text-[#f1e9da]/75"}`}>{day ? `오늘은 ${day.label.replace("일", "")} 날` : ""}{greeting ? `, ${sky === "night" && moon ? `${moon.phrase} ` : ""}${greeting}` : ""}</p>
         <p className="mt-2 text-2xl font-extrabold">오늘, 하늘에 무엇을 물을까요</p>
         <p className={`mt-2 max-w-[62%] text-sm leading-relaxed md:max-w-[70%] ${sky === "day" ? "text-[#1f1d1a]/80" : "text-[#f1e9da]/85"}`}>궁금한 일 하나를 적고 괘를 뽑으면, 내 질문에 맞춘 AI 점사 분석이 바로 나와요.</p>
-        <span className="mt-5 flex flex-wrap items-center gap-2">
-          <motion.button
-            onClick={() => go("divine")}
-            whileTap={{ scale: 0.96 }}
-            className="inline-flex items-center gap-1 rounded-full bg-vermilion px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(216,69,43,0.35)] transition hover:brightness-105"
-          >
-            하늘에 묻기 <ChevronRight size={16} />
-          </motion.button>
-          <QuotaBadge />
-        </span>
+        <motion.button
+          onClick={() => go("divine")}
+          whileTap={{ scale: 0.96 }}
+          className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-vermilion px-6 py-3 text-base font-bold text-white shadow-[0_8px_24px_rgba(216,69,43,0.35)] transition hover:brightness-105"
+        >
+          하늘에 묻기 <ChevronRight size={18} />
+        </motion.button>
+        <div className={`mt-2.5 text-xs ${sky === "day" ? "text-[#1f1d1a]/70" : "text-[#f1e9da]/70"}`}>
+          <QuotaBadge plain />
+        </div>
         </div>
       </section>
 
