@@ -145,7 +145,7 @@ export default function AppShell() {
       </aside>
 
       <div className="mx-auto min-h-screen w-full max-w-[520px] bg-background sm:shadow-[0_0_60px_rgba(31,29,26,0.08)] lg:max-w-none lg:bg-transparent lg:shadow-none">
-        <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-3 pt-4 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-2 pt-3 backdrop-blur lg:hidden">
           <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />
             하늘주역
@@ -158,7 +158,7 @@ export default function AppShell() {
           </div>
         </header>
 
-        <main className="px-4 pb-40 pt-2 lg:mx-auto lg:max-w-4xl lg:px-8 lg:pb-12 lg:pt-8">
+        <main className="px-4 pb-28 pt-2 lg:mx-auto lg:max-w-4xl lg:px-8 lg:pb-12 lg:pt-8">
           <h1 className="mb-4 hidden text-2xl font-extrabold lg:block">{TITLES[tab]}</h1>
           {/* 탭 전환은 퇴장 애니메이션 없이 바로 바꾼다. 화면이 가려진 상태에서도 멈추지 않도록 */}
           <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>

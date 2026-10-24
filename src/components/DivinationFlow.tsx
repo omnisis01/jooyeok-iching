@@ -118,9 +118,7 @@ export default function DivinationFlow() {
                 </button>
               ))}
             </div>
-            <p className="mt-1 px-1 text-xs text-muted">{categoryOf(category).desc}</p>
-
-            <label htmlFor="question" className="mt-4 block font-bold">
+            <label htmlFor="question" className="mt-3 block font-bold">
               질문을 적어 주세요 <span className="text-sm font-normal text-muted">(선택, 구체적일수록 잘 맞아요)</span>
             </label>
             <input
@@ -176,7 +174,7 @@ export default function DivinationFlow() {
               />
             ) : null}
 
-            <p className="mt-4 font-bold">어떻게 뽑을까요</p>
+            <p className="mt-3 font-bold">어떻게 뽑을까요</p>
             {quota.remaining <= 0 ? (
               <div className="mt-2">
                 <QuotaGate onGoPremium={() => (window.location.hash = "home")} />
@@ -184,17 +182,19 @@ export default function DivinationFlow() {
             ) : null}
             <div className={`mt-2 grid grid-cols-2 gap-2 ${quota.remaining <= 0 ? "pointer-events-none opacity-40" : ""}`}>
               <MethodCard
-                icon={<Coins size={22} />}
+                icon={<Coins size={20} />}
                 title="척전법"
                 sub="동전 세 개"
-                desc="가볍고 빠른 질문에. 약 1분"
+                desc="빠른 질문에 · 약 1분"
+                wide
                 onClick={() => start("coin")}
               />
               <MethodCard
-                icon={<Landmark size={22} />}
+                icon={<Landmark size={20} />}
                 title="산통법"
                 sub="산통 흔들기"
-                desc="깊이 들여다볼 질문에. 약 30초"
+                desc="깊은 질문에 · 약 30초"
+                wide
                 onClick={() => start("santong")}
               />
             </div>
@@ -299,9 +299,9 @@ function MethodCard({ icon, title, sub, desc, badge, locked, wide, onClick }: { 
       onClick={onClick}
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
-      className={`group flex break-keep rounded-2xl bg-card p-3.5 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)] ${wide ? "items-center gap-3" : "flex-col items-start gap-2"} ${locked ? "opacity-80" : ""}`}
+      className={`group flex break-keep rounded-2xl bg-card p-3 text-left shadow-[0_6px_30px_rgba(31,29,26,0.06)] transition hover:shadow-[0_10px_36px_rgba(31,29,26,0.10)] ${wide ? "items-center gap-2.5" : "flex-col items-start gap-2"} ${locked ? "opacity-80" : ""}`}
     >
-      <span className={`shrink-0 rounded-xl p-2.5 transition ${locked ? "bg-foreground/8 text-muted" : "bg-vermilion/10 text-vermilion group-hover:bg-vermilion group-hover:text-card"}`}>{icon}</span>
+      <span className={`shrink-0 rounded-xl p-2 transition ${locked ? "bg-foreground/8 text-muted" : "bg-vermilion/10 text-vermilion group-hover:bg-vermilion group-hover:text-card"}`}>{icon}</span>
       <span className="min-w-0">
         <span className="flex flex-wrap items-center gap-1.5">
           <span className="text-base font-bold">{title}</span>
