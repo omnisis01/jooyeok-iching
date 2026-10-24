@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
 
   const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
   const priceId = Deno.env.get("STRIPE_PRICE_ID");
-  const siteUrl = Deno.env.get("SITE_URL") ?? "https://omnisis01.github.io/jooyeok-iching/";
+  const siteUrl = Deno.env.get("SITE_URL") ?? "https://skyjooyeok.com/";
   if (!stripeKey || !priceId) return new Response("payments not configured", { status: 500, headers: CORS });
 
   // 요청에 실린 사용자 토큰으로 본인 확인

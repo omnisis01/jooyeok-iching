@@ -2,7 +2,7 @@
 // 장애 감시: 사이트와 서버 상태를 보고 문제가 있으면 GitHub 이슈를 연다(GitHub가 대표님 메일로 알린다)
 // 정상으로 돌아오면 같은 이슈에 알리고 닫는다. GitHub Actions(.github/workflows/monitor.yml)가 30분마다 실행한다
 // 필요한 환경 변수: HEALTH_URL, HEALTH_TOKEN, GITHUB_TOKEN, GITHUB_REPOSITORY
-const SITE = "https://omnisis01.github.io/jooyeok-iching/";
+const SITE = "https://skyjooyeok.com/";
 const problems = [];
 const notes = [];
 

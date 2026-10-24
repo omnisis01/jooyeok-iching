@@ -13,7 +13,7 @@ import { drawFlow, drawHexagram, ensureFonts, font, roundRect, wrap } from "@/li
 
 export const SW = 1080;
 export const SH = 1920;
-const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
+const SITE_LABEL = "skyjooyeok.com";
 /** 인스타그램 스토리는 위아래 약 250px에 자기 UI를 얹으므로 그 안쪽에만 그린다 */
 const SAFE_TOP = 260;
 const SAFE_BOTTOM = 1920 - 260;

@@ -31,8 +31,8 @@
 라이프스타일 (태그: 운세, 주역, 타로, 사주, 점)
 
 ## 연락처·정책 URL (도메인 구입 전 임시)
-- 개인정보처리방침: https://omnisis01.github.io/jooyeok-iching/privacy/
-- 이용약관: https://omnisis01.github.io/jooyeok-iching/terms/
+- 개인정보처리방침: https://skyjooyeok.com/privacy/
+- 이용약관: https://skyjooyeok.com/terms/
 - 지원 이메일: omnisis01@gmail.com (도메인 뒤 hello@skyjooyeok.com 권장)
 
 ## 데이터 안전 설문 답변 초안

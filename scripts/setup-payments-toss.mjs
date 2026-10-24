@@ -14,7 +14,7 @@ import { getSupabaseToken } from "./token.mjs";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const API = "https://api.supabase.com";
 const PROJECT_NAME = process.env.SUPABASE_PROJECT_NAME || "jooyeok-master";
-const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
+const SITE_URL = "https://skyjooyeok.com/";
 const GITHUB_REPO = "omnisis01/jooyeok-iching";
 const PRICE_KRW = String(process.env.PREMIUM_PRICE_KRW || 4900);
 const UNLOCK_KRW = String(process.env.UNLOCK_PRICE_KRW || 1000);

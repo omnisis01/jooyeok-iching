@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 
 // 하위 경로 페이지(64괘 페이지 등)에서도 아이콘과 매니페스트를 찾도록 절대 경로로 둔다
-const BASE = process.env.GITHUB_PAGES === "true" ? "/jooyeok-iching" : "";
+const BASE = "";
 
 export const metadata: Metadata = {
   title: "하늘주역, 하늘에 묻고, 주역으로 답하다",

@@ -30,7 +30,7 @@ const callback = `https://${project.id}.supabase.co/auth/v1/callback`;
 
 console.log("카카오 개발자 콘솔에서 먼저 해 둘 것:");
 console.log("  1) 내 애플리케이션 → 앱 추가 (앱 이름: 하늘주역)");
-console.log("  2) 앱 설정 → 플랫폼 → Web 사이트 도메인: https://omnisis01.github.io");
+console.log("  2) 앱 설정 → 플랫폼 → Web 사이트 도메인: https://skyjooyeok.com");
 console.log("  3) 제품 설정 → 카카오 로그인 → 활성화 ON, Redirect URI에 아래 주소 등록");
 console.log(`     ${callback}`);
 console.log("  4) 카카오 로그인 → 동의항목: 닉네임(필수), 카카오계정(이메일)(필수, 비즈 앱 필요)");

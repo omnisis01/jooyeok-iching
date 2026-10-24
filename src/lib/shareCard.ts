@@ -7,8 +7,8 @@ import { categoryOf } from "@/lib/categories";
 import { categoryReading } from "@/data/categoryReadings";
 import { formatCastAt } from "@/lib/castTime";
 
-export const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
-const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
+export const SITE_URL = "https://skyjooyeok.com/";
+const SITE_LABEL = "skyjooyeok.com";
 
 export const W = 1080;
 /** 기본 높이(4:5). 내용이 길면 이보다 늘어난다 */

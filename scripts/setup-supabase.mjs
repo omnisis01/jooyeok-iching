@@ -19,7 +19,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const API = "https://api.supabase.com";
 const PROJECT_NAME = process.env.SUPABASE_PROJECT_NAME || "jooyeok-master";
 const REGION = process.env.SUPABASE_REGION || "ap-northeast-2";
-const SITE_URL = "https://omnisis01.github.io/jooyeok-iching/";
+const SITE_URL = "https://skyjooyeok.com/";
 const LOCAL_URL = "http://localhost:3000/";
 const GITHUB_REPO = "omnisis01/jooyeok-iching";
 

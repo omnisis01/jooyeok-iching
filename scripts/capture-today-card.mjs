@@ -6,7 +6,7 @@ import { chromium } from "playwright";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const SITE = process.env.SITE_URL || "https://omnisis01.github.io/jooyeok-iching/";
+const SITE = process.env.SITE_URL || "https://skyjooyeok.com/";
 const outDir = process.argv[2] || "daily-cards";
 const date = process.argv[3] || new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
 

@@ -3,7 +3,7 @@ import { BEASTS, BRANCHES_HANJA, STEMS_HANJA, branchLabel, type YukhyoResult } f
 import { categoryOf } from "@/lib/categories";
 import { C, W, ensureFonts, font, roundRect, wrap, SITE_URL } from "@/lib/shareCard";
 
-const SITE_LABEL = "omnisis01.github.io/jooyeok-iching";
+const SITE_LABEL = "skyjooyeok.com";
 
 export async function renderYukhyoCard(r: YukhyoResult): Promise<Blob> {
   await ensureFonts();
