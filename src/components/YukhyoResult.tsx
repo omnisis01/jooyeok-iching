@@ -201,7 +201,7 @@ export default function YukhyoResult({ result, onRestart, saveToHistory = true, 
       </>
       )}
       <p className="text-center text-xs leading-relaxed text-muted">
-        육효는 점친 날의 일진과 월건을 함께 보는 점법이라 같은 괘라도 날짜에 따라 풀이가 달라집니다. 결과는 참고로만 삼아 주세요.
+        육효는 점친 날의 일진과 월건을 함께 보는 점법이라 같은 괘라도 날짜에 따라 풀이가 달라집니다. 점괘 결과가 오늘 삶의 길잡이가 되길 바랍니다.
       </p>
     </motion.div>
   );

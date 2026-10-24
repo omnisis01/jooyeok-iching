@@ -353,7 +353,7 @@ export default function ResultView({ reading: source, onRestart, restartLabel = 
       <ShareForCoupon className="mx-auto max-w-sm pt-2" />
       <div className="space-y-1 text-center text-[11px] leading-relaxed text-muted">
         <p>이 분석의 근거: {sources}</p>
-        <p>주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼고, 건강, 법률, 돈과 관련된 중요한 결정은 꼭 전문가와 상의해 주세요.</p>
+        <p>점괘 결과가 오늘 삶의 길잡이가 되길 바랍니다. 건강, 법률, 돈과 관련된 중요한 결정은 꼭 전문가와 상의해 주세요.</p>
       </div>
     </motion.div>
   );

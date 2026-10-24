@@ -245,7 +245,7 @@ export default function HomeScreen({ go }: { go: (t: Tab) => void }) {
 
       <PremiumCard />
 
-      <p className="px-2 text-center text-xs leading-relaxed text-muted lg:col-span-2">주역 점은 스스로를 돌아보는 거울입니다. 결과는 참고로만 삼아 주세요.</p>
+      <p className="px-2 text-center text-xs leading-relaxed text-muted lg:col-span-2">점괘 결과가 오늘 삶의 길잡이가 되길 바랍니다.</p>
     </div>
   );
 }
