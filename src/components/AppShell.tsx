@@ -141,7 +141,7 @@ export default function AppShell() {
       </aside>
 
       <div className="mx-auto min-h-screen w-full max-w-[520px] lg:max-w-none">
-        <header className="sticky top-0 z-30 flex items-center justify-between bg-background/85 px-5 pb-2 pt-3 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-30 flex items-center justify-between bg-gradient-to-b from-background via-background/70 to-transparent px-5 pb-4 pt-3 lg:hidden">
           <button onClick={() => go("home")} className="flex items-center gap-2 text-lg font-bold">
             <Taegeuk size={26} />
             하늘주역
