@@ -85,7 +85,7 @@ export default function DivinationFlow() {
 
   const complete = (r: Reading) => {
     consumeCast();
-    track("cast_done", { kind: "iching", method: r.method, category, changing: r.changingLines.length });
+    track("cast_done", { kind: "iching", method: r.method, category, changing: r.changingLines.length, q: Boolean(question.trim()) });
     setReading({ ...r, category, question: question.trim() || undefined, context: context.trim() || undefined, period, periodDate: period === "date" ? periodDate : undefined });
     setStage(yukhyoMode ? "yukhyo" : "result");
   };

@@ -24,9 +24,34 @@ const COLUMNS: [string, string, boolean][] = [
   ["share_image", "이미지 공유", false],
   ["deep_view", "유료 카드 노출", true],
   ["deep_buy_click", "구매 클릭", false],
-  ["ai_done", "AI 풀이", false],
+  ["ai_done", "AI 분석", false],
   ["ai_fallback", "AI 대체", false],
+  ["install_prompt", "설치 권유", true],
+  ["install_add", "홈 화면 추가", false],
+  ["push_on", "알림 켬", false],
 ];
+
+// 퍼널: 최근 기간 합계. 방문·권유는 사람 수, 나머지는 횟수
+function funnel(days: AdminDashboard["days"]) {
+  const sum = (name: string, people: boolean) => days.filter((r) => r.name === name).reduce((a, r) => a + (people ? r.people : r.n), 0);
+  const visit = sum("app_open", true);
+  const cast = sum("cast_done", false);
+  const ai = sum("ai_done", false);
+  const asked = sum("ai_question_added", false);
+  const prompt = sum("install_prompt", true);
+  const added = sum("install_add", false);
+  const push = sum("push_on", false);
+  const pct = (a: number, b: number) => (b > 0 ? `${Math.round((100 * a) / b)}%` : "-");
+  return [
+    { label: "방문(사람)", value: visit, rate: "" },
+    { label: "점 완료", value: cast, rate: pct(cast, visit) },
+    { label: "AI 분석", value: ai, rate: pct(ai, cast) },
+    { label: "결과에서 질문 추가", value: asked, rate: pct(asked, ai) },
+    { label: "설치 권유 본 사람", value: prompt, rate: pct(prompt, visit) },
+    { label: "홈 화면 추가", value: added, rate: pct(added, prompt) },
+    { label: "알림 켬", value: push, rate: pct(push, prompt) },
+  ];
+}
 
 const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 
@@ -142,11 +167,27 @@ export default function AdminScreen() {
             </section>
 
             <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
+              <p className="font-bold">최근 14일 퍼널</p>
+              <p className="mt-1 text-xs text-muted">앞 단계 대비 비율이에요. 어디서 빠져나가는지 보고 다음 손질 순서를 정해요.</p>
+              <ul className="mt-3 space-y-1.5">
+                {funnel(data.days).map((f) => (
+                  <li key={f.label} className="flex items-center justify-between rounded-xl bg-background px-3 py-2 text-sm">
+                    <span>{f.label}</span>
+                    <span className="tabular-nums">
+                      <b>{f.value.toLocaleString("ko-KR")}</b>
+                      {f.rate ? <span className="ml-2 text-xs text-muted">{f.rate}</span> : null}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="rounded-3xl bg-card p-5 shadow-[0_6px_30px_rgba(31,29,26,0.06)]">
               <p className="font-bold">최근 14일 사용 기록</p>
               <p className="mt-1 text-xs text-muted">방문, 횟수 소진, 로그인, 유료 카드 노출은 사람 수, 나머지는 횟수예요. AI 대체는 AI 대신 기본 풀이가 나간 횟수예요(차감 없음).</p>
               {days.length ? (
                 <div className="mt-3 overflow-x-auto">
-                  <table className="w-full min-w-[680px] text-right text-sm">
+                  <table className="w-full min-w-[860px] text-right text-sm">
                     <thead>
                       <tr className="text-xs text-muted">
                         <th className="py-2 text-left font-semibold">날짜</th>
